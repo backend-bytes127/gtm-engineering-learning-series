@@ -12,6 +12,12 @@ An n8n workflow that takes an **Ideal Customer Profile (ICP)** as input, turns i
 
 ![Both flows on the canvas; this project is the upper flow](../02-contact-list-merge/docs/guide/assets/01-canvas-both-flows.jpg)
 
+### Process map
+
+![Process map of the LinkedIn ICP Scraper](../../docs/workflows/01-linkedin-icp-scraper.puzzle.png)
+
+*Who does what and where the fork is. Details in [`docs/workflows/`](../../docs/workflows/README.md).*
+
 ## 1. ICP definition
 
 The ICP is data, in [`data/icp-design.csv`](data/icp-design.csv). Priorities run P1 (highest) to P3.

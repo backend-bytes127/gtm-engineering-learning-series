@@ -23,6 +23,10 @@ The Rules tab defines both the format of each field (E.164 phones, spelled-out t
 
 ## Architecture
 
+![Process map of the Contact List Merge](../../docs/workflows/02-contact-list-merge.puzzle.png)
+
+*The human and automated steps, and the validity fork, as a process map. The diagram below shows the n8n node wiring.*
+
 ```mermaid
 flowchart LR
     F["Contact Merge Form<br/>6 xlsx uploads"] --> E["Extract From File x7"]

@@ -56,6 +56,12 @@ make down
 
 `make help` lists every target. To run the merge on your own exports, open the form at `http://localhost:5678/form/contact-merge-form-0001`, upload the six files, then download `Final_Contact_List.xlsx` from the latest execution (see [project 02](projects/02-contact-list-merge/README.md#run-it)).
 
+## Workflow maps
+
+Process maps of both workflows (who does what, with which tool, where the forks are) are in [`docs/workflows/`](docs/workflows/README.md).
+
+![Process map of the Contact List Merge](docs/workflows/02-contact-list-merge.puzzle.png)
+
 ## Repository map
 
 ```
