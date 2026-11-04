@@ -1,0 +1,29 @@
+# Local n8n for the learning series. One container, one volume, no external services.
+# Pinned to the version every workflow in this repo was built and tested on.
+name: gtm-learning
+services:
+  n8n:
+    image: n8nio/n8n:2.32.6
+    container_name: gtm-n8n
+    ports:
+      - "${N8N_HOST_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: localhost
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: "false"            # plain http on localhost only; never expose this port
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?run `make env` first}
+      WEBHOOK_URL: http://localhost:${N8N_HOST_PORT:-5678}/
+      GENERIC_TIMEZONE: ${TZ:-UTC}
+      TZ: ${TZ:-UTC}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  n8n_data:

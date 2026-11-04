@@ -1,0 +1,24 @@
+# --- secrets and identity: never commit ---
+.env
+.env.*
+!.env.example
+client_secret*.json
+*.pem
+*.key
+secrets.*
+.claude/
+
+# --- OS / editor noise ---
+.DS_Store
+~$*
+.idea/
+.vscode/
+
+# --- build output ---
+__pycache__/
+.pytest_cache/
+.coverage
+node_modules/
+output/
+*.zip
+*.sqlite

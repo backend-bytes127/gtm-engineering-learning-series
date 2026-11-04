@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTM Engineering Learning Series</title>
+<meta name="description" content="Tested, reproducible go-to-market automation projects built with n8n, Python and JavaScript.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root { --bg:#F4F6FA; --surface:#FFFFFF; --ink:#0E1A2B; --muted:#566579; --line:#DCE2EB; --accent:#2346F0; --accent-soft:#E7ECFF;
+  --font: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0A111D; --surface:#111B2C; --ink:#E7EDF7; --muted:#95A4B8; --line:#22314A; --accent:#86A0FF; --accent-soft:#18264A; color-scheme: dark; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--font); padding: 0 max(16px, env(safe-area-inset-left)) 72px; }
+main { max-width: 880px; margin: 0 auto; }
+.eyebrow { font: 500 .74rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); line-height: 1.08; letter-spacing: -.02em; font-weight: 800; margin: 14px 0 16px; text-wrap: balance; }
+header { padding-top: 64px; }
+.lede { font-size: 1.2rem; color: var(--muted); max-width: 46ch; margin: 0 0 8px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 18px; margin-top: 36px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px 22px; display: flex; flex-direction: column; min-width: 0; }
+.card h2 { font-size: 1.3rem; margin: 6px 0 8px; letter-spacing: -.01em; }
+.card p { margin: 0 0 14px; color: var(--muted); font-size: .98rem; }
+.tag { font: 500 .72rem var(--mono); color: var(--accent); background: var(--accent-soft); padding: 3px 8px; border-radius: 5px; align-self: flex-start; }
+.facts { font: 400 .8rem/1.7 var(--mono); color: var(--muted); margin: 0 0 18px; padding: 0; list-style: none; }
+.links { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: auto; }
+a { color: var(--accent); font-weight: 600; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+h3 { font-size: 1rem; margin: 44px 0 10px; }
+.practices { columns: 2 260px; column-gap: 32px; padding-left: 1.1em; margin: 0; color: var(--muted); font-size: .95rem; }
+.practices li { margin-bottom: 6px; break-inside: avoid; }
+footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Advanced GTM Engineering · portfolio</div>
+    <h1>GTM Engineering Learning Series</h1>
+    <p class="lede">Go-to-market automation built like production software: specifications traced to tests, golden files, parity checks, pinned infrastructure and recorded decisions.</p>
+  </header>
+
+  <div class="grid">
+    <article class="card">
+      <span class="tag">Project 02</span>
+      <h2>Contact List Merge</h2>
+      <p>Six messy lead exports (ads, event, LinkedIn, scraper, Apollo, ZoomInfo) merged into one clean, de-duplicated contact list. Guarded entity resolution, recency and source-precedence rules, evidence-based phone handling.</p>
+      <ul class="facts"><li>292 rows in, 9 invalid removed, 90 people out</li><li>102 tests, 98% coverage</li><li>n8n output identical to the Python reference</li></ul>
+      <div class="links">
+        <a href="projects/02-contact-list-merge/docs/guide/index.html">Read the build guide</a>
+        <a href="https://github.com/backend-bytes127/gtm-engineering-learning-series/tree/main/projects/02-contact-list-merge">Code and docs</a>
+      </div>
+    </article>
+    <article class="card">
+      <span class="tag">Project 01</span>
+      <h2>LinkedIn ICP Scraper</h2>
+      <p>An Ideal Customer Profile turned into a prioritized keyword matrix, scraped through an API, and appended to a Google Sheet. Includes the tool-selection trade-offs and the failure modes met along the way.</p>
+      <ul class="facts"><li>15 searches, 255 profiles, about $0.40 per run</li><li>n8n, Apify, Google Sheets</li></ul>
+      <div class="links">
+        <a href="https://github.com/backend-bytes127/gtm-engineering-learning-series/tree/main/projects/01-linkedin-icp-scraper">Code and docs</a>
+      </div>
+    </article>
+  </div>
+
+  <h3>How the repository is engineered</h3>
+  <ul class="practices">
+    <li>Python reference build plus n8n JavaScript, proven identical by a parity check</li>
+    <li>End-to-end test in a clean, pinned n8n container</li>
+    <li>Workflow JSON generated from source and verified in CI</li>
+    <li>Rules traceability matrix: every spec line mapped to code and tests</li>
+    <li>Seven architecture decision records</li>
+    <li>Secret and identifier scanning on every commit</li>
+  </ul>
+
+  <p style="margin-top:28px"><a href="https://github.com/backend-bytes127/gtm-engineering-learning-series">View the repository on GitHub</a></p>
+  <footer>All people and companies in the sample data are fictional. Screenshots are pixelated.</footer>
+</main>
+</body>
+</html>
