@@ -41,6 +41,13 @@ and the n8n workflow are checked against.
 | 5 | Enrich gaps and merge each group | [Merge](#5.-Enrich-and-merge-one-row-per-person) |
 | 6 | Verify against the golden file and the n8n code | [Verify](#6.-Verify) |
 
+**A note on privacy.** Every name, e-mail address, phone number and LinkedIn slug in this notebook is **masked at
+display time**: names keep their first letter (`Jane Doe` becomes `J*** D**`; an ALL-CAPS `JANE DOE` shows as
+`J### D##`), e-mails keep their company domain,
+phones keep the country code and last three digits, slugs are starred. The data is synthetic anyway; the masking shows
+how you would present real contact data safely *without* hiding what is being explained. Two people with the same masked
+name are exactly the "name twins" case, and the raw formatting problems stay visible.
+
 **Run it:** `pip install -r requirements.txt -r requirements-notebook.txt`, then open this file with Jupyter from the
 `notebooks/` folder. Node is only needed for the optional parity cell at the end.
 """)
@@ -64,6 +71,7 @@ ROOT = Path.cwd().resolve()
 ROOT = ROOT.parent if ROOT.name == "notebooks" else ROOT
 sys.path.insert(0, str(ROOT))
 
+from pipeline import normalize as N
 from pipeline.build import COLUMNS, build_all
 from pipeline.cluster import _strong_keys, build_clusters, prepare
 from pipeline.loaders import load_all
@@ -74,6 +82,70 @@ pd.set_option("display.width", 170)
 pd.set_option("display.max_columns", 30)
 plt.rcParams.update({"figure.dpi": 110, "axes.spines.top": False, "axes.spines.right": False, "font.size": 10})
 BLUE, ORANGE, GREEN, RED, GREY, AMBER = "#3b82f6", "#c2410c", "#047857", "#dc2626", "#64748b", "#b45309"
+kept, removed = load_all(DATA)
+
+# ---- display-time masking: names, e-mails, phones and LinkedIn slugs never appear unmasked in this notebook ----
+STOP = {"google", "test", "lead", "linkedin", "member", "asdf", "student", "freelancer"}
+KNOWN_NAMES = sorted(
+    {w for r in kept for w in r.full.split() if len(w) >= 3}
+    | {r.full for r in kept if r.full}
+    | {w for r in removed for w in r.name.split() if len(w) >= 3 and w.lower() not in STOP},
+    key=len, reverse=True)
+KNOWN_SLUGS = sorted({r.slug for r in kept if r.slug}, key=len, reverse=True)
+NAME_RX = re.compile(r"\\b(?:" + "|".join(re.escape(n) for n in KNOWN_NAMES) + r")\\b", re.I)
+EMAIL_RX = re.compile(r"([\\w.+-]+)@([\\w.-]+\\.[a-z]{2,})", re.I)
+PHONE_RX = re.compile(r"\\+?\\d[\\d\\s().-]{7,}\\d")
+LINK_RX = re.compile(r"(linkedin\\.com/(?:in|sales/lead)/)([^\\s,/?\\"']+)", re.I)
+
+
+def _star(word):
+    # first letter kept; the rest become * (lower case) or # (upper case), so an ALL-CAPS quirk stays visible
+    return word[:1] + "".join("#" if ch.isupper() else "*" for ch in word[1:])
+
+
+def mask_name(name):
+    return " ".join(_star(w) for w in str(name).split())
+
+
+def mask_slug(slug):
+    return "-".join(_star(part) for part in slug.split("-"))
+
+
+def _mask_phone(match):
+    s = match.group(0)
+    digits = [c for c in s if c.isdigit()]
+    placeholder = len(set(digits)) == 1 or "".join(digits) == "1234567890"
+    if len(digits) < 10 or placeholder or re.match(r"\\d{4}-\\d{2}-\\d{2}", s):
+        return s  # placeholders, dates and ranges are not a person's number
+    seen = 0
+    out = []
+    for ch in s:
+        if ch.isdigit():
+            seen += 1
+            out.append(ch if seen <= 2 or seen > len(digits) - 3 else "•")
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
+def mask_text(text):
+    text = EMAIL_RX.sub(lambda m: _star(m.group(1)) + "@" + m.group(2), str(text))
+    text = LINK_RX.sub(lambda m: m.group(1) + mask_slug(m.group(2)), text)
+    for slug in KNOWN_SLUGS:
+        text = re.sub(re.escape(slug), mask_slug(slug), text, flags=re.I)
+    text = PHONE_RX.sub(_mask_phone, text)
+    return NAME_RX.sub(lambda m: mask_name(m.group(0)), text)
+
+
+def view(df):
+    # a masked copy of a DataFrame, for display
+    return df.astype(object).map(lambda v: mask_text(v) if isinstance(v, str | list | tuple) else v)
+
+
+def say(*parts):
+    print(*(mask_text(p) for p in parts))
+
+
 print("data folder:", DATA.relative_to(ROOT))
 """)
 
@@ -97,11 +169,11 @@ raw = {
 # the delegate sheet has a blank row and a "Total Delegates" footer: keep only real rows (those with a serial number)
 raw["Event delegates"] = raw["Event delegates"][raw["Event delegates"]["S.No"].notna()]
 print({name: len(df) for name, df in raw.items()}, "-> total", sum(len(df) for df in raw.values()))
-raw["Google Ads"][["Full name", "Work email", "Phone number", "Company name", "Job title"]]
+view(raw["Google Ads"][["Full name", "Work email", "Phone number", "Company name", "Job title"]])
 """)
 
 code("""
-raw["Event delegates"][["S.No", "Name of Delegate", "Organisation", "Designation", "Contact No", "Email ID"]]
+view(raw["Event delegates"][["S.No", "Name of Delegate", "Organisation", "Designation", "Contact No", "Email ID"]])
 """)
 
 md("""
@@ -130,9 +202,8 @@ employer and title.
 """)
 
 code("""
-kept, removed = load_all(DATA)
 records = pd.DataFrame([dataclasses.asdict(r) for r in kept])
-records[["source", "ref", "date", "full", "company", "title", "emails", "phones"]].head(10)
+view(records[["source", "ref", "date", "full", "company", "title", "emails", "phones"]].head(10))
 """)
 
 md("""
@@ -147,7 +218,7 @@ made after merging.
 
 code("""
 rem = pd.DataFrame([dataclasses.asdict(r) for r in removed])
-display(rem[["source", "ref", "name", "company", "reason"]])
+display(view(rem[["source", "ref", "name", "company", "reason"]]))
 
 fig, ax = plt.subplots(figsize=(7, 2.4))
 rem["reason"].value_counts().sort_values().plot.barh(ax=ax, color=RED)
@@ -155,7 +226,7 @@ ax.set_title(f"{len(removed)} of {len(kept) + len(removed)} rows removed, by rea
 plt.show()
 
 blank = [r for r in kept if not r.company]
-print(f"kept despite a blank company: {[(r.source, r.full) for r in blank]}")
+say(f"kept despite a blank company: {[(r.source, r.full) for r in blank]}")
 """)
 
 md("""
@@ -177,7 +248,7 @@ std = pd.DataFrame([{
 } for p in preps])
 changed = std[(std["title (raw)"] != std["title (standard)"]) | (std["company (raw)"] != std["company (standard)"])
               | (std["phone (raw)"] != std["mobile (E.164)"])]
-changed.head(14)
+view(changed.head(14))
 """)
 
 md("""
@@ -248,11 +319,11 @@ people_groups = pd.DataFrame([{
     "titles": ", ".join(sorted({p.title_c for p in c if p.title_c})),
 } for c in clusters]).sort_values("records", ascending=False)
 print(f"{len(preps)} records -> {len(clusters)} people")
-people_groups
+view(people_groups)
 """)
 
 code("""
-pd.DataFrame([dataclasses.asdict(link) for link in links])[["kind", "note"]]
+view(pd.DataFrame([dataclasses.asdict(link) for link in links])[["kind", "note"]])
 """)
 
 md("""
@@ -266,11 +337,28 @@ SHORT = {"Google Ads": "GAd", "Event Delegate": "Dlg", "Event Booth Scan": "Scn"
          "LinkedIn Scraped": "LIs", "Apollo": "Apo", "ZoomInfo": "ZI"}
 SRC_COLOR = {"Google Ads": "#f59e0b", "Event Delegate": "#8b5cf6", "Event Booth Scan": "#a78bfa",
              "LinkedIn Lead Gen Form": "#0ea5e9", "LinkedIn Scraped": "#14b8a6", "Apollo": "#ef4444", "ZoomInfo": "#64748b"}
-interesting = [c for c in clusters if Counter(p.rec.full for p in c).most_common(1)[0][0] in
-               ("Lena Park", "Maya Iyer", "Hana Weiss", "Omar Diaz") and len(c) > 1]
-interesting.sort(key=lambda c: (Counter(p.rec.full for p in c).most_common(1)[0][0], -len(c)))
-fig, axes = plt.subplots(1, len(interesting), figsize=(3.4 * len(interesting), 3.8))
-for ax, c in zip(axes, interesting, strict=True):
+
+
+def name_of(c):
+    return Counter(p.rec.full for p in c).most_common(1)[0][0]
+
+
+def main_company(c):
+    return Counter(p.company_c for p in c if p.company_c).most_common(1)[0][0]
+
+
+# pick the interesting people by what is true of them, never by name
+twin_keys = {k for k, n in Counter((name_of(c), main_company(c)) for c in clusters).items() if n > 1}
+twins = sorted((c for c in clusters if (name_of(c), main_company(c)) in twin_keys), key=name_of)[:2]
+job_changer = [c for c in clusters if len({p.company_c for p in c if p.company_c}) > 1]
+sales_nav_only = [c for c in clusters if any(p.rec.acwaa for p in c) and not any(p.rec.slug for p in c)]
+personal_and_work = [c for c in clusters if any(N.is_personal_domain(e) for p in c for e, _ in p.emails)
+                     and any(not N.is_personal_domain(e) for p in c for e, _ in p.emails)]
+shown = twins + job_changer[:1] + sales_nav_only[:1] + personal_and_work[:1]
+tags = ["same name, same company", "same name, same company", "changed employer", "Sales Nav id only", "personal + work e-mail"]
+
+fig, axes = plt.subplots(1, len(shown), figsize=(3.4 * len(shown), 4.2))
+for ax, c, tag in zip(axes, shown, tags, strict=True):
     g = nx.Graph()
     keys = {}
     for i, p in enumerate(c):
@@ -285,29 +373,28 @@ for ax, c in zip(axes, interesting, strict=True):
     nx.draw_networkx_edges(g, pos, edgelist=list(weak), ax=ax, edge_color=GREY, style="dashed", width=1.2)
     nx.draw_networkx_nodes(g, pos, ax=ax, node_size=620, node_color=[SRC_COLOR[p.rec.source] for p in c], edgecolors="#1e3a5f")
     nx.draw_networkx_labels(g, pos, {i: SHORT[p.rec.source] for i, p in enumerate(c)}, ax=ax, font_size=7)
-    name = Counter(p.rec.full for p in c).most_common(1)[0][0]
     title = Counter(p.title_c for p in c if p.title_c).most_common(1)[0][0]
-    ax.set_title(f"{name}\\n{title}", fontsize=9)
+    ax.set_title(f"{mask_name(name_of(c))}\\n{title}\\n({tag})", fontsize=9)
     ax.axis("off")
     ax.margins(0.25)
 fig.suptitle("Records grouped into people\\n(solid = share an e-mail, mobile, slug or Sales Nav id; dashed = linked indirectly)",
-             y=1.04, fontsize=10)
+             y=1.06, fontsize=10)
 plt.tight_layout()
 plt.show()
 """)
 
 md("""
-Notice the two **Lena Park** panels: same name, same company, but different titles and different LinkedIn slugs, so
-they stay two people. Here is the guard that protects that, demonstrated by forcing a shared e-mail onto both:
+Notice the first two panels: the **same (masked) name at the same company**, but different titles and different LinkedIn
+slugs, so they stay two people. Here is the guard that protects that, demonstrated by forcing a shared e-mail onto both:
 """)
 
 code("""
-lenas = [p for p in preps if p.rec.full == "Lena Park" and p.rec.slug]
 shared = (("shared@example.com", "ok"),)
-a = dataclasses.replace(lenas[0], emails=shared)
-b = dataclasses.replace(next(p for p in lenas if p.rec.slug != a.rec.slug), emails=shared)
+a = dataclasses.replace(next(p for p in twins[0] if p.rec.slug), emails=shared)
+b = dataclasses.replace(next(p for p in twins[1] if p.rec.slug), emails=shared)
 forced_clusters, forced_links = build_clusters([a, b])
-print(f"two Lena Park records sharing an e-mail, with slugs {a.rec.slug!r} and {b.rec.slug!r}")
+say(f"two records with the same masked name ({mask_name(a.rec.full)}) now share an e-mail; their LinkedIn slugs are",
+    repr(a.rec.slug), "and", repr(b.rec.slug))
 print(f"-> {len(forced_clusters)} people (merge refused)")
 for link in forced_links:
     print("  ", link.kind, "|", link.note)
@@ -327,20 +414,20 @@ Each group becomes one row, filling gaps from the other sources and never guessi
 code("""
 people, dropped = build_all(clusters, preps)
 final = pd.DataFrame([p.row for p in people])[list(COLUMNS)]
-final
+view(final)
 """)
 
 md("""
 ### A job changer: the latest dated record decides
 
-Maya Iyer appears with *two* employers across the sources. The chart plots every record by date: older records (Apollo,
-the event) say Driftwood Pay; the newest (LinkedIn form, scraper) say Sparrow Fintech. The latest wins, and her e-mail
-switches to the new employer's domain.
+One person appears with *two* employers across the sources. The chart plots every record by date: the older records
+(Apollo, the event) name the previous employer; the newest (LinkedIn form, scraper) name the current one. The latest
+wins, and the e-mail switches to the new employer's domain.
 """)
 
 code("""
-maya = next(c for c in clusters if any(p.rec.full == "Maya Iyer" for p in c))
-dated = [(p.rec.date, p.company_c, p.rec.source) for p in maya if p.rec.date]
+changer = job_changer[0]
+dated = [(p.rec.date, p.company_c, p.rec.source) for p in changer if p.rec.date]
 companies = sorted({c for _, c, _ in dated})
 fig, ax = plt.subplots(figsize=(8, 2.8))
 for when, company, source in dated:
@@ -353,11 +440,12 @@ ax.set_ylim(-0.6, len(companies) - 0.4)
 ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
 ax.grid(axis="x", alpha=0.3)
-ax.set_title("Maya Iyer: records over time (latest dated source wins)")
+ax.set_title("A job changer: records over time (latest dated source wins)")
 plt.tight_layout()
 plt.show()
-person = next(p for p in people if p.row["Contact Person Name"] == "Maya Iyer")
-print({k: person.row[k] for k in ("Company Name", "Designation/Job Title", "Email ID", "Mobile No.")})
+target = {f"{p.rec.source}: {p.rec.ref}" for p in changer}
+person = next(pp for pp in people if set(pp.refs) == target)
+view(pd.DataFrame([person.row])[["Contact Person Name", "Company Name", "Designation/Job Title", "Email ID", "Mobile No."]])
 """)
 
 md("""
@@ -368,13 +456,13 @@ the short flag list instead of re-checking every row.
 """)
 
 code("""
-print("Maya's row was built from:")
+print("This person's row was built from:")
 for ref in person.refs:
     print("  -", ref)
 
 flags = pd.DataFrame([{"person": p.row["Contact Person Name"], "company": p.row["Company Name"], "flag": f}
                       for p in people for f in p.flags])
-flags[~flags["flag"].str.startswith(("no mobile", "no public"))].reset_index(drop=True)
+view(flags[~flags["flag"].str.startswith(("no mobile", "no public"))].reset_index(drop=True))
 """)
 
 md("""

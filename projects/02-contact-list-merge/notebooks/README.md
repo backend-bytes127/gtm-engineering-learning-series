@@ -12,6 +12,8 @@
 | 5 Merge | one row per person; a job changer resolved by the latest dated source; provenance and review flags |
 | 6 Verify | identical to the golden file; identical to the n8n JavaScript |
 
+**Privacy.** Names, e-mails, phones and LinkedIn slugs are masked at display time (first letter kept; `*` for lower case, `#` for upper case; phones keep the country code and last 3 digits), so the structure that is being explained stays visible. Cells choose people by *property* ("the job changer", "the same-name pair"), never by name, and `pipeline/tests/test_notebook_masking.py` fails if any sample name, e-mail, slug or phone appears in the notebook or the sample README.
+
 The notebook **imports the tested `pipeline/` package** rather than re-implementing it, so it cannot drift from the real logic.
 
 ## Run it
