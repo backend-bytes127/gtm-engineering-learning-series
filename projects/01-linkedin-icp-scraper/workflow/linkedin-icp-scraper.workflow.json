@@ -1,0 +1,408 @@
+{
+  "id": "linkedinIcpScraper1",
+  "name": "LinkedIn ICP Scraper (Apify -> Google Sheets)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "t1",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "LinkedIn ICP Scraper",
+        "formDescription": "Enter your ICP. Separate multiple values with commas or semicolons.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Job titles / keywords",
+              "placeholder": "Director of Facilities, Facilities Manager",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Locations",
+              "placeholder": "Denver, Colorado"
+            },
+            {
+              "fieldLabel": "Industries",
+              "placeholder": "K-12 Education, Higher Education, Hospitals & Health Care"
+            },
+            {
+              "fieldLabel": "Company headcount (e.g. 51-200, 201-500)",
+              "placeholder": "51-200, 201-500, 501-1000"
+            },
+            {
+              "fieldLabel": "Max profiles per keyword",
+              "fieldType": "number",
+              "placeholder": "25"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "t2",
+      "name": "ICP Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        224
+      ],
+      "webhookId": "icp-linkedin-scraper"
+    },
+    {
+      "parameters": {
+        "jsCode": "// INPUTS: Keyword Setting matrix (from the keyword-matrix spreadsheet > Keyword Setting).\n// Edit this array to change the run. One item out = one Apify scrape.\nconst matrix = [\n  {\n    \"keyword\": \"Director of Facilities\",\n    \"priority\": \"P1\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Facilities Manager\",\n    \"priority\": \"P1\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Director of Maintenance and Operations\",\n    \"priority\": \"P1\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Facilities Director\",\n    \"priority\": \"P1\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Director of Capital Projects\",\n    \"priority\": \"P2\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Energy Manager\",\n    \"priority\": \"P2\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Property Manager\",\n    \"priority\": \"P2\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Director of Operations facilities\",\n    \"priority\": \"P2\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Sustainability Director\",\n    \"priority\": \"P2\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Chief Engineer building\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Asset Manager\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Facilities Operations Manager\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Director of Construction facilities\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"Maintenance Manager HVAC\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  },\n  {\n    \"keyword\": \"VP Operations facilities\",\n    \"priority\": \"P3\",\n    \"headcount\": [\n      \"51-200\",\n      \"201-500\",\n      \"501-1000\",\n      \"1001-5000\",\n      \"5001-10000\"\n    ],\n    \"industries\": [\n      \"K-12 Education\",\n      \"Higher Education\",\n      \"Hospitals & Health Care\",\n      \"Government Administration\",\n      \"Commercial Real Estate\",\n      \"Facilities Services\"\n    ],\n    \"locations\": [\n      \"Denver, Colorado\",\n      \"Aurora, Colorado\",\n      \"Boulder, Colorado\",\n      \"Colorado Springs, Colorado\",\n      \"Fort Collins, Colorado\"\n    ],\n    \"maxItems\": 25\n  }\n];\nreturn matrix.map(row => ({ json: row }));"
+      },
+      "id": "c1",
+      "name": "Inputs (Keyword Matrix)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turn the form submission into the same shape as the keyword matrix.\nconst list = (v) => String(v || '').split(/[;,\\n]/).map(s => s.trim()).filter(Boolean);\nconst f = $input.first().json;\nconst maxItems = Number(f['Max profiles per keyword']) || 25;\nreturn list(f['Job titles / keywords']).map(keyword => ({ json: {\n  keyword,\n  priority: 'P1',\n  headcount: list(f['Company headcount (e.g. 51-200, 201-500)']),\n  industries: list(f['Industries']),\n  locations: list(f['Locations']),\n  maxItems,\n}}));"
+      },
+      "id": "c2",
+      "name": "Normalize Form Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the Apify (automly/linkedin-people-search-scraper) input from one matrix row.\n// NOTE: this actor has no company-headcount / industry facets, so those matrix columns are\n// recorded for reference only; the ICP is expressed through job title + location.\nreturn $input.all().map(item => {\n  const r = item.json;\n  const apifyInput = {\n    jobTitles: [r.keyword],\n    locations: r.locations || [],\n    maxResults: r.maxItems || 25,\n    maxResultsPerSearch: r.maxItems || 25,\n  };\n  return { json: { keyword: r.keyword, priority: r.priority, apifyInput } };\n});"
+      },
+      "id": "c3",
+      "name": "Build Apify Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/automly~linkedin-people-search-scraper/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.apifyInput) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          },
+          "timeout": 300000
+        }
+      },
+      "id": "h1",
+      "name": "Apify: LinkedIn Profile Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        112
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_AFTER_IMPORT",
+          "name": "Apify API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep the RAW scraped record (raw_json) plus the main fields flattened for the sheet.\nconst meta = $('Build Apify Input').all();\nreturn $input.all().map(item => {\n  const p = item.json || {};\n  const src = meta[(item.pairedItem && item.pairedItem.item) || 0]?.json || {};\n  const parts = String(p.name || '').trim().split(/\\s+/);\n  const headline = p.headline || '';\n  const m = headline.match(/^(.*?)\\s+(?:at|@)\\s+(.*)$/i);\n  return { json: {\n    scraped_at: new Date().toISOString(),\n    keyword: src.keyword || '',\n    priority: src.priority || '',\n    first_name: parts[0] || '',\n    last_name: parts.slice(1).join(' '),\n    headline,\n    current_title: m ? m[1] : headline,\n    current_company: p.company || (m ? m[2] : ''),\n    location: p.location || '',\n    linkedin_url: p.linkedinUrl || '',\n    profile_id: p.publicIdentifier || '',\n    school: p.school || '',\n    connections: p.connections || '',\n    raw_json: JSON.stringify(p),\n  }};\n});"
+      },
+      "id": "c4",
+      "name": "Flatten Raw Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Raw LinkedIn Data"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "scraped_at",
+              "displayName": "scraped_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keyword",
+              "displayName": "keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "current_title",
+              "displayName": "current_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "current_company",
+              "displayName": "current_company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "profile_id",
+              "displayName": "profile_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "school",
+              "displayName": "school",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "connections",
+              "displayName": "connections",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "raw_json",
+              "displayName": "raw_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "g1",
+      "name": "Append row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1392,
+        112
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_AFTER_IMPORT",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Inputs (Keyword Matrix)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ICP Form": {
+      "main": [
+        [
+          {
+            "node": "Normalize Form Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inputs (Keyword Matrix)": {
+      "main": [
+        [
+          {
+            "node": "Build Apify Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Form Input": {
+      "main": [
+        [
+          {
+            "node": "Build Apify Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Apify Input": {
+      "main": [
+        [
+          {
+            "node": "Apify: LinkedIn Profile Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify: LinkedIn Profile Search": {
+      "main": [
+        [
+          {
+            "node": "Flatten Raw Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten Raw Data": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

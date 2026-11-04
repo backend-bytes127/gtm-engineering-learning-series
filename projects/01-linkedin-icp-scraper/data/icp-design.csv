@@ -1,0 +1,21 @@
+dimension,value,priority
+audience,Target Audience (Designations/Departments),Priority
+industry,Sr. No.,Target Groups (Industry/Sector)
+audience,Director of Facilities,P1
+industry,1,K-12 Education (Primary & Secondary)
+audience,Facilities Manager,P1
+industry,2,Higher Education
+audience,Director of Maintenance & Operations,P1
+industry,3,Hospitals & Health Care
+audience,Director of Capital Projects / Construction,P2
+industry,4,Commercial Real Estate
+audience,Property Manager,P2
+industry,5,Government Administration (City/County)
+audience,Energy Manager / Sustainability Director,P2
+industry,6,Facilities Services
+audience,VP / COO Operations,P2
+industry,7,Hospitality
+audience,Chief Engineer / Building Engineer,P3
+industry,8,Manufacturing
+audience,Asset Manager,P3
+industry,9,Real Estate
