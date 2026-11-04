@@ -1,0 +1,619 @@
+{
+  "id": "contactListMerge01",
+  "name": "Contact List Merge",
+  "nodes": [
+    {
+      "parameters": {
+        "width": 3400,
+        "height": 760,
+        "color": 5,
+        "content": "## Contact List Merge\nUpload the 6 exports in the form. Steps 1-6 follow the task note: map columns, clean + remove invalid, standardize (Rules tab), remove duplicates, enrich + merge, final output. Click a Code node to see its data. Removed rows: 'Removed Records (log)'. Merge log and review flags: 'Audit' node."
+      },
+      "id": "cm-3ea7eac1",
+      "name": "Note: Contact List Merge",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Contact List Merge",
+        "formDescription": "Upload the 6 source exports. You get back ONE cleaned, de-duplicated contact list (xlsx).",
+        "path": "contact-merge",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Google Ads",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "Google Ads",
+              "placeholder": "01_GoogleAds_LeadForm_Export.xlsx"
+            },
+            {
+              "fieldLabel": "Event",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "Event",
+              "placeholder": "02_Event_Delegates_and_Scans.xlsx"
+            },
+            {
+              "fieldLabel": "LinkedIn Form",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "LinkedIn Form",
+              "placeholder": "03_LinkedIn_LeadGenForm_Export.xlsx"
+            },
+            {
+              "fieldLabel": "Scraped LinkedIn",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "Scraped LinkedIn",
+              "placeholder": "04_LinkedIn_Scraped_SalesNav.xlsx"
+            },
+            {
+              "fieldLabel": "Apollo",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "Apollo",
+              "placeholder": "05_ThirdParty_Apollo_Export.xlsx"
+            },
+            {
+              "fieldLabel": "ZoomInfo",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true,
+              "fieldName": "ZoomInfo",
+              "placeholder": "06_ThirdParty_ZoomInfo_Export.xlsx"
+            }
+          ]
+        },
+        "options": {
+          "formSubmittedText": "Received. The merge is running: open this workflow's Executions list and download Final_Contact_List.xlsx from the 'Convert to Final_Contact_List.xlsx' node."
+        }
+      },
+      "id": "cm-8f7471c9",
+      "name": "Contact Merge Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        450
+      ],
+      "webhookId": "contact-merge-form-0001"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Google_Ads",
+        "options": {
+          "sheetName": "leads",
+          "headerRow": true
+        }
+      },
+      "id": "cm-8f54886d",
+      "name": "Extract Google Ads",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Event",
+        "options": {
+          "sheetName": "Delegate List",
+          "headerRow": true,
+          "range": "4"
+        }
+      },
+      "id": "cm-c9bcc299",
+      "name": "Extract Event Delegates",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Event",
+        "options": {
+          "sheetName": "Booth Scans",
+          "headerRow": true
+        }
+      },
+      "id": "cm-e2e0067a",
+      "name": "Extract Event Scans",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "LinkedIn_Form",
+        "options": {
+          "sheetName": "leads",
+          "headerRow": true
+        }
+      },
+      "id": "cm-16880aa8",
+      "name": "Extract LinkedIn Form",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Scraped_LinkedIn",
+        "options": {
+          "sheetName": "result",
+          "headerRow": true
+        }
+      },
+      "id": "cm-3a95c994",
+      "name": "Extract Scraped LinkedIn",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Apollo",
+        "options": {
+          "sheetName": "apollo-contacts-export",
+          "headerRow": true
+        }
+      },
+      "id": "cm-14010b67",
+      "name": "Extract Apollo",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "ZoomInfo",
+        "options": {
+          "sheetName": "ZoomInfo Contacts",
+          "headerRow": true
+        }
+      },
+      "id": "cm-4b22229b",
+      "name": "Extract ZoomInfo",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        280,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 7
+      },
+      "id": "cm-c0f701f0",
+      "name": "Wait for all 7 sheets",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        560,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- constants (port of pipeline/constants.py) ----\nconst LEGAL_SUFFIXES = ['private limited', 'pvt ltd', 'pvt. ltd.', 'pvt. ltd', 'pvt ltd.', 'pte. ltd.',\n  'pte ltd', 'pte. ltd', 'limited', 'ltd', 'ltd.', 'inc.', 'inc', 'llc', 'pvt', 'corp'];\nconst CREDENTIALS = new Set(['mba', 'pmp', 'cspo', 'phd', 'cfa', 'cpa', 'csm', 'pmi', 'cissp']);\nconst SALUTATIONS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'ca']);\nconst FIRST_NAME_ALIASES = { vicky: 'vikram', kate: 'katherine', mohd: 'mohammed', mohammad: 'mohammed',\n  srinivas: 'shrinivas', laxmi: 'lakshmi' };\nconst PERSONAL_EMAIL_DOMAINS = new Set(['gmail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com', 'hotmail.com',\n  'icloud.com', 'rediffmail.com', 'proton.me', 'protonmail.com', 'live.com', 'aol.com']);\nconst GENERIC_MAILBOXES = new Set(['info', 'contact', 'sales', 'hello', 'support', 'admin', 'office', 'mail',\n  'enquiries', 'marketing', 'careers', 'hr']);\nconst PLACEHOLDER_EMAILS = new Set(['email_not_unlocked@domain.com']);\nconst INVALID_EMAIL_DOMAIN_SUFFIXES = ['.invalid', '.test', '.example'];\nconst TEST_EMAIL_DOMAINS = new Set(['test.com', 'asdf.invalid', 'google-test.invalid', 'example.com']);\nconst PLACEHOLDER_PHONES = new Set(['na', 'n/a', '-', 'not shared', 'none', 'null', '']);\nconst CITY_INFO = {\n  bengaluru: ['Bengaluru', 'India'], bangalore: ['Bengaluru', 'India'], blr: ['Bengaluru', 'India'],\n  'bangalore urban': ['Bengaluru', 'India'], mumbai: ['Mumbai', 'India'], bombay: ['Mumbai', 'India'],\n  delhi: ['Delhi', 'India'], 'new delhi': ['New Delhi', 'India'], 'delhi ncr': ['Delhi', 'India'],\n  noida: ['Noida', 'India'], gurugram: ['Gurugram', 'India'], gurgaon: ['Gurugram', 'India'],\n  pune: ['Pune', 'India'], hyderabad: ['Hyderabad', 'India'], hyd: ['Hyderabad', 'India'],\n  chennai: ['Chennai', 'India'], madras: ['Chennai', 'India'], kolkata: ['Kolkata', 'India'],\n  calcutta: ['Kolkata', 'India'], ahmedabad: ['Ahmedabad', 'India'], amdavad: ['Ahmedabad', 'India'],\n  dubai: ['Dubai', 'United Arab Emirates'], dxb: ['Dubai', 'United Arab Emirates'],\n  singapore: ['Singapore', 'Singapore'], sg: ['Singapore', 'Singapore'],\n  london: ['London', 'United Kingdom'], manchester: ['Manchester', 'United Kingdom'],\n  'new york': ['New York', 'United States'], nyc: ['New York', 'United States'],\n  'san francisco': ['San Francisco', 'United States'], sf: ['San Francisco', 'United States'],\n  austin: ['Austin', 'United States'], boston: ['Boston', 'United States'],\n};\nconst CITY_KEYWORDS = ['bengaluru', 'bangalore', 'mumbai', 'delhi', 'noida', 'gurugram', 'gurgaon', 'pune',\n  'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'ahmedabad', 'amdavad', 'dubai', 'singapore',\n  'london', 'manchester', 'new york', 'san francisco', 'austin', 'boston'];\nconst COUNTRY_ALIASES = { in: 'India', india: 'India', ae: 'United Arab Emirates', uae: 'United Arab Emirates',\n  'united arab emirates': 'United Arab Emirates', sg: 'Singapore', singapore: 'Singapore', gb: 'United Kingdom',\n  uk: 'United Kingdom', 'united kingdom': 'United Kingdom', england: 'United Kingdom', us: 'United States',\n  usa: 'United States', 'united states': 'United States' };\nconst COUNTRY_ISO = { India: 'IN', 'United Arab Emirates': 'AE', Singapore: 'SG', 'United Kingdom': 'GB',\n  'United States': 'US' };\nconst TOKEN_EXPANSIONS = {\n  mgr: ['manager'], dir: ['director'], sr: ['senior'], vp: ['vice', 'president'], mktg: ['marketing'],\n  biz: ['business'], dev: ['development'], gen: ['generation'], demandgen: ['demand', 'generation'],\n  rev: ['revenue'], revops: ['revenue', 'operations'], sdr: ['sales', 'development'], purchase: ['procurement'],\n  ceo: ['chief', 'executive', 'officer'], cto: ['chief', 'technology', 'officer'],\n  cro: ['chief', 'revenue', 'officer'], cmo: ['chief', 'marketing', 'officer'],\n  coo: ['chief', 'operating', 'officer'], cfo: ['chief', 'financial', 'officer'], it: ['information', 'technology'],\n};\nconst TITLE_DROP_TOKENS = new Set(['of', 'and', 'the', 'team', 'for', 'co', 'founder', 'cofounder']);\nconst SIZE_BUCKETS = [[10, '1-10'], [50, '11-50'], [200, '51-200'], [500, '201-500'], [1000, '501-1,000'],\n  [5000, '1,001-5,000'], [10000, '5,001-10,000']];\nconst SIZE_TOP = '10,001+';\n\n// ---- core text helpers + LinkedIn + email + phone (port of pipeline/normalize.py) ----\nconst isBlank = (v) => v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) || String(v).trim() === '';\nconst s = (v) => (isBlank(v) ? '' : String(v).trim());\n// -: n8n's xlsx reader (SheetJS) decodes 4-byte emoji such as U+1F680 into U+F680 (private use).\nconst EMOJI = /[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{1F000}-\\u{1F2FF}‍️-]+/gu;\nconst stripEmoji = (t) => t.replace(EMOJI, '');\nconst trimDots = (t) => t.replace(/^\\.+|\\.+$/g, '');\nconst capToken = (tok) => tok.split(\"'\").map((p) => p.slice(0, 1).toUpperCase() + p.slice(1).toLowerCase()).join(\"'\");\n\nfunction cleanName(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).replace(/\\([^)]*\\)/g, ' ');\n  let parts = text.split(',').map((p) => p.trim()).filter(Boolean);\n  parts = parts.filter((p) => !CREDENTIALS.has(trimDots(p.toLowerCase())));\n  if (parts.length === 2) parts = [parts[1], parts[0]];\n  let tokens = parts.join(' ').split(/\\s+/).filter(Boolean);\n  while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);\n  return tokens.map(capToken).join(' ');\n}\nconst letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');\nconst aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();\nconst nameKey = (first, last) => `${first ? aliasFirst(first.split(/\\s+/)[0]) : ''}|${letters(last)}`;\nfunction slugToName(slug) {\n  const base = slug.toLowerCase().replace(/-[0-9a-f]{8}$/, '').replace(/\\d+$/, '');\n  return base.replace(/-/g, ' ').trim();\n}\n\n// ---- LinkedIn ----\nfunction linkedinSlug(raw) {\n  if (isBlank(raw)) return '';\n  const m = String(raw).trim().match(/linkedin\\.com\\/in\\/([^/?#,\\s]+)/i);\n  if (!m) return '';\n  const slug = m[1].toLowerCase();\n  return slug.startsWith('acwa') ? '' : slug;\n}\nfunction linkedinAcwaa(raw) {\n  const m = String(raw || '').match(/\\/in\\/(ACwA[^/?#,\\s]+)|\\/lead\\/(ACwA[^,/?#\\s]+)/);\n  return m ? (m[1] || m[2]).toLowerCase() : '';\n}\nconst linkedinUrl = (slug) => (slug ? `https://www.linkedin.com/in/${slug}` : '');\n\n// ---- email ----\nconst domainOk = (d) => /^[a-z0-9-]+(\\.[a-z0-9-]+)*\\.[a-z]{2,}$/.test(d);\nfunction splitEmails(raw) {\n  if (isBlank(raw)) return [];\n  const text = String(raw).toLowerCase().replace(/mailto:/g, '');\n  return text.split(/[;,\\s]+(?=\\S+@)|;/)\n    .map((p) => p.replace(/\\s+/g, '').replace(/@@/g, '@'))\n    .filter(Boolean);\n}\nfunction classifyEmail(email, knownDomains) {\n  if (PLACEHOLDER_EMAILS.has(email) || email.split('@').length !== 2) return ['invalid', ''];\n  const [local, domain] = email.split('@');\n  if (TEST_EMAIL_DOMAINS.has(domain) || INVALID_EMAIL_DOMAIN_SUFFIXES.some((x) => domain.endsWith(x))) return ['invalid', ''];\n  if (GENERIC_MAILBOXES.has(local)) return ['generic', ''];\n  if (knownDomains.has(domain)) return ['ok', email];\n  const candidates = [domain.replace(/\\.con$/, '.com'), ...[...knownDomains].filter((d) => d.startsWith(`${domain}.`))];\n  for (const cand of candidates) {\n    if (cand !== domain && knownDomains.has(cand)) return ['repaired', `${local}@${cand}`];\n  }\n  return domainOk(domain) ? ['ok', email] : ['invalid', ''];\n}\nconst isPersonalDomain = (email) => PERSONAL_EMAIL_DOMAINS.has(email.split('@').pop());\n\n// ---- phone ----\nconst PHONE_RULES = [\n  ['IN', /^\\+91[6-9]\\d{9}$/, '91', 12], ['US', /^\\+1\\d{10}$/, '1', 11], ['GB', /^\\+447\\d{9}$/, '44', 12],\n  ['AE', /^\\+9715\\d{8}$/, '971', 12], ['SG', /^\\+65[89]\\d{7}$/, '65', 10],\n];\nconst allFake = (d) => new Set(d).size === 1 || ['1234567890', '0123456789', '9876543210'].includes(d);\nconst validE164 = (e) => PHONE_RULES.some((r) => r[1].test(e));\nfunction nationalToE164(digits, iso) {\n  for (const [ruleIso, , prefix, length] of PHONE_RULES) {\n    if (digits.length === length && digits.startsWith(prefix) && ruleIso !== 'US') return `+${digits}`;\n  }\n  if (digits.length === 11 && digits.startsWith('1') && iso === 'US') return `+${digits}`;\n  if (iso === 'IN') {\n    const d = digits.length === 11 && digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 10 ? `+91${d}` : '';\n  }\n  if (iso === 'US') return digits.length === 10 ? `+1${digits}` : '';\n  if (iso === 'SG') return digits.length === 8 ? `+65${digits}` : '';\n  if (iso === 'AE') {\n    const d = digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 9 ? `+971${d}` : '';\n  }\n  return '';\n}\nfunction parseMobile(raw, country) {\n  if (isBlank(raw)) return [null, 'empty'];\n  let text = String(raw).trim().replace(/^'+/, '');\n  if (PLACEHOLDER_PHONES.has(text.toLowerCase())) return [null, 'placeholder'];\n  if (/^\\d\\.\\d+E\\+\\d+$/i.test(text)) return [null, 'scientific-notation (digits lost)'];\n  if (/^\\d+\\.0$/.test(text)) text = text.slice(0, -2);\n  if (/^0\\d{2,4}-\\d{6,8}$/.test(text)) return [null, 'landline (STD code)'];\n  text = text.replace(/\\([^)\\d]*[A-Za-z][^)]*\\)/g, '');\n  const digits = text.replace(/\\D/g, '');\n  if (!digits || allFake(digits.slice(-10))) return [null, 'fake/placeholder number'];\n  let cand;\n  if (text.startsWith('+')) cand = `+${digits}`;\n  else if (digits.startsWith('00')) cand = `+${digits.slice(2)}`;\n  else cand = nationalToE164(digits, COUNTRY_ISO[country] || '');\n  return cand && validE164(cand) ? [cand, 'ok'] : [null, `unrecognised format (${text})`];\n}\nconst phoneFromNotes = (notes) => {\n  const m = String(notes || '').match(/Mob\\s+(\\d{7,12})/);\n  return m ? m[1] : '';\n};\n\n// STEP 1 - Map each source's columns onto ONE common record shape. Raw values only; no cleaning yet.\nconst IST_MS = 330 * 60000;\nconst EVENT_END = Date.UTC(2026, 8, 19); // delegate list has no per-row date; summit ran 18-19 Sep 2026\nconst rowsOf = (node) => $(node).all().map((it) => it.json);\nconst utc = (y, mo, d, h = 0, mi = 0, sec = 0) => Date.UTC(+y, +mo - 1, +d, +h, +mi, +sec);\n\nconst dateGoogleAds = (t) => { // '2026-10-12 13:09:15 IST'\n  const m = s(t).replace(' IST', '').match(/(\\d{4})-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d)/);\n  return m ? utc(...m.slice(1)) - IST_MS : null;\n};\nconst dateScan = (t) => { // '18/09/2026 13:25' (dd/mm/yyyy)\n  const m = s(t).match(/(\\d\\d)\\/(\\d\\d)\\/(\\d{4}) (\\d\\d):(\\d\\d)/);\n  return m ? utc(m[3], m[2], m[1], m[4], m[5]) - IST_MS : null;\n};\nconst dateLinkedInForm = (t) => { // '10/04/2026, 01:48 AM' (mm/dd/yyyy)\n  const m = s(t).match(/(\\d\\d)\\/(\\d\\d)\\/(\\d{4}), (\\d\\d):(\\d\\d) (AM|PM)/);\n  if (!m) return null;\n  const hour = (+m[4] % 12) + (m[6] === 'PM' ? 12 : 0);\n  return utc(m[3], m[1], m[2], hour, m[5]);\n};\nconst dateIso = (t) => (s(t) ? Date.parse(`${s(t).slice(0, 19)}Z`) : null);\n\nconst base = (o) => ({ name_mode: 'full', first_raw: '', last_raw: '', full_raw: '', emails: [], phones: [],\n  company: '', title: '', li_urls: [], person_loc: '', country: '', co_size_raw: '', co_website: '',\n  co_city: '', co_country: '', co_loc_raw: '', is_test: false, date: null, ...o });\nconst out = [];\nconst add = (source, n, o) => out.push({ json: base({ source, ref: `${source} row ${n}`, ...o }) });\n\nrowsOf('Extract Google Ads').forEach((r, i) => add('Google Ads', i + 1, {\n  date: dateGoogleAds(r['Time submitted']), full_raw: r['Full name'], emails: [s(r['Work email'])],\n  phones: [[s(r['Phone number']), 'self']], company: s(r['Company name']), title: s(r['Job title']),\n  person_loc: s(r.City), co_size_raw: s(r['How many employees does your company have?']),\n  is_test: String(r['Is test']).toUpperCase() === 'TRUE',\n}));\nrowsOf('Extract Event Delegates').filter((r) => /^\\d+$/.test(s(r['S.No']))).forEach((r, i) => add('Event Delegate', i + 1, {\n  date: EVENT_END, full_raw: r['Name of Delegate'], emails: [s(r['Email ID'])], phones: [[s(r['Contact No']), 'self']],\n  company: s(r.Organisation), title: s(r.Designation), person_loc: s(r.City), co_size_raw: s(r['Emp Strength']),\n}));\nrowsOf('Extract Event Scans').forEach((r, i) => {\n  const phones = [[s(r.Phone), 'self']];\n  const noted = phoneFromNotes(r.Notes); // phone typed into the Notes column\n  if (noted) phones.push([noted, 'self']);\n  add('Event Booth Scan', i + 1, { date: dateScan(r['Scan Time']), full_raw: r['Full Name'], emails: [s(r.Email)],\n    phones, company: s(r.Company), title: s(r['Job Title']) });\n});\nrowsOf('Extract LinkedIn Form').forEach((r, i) => add('LinkedIn Lead Gen Form', i + 1, {\n  date: dateLinkedInForm(r['Submitted At']), name_mode: 'pair', first_raw: r['First Name'], last_raw: r['Last Name'],\n  emails: [s(r['Email Address'])], phones: [[s(r['Phone Number']), 'self']], company: s(r['Company Name']),\n  title: s(r['Job Title']), li_urls: [r['LinkedIn Profile']], person_loc: s(r.City), country: s(r.Country),\n  co_size_raw: s(r['Company Size']),\n}));\nrowsOf('Extract Scraped LinkedIn').forEach((r, i) => add('LinkedIn Scraped', i + 1, {\n  date: dateIso(r.timestamp), name_mode: 'pair+full', first_raw: r.firstName, last_raw: r.lastName, full_raw: r.fullName,\n  company: s(r.companyName), title: s(r.title), li_urls: [r.defaultProfileUrl, r.linkedInProfileUrl, r.profileUrl],\n  person_loc: s(r.location), co_loc_raw: s(r.companyLocation),\n}));\nrowsOf('Extract Apollo').forEach((r, i) => add('Apollo', i + 1, {\n  date: dateIso(r['Primary Email Last Verified At']), name_mode: 'pair', first_raw: r['First Name'], last_raw: r['Last Name'],\n  emails: [s(r.Email)], phones: [[s(r['Mobile Phone']), 'mobile'], [s(r['Work Direct Phone']), 'apollo_direct']],\n  company: s(r.Company), title: s(r.Title), li_urls: [r['Person Linkedin Url']], person_loc: s(r.City), country: s(r.Country),\n  co_size_raw: s(r['# Employees']), co_website: s(r.Website), co_city: s(r['Company City']), co_country: s(r['Company Country']),\n}));\nrowsOf('Extract ZoomInfo').forEach((r, i) => add('ZoomInfo', i + 1, { // ZoomInfo has no populated date -> null\n  name_mode: 'pair', first_raw: r['First Name'], last_raw: r['Last Name'], emails: [s(r['Email Address'])],\n  phones: [[s(r['Mobile phone']), 'mobile']], // 'Direct Phone Number' deliberately NOT read (direct line)\n  company: s(r['Company Name']), title: s(r['Job Title']), li_urls: [r['LinkedIn Contact Profile URL']],\n  person_loc: s(r['Person City']), country: s(r.Country), co_size_raw: s(r.Employees), co_website: s(r.Website),\n  co_city: s(r['Company City']), co_country: s(r['Company Country']),\n}));\nreturn out;\n"
+      },
+      "id": "cm-92aefbac",
+      "name": "1 Map Columns",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        840,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- constants (port of pipeline/constants.py) ----\nconst LEGAL_SUFFIXES = ['private limited', 'pvt ltd', 'pvt. ltd.', 'pvt. ltd', 'pvt ltd.', 'pte. ltd.',\n  'pte ltd', 'pte. ltd', 'limited', 'ltd', 'ltd.', 'inc.', 'inc', 'llc', 'pvt', 'corp'];\nconst CREDENTIALS = new Set(['mba', 'pmp', 'cspo', 'phd', 'cfa', 'cpa', 'csm', 'pmi', 'cissp']);\nconst SALUTATIONS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'ca']);\nconst FIRST_NAME_ALIASES = { vicky: 'vikram', kate: 'katherine', mohd: 'mohammed', mohammad: 'mohammed',\n  srinivas: 'shrinivas', laxmi: 'lakshmi' };\nconst PERSONAL_EMAIL_DOMAINS = new Set(['gmail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com', 'hotmail.com',\n  'icloud.com', 'rediffmail.com', 'proton.me', 'protonmail.com', 'live.com', 'aol.com']);\nconst GENERIC_MAILBOXES = new Set(['info', 'contact', 'sales', 'hello', 'support', 'admin', 'office', 'mail',\n  'enquiries', 'marketing', 'careers', 'hr']);\nconst PLACEHOLDER_EMAILS = new Set(['email_not_unlocked@domain.com']);\nconst INVALID_EMAIL_DOMAIN_SUFFIXES = ['.invalid', '.test', '.example'];\nconst TEST_EMAIL_DOMAINS = new Set(['test.com', 'asdf.invalid', 'google-test.invalid', 'example.com']);\nconst PLACEHOLDER_PHONES = new Set(['na', 'n/a', '-', 'not shared', 'none', 'null', '']);\nconst CITY_INFO = {\n  bengaluru: ['Bengaluru', 'India'], bangalore: ['Bengaluru', 'India'], blr: ['Bengaluru', 'India'],\n  'bangalore urban': ['Bengaluru', 'India'], mumbai: ['Mumbai', 'India'], bombay: ['Mumbai', 'India'],\n  delhi: ['Delhi', 'India'], 'new delhi': ['New Delhi', 'India'], 'delhi ncr': ['Delhi', 'India'],\n  noida: ['Noida', 'India'], gurugram: ['Gurugram', 'India'], gurgaon: ['Gurugram', 'India'],\n  pune: ['Pune', 'India'], hyderabad: ['Hyderabad', 'India'], hyd: ['Hyderabad', 'India'],\n  chennai: ['Chennai', 'India'], madras: ['Chennai', 'India'], kolkata: ['Kolkata', 'India'],\n  calcutta: ['Kolkata', 'India'], ahmedabad: ['Ahmedabad', 'India'], amdavad: ['Ahmedabad', 'India'],\n  dubai: ['Dubai', 'United Arab Emirates'], dxb: ['Dubai', 'United Arab Emirates'],\n  singapore: ['Singapore', 'Singapore'], sg: ['Singapore', 'Singapore'],\n  london: ['London', 'United Kingdom'], manchester: ['Manchester', 'United Kingdom'],\n  'new york': ['New York', 'United States'], nyc: ['New York', 'United States'],\n  'san francisco': ['San Francisco', 'United States'], sf: ['San Francisco', 'United States'],\n  austin: ['Austin', 'United States'], boston: ['Boston', 'United States'],\n};\nconst CITY_KEYWORDS = ['bengaluru', 'bangalore', 'mumbai', 'delhi', 'noida', 'gurugram', 'gurgaon', 'pune',\n  'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'ahmedabad', 'amdavad', 'dubai', 'singapore',\n  'london', 'manchester', 'new york', 'san francisco', 'austin', 'boston'];\nconst COUNTRY_ALIASES = { in: 'India', india: 'India', ae: 'United Arab Emirates', uae: 'United Arab Emirates',\n  'united arab emirates': 'United Arab Emirates', sg: 'Singapore', singapore: 'Singapore', gb: 'United Kingdom',\n  uk: 'United Kingdom', 'united kingdom': 'United Kingdom', england: 'United Kingdom', us: 'United States',\n  usa: 'United States', 'united states': 'United States' };\nconst COUNTRY_ISO = { India: 'IN', 'United Arab Emirates': 'AE', Singapore: 'SG', 'United Kingdom': 'GB',\n  'United States': 'US' };\nconst TOKEN_EXPANSIONS = {\n  mgr: ['manager'], dir: ['director'], sr: ['senior'], vp: ['vice', 'president'], mktg: ['marketing'],\n  biz: ['business'], dev: ['development'], gen: ['generation'], demandgen: ['demand', 'generation'],\n  rev: ['revenue'], revops: ['revenue', 'operations'], sdr: ['sales', 'development'], purchase: ['procurement'],\n  ceo: ['chief', 'executive', 'officer'], cto: ['chief', 'technology', 'officer'],\n  cro: ['chief', 'revenue', 'officer'], cmo: ['chief', 'marketing', 'officer'],\n  coo: ['chief', 'operating', 'officer'], cfo: ['chief', 'financial', 'officer'], it: ['information', 'technology'],\n};\nconst TITLE_DROP_TOKENS = new Set(['of', 'and', 'the', 'team', 'for', 'co', 'founder', 'cofounder']);\nconst SIZE_BUCKETS = [[10, '1-10'], [50, '11-50'], [200, '51-200'], [500, '201-500'], [1000, '501-1,000'],\n  [5000, '1,001-5,000'], [10000, '5,001-10,000']];\nconst SIZE_TOP = '10,001+';\n\n// ---- core text helpers + LinkedIn + email + phone (port of pipeline/normalize.py) ----\nconst isBlank = (v) => v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) || String(v).trim() === '';\nconst s = (v) => (isBlank(v) ? '' : String(v).trim());\n// -: n8n's xlsx reader (SheetJS) decodes 4-byte emoji such as U+1F680 into U+F680 (private use).\nconst EMOJI = /[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{1F000}-\\u{1F2FF}‍️-]+/gu;\nconst stripEmoji = (t) => t.replace(EMOJI, '');\nconst trimDots = (t) => t.replace(/^\\.+|\\.+$/g, '');\nconst capToken = (tok) => tok.split(\"'\").map((p) => p.slice(0, 1).toUpperCase() + p.slice(1).toLowerCase()).join(\"'\");\n\nfunction cleanName(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).replace(/\\([^)]*\\)/g, ' ');\n  let parts = text.split(',').map((p) => p.trim()).filter(Boolean);\n  parts = parts.filter((p) => !CREDENTIALS.has(trimDots(p.toLowerCase())));\n  if (parts.length === 2) parts = [parts[1], parts[0]];\n  let tokens = parts.join(' ').split(/\\s+/).filter(Boolean);\n  while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);\n  return tokens.map(capToken).join(' ');\n}\nconst letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');\nconst aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();\nconst nameKey = (first, last) => `${first ? aliasFirst(first.split(/\\s+/)[0]) : ''}|${letters(last)}`;\nfunction slugToName(slug) {\n  const base = slug.toLowerCase().replace(/-[0-9a-f]{8}$/, '').replace(/\\d+$/, '');\n  return base.replace(/-/g, ' ').trim();\n}\n\n// ---- LinkedIn ----\nfunction linkedinSlug(raw) {\n  if (isBlank(raw)) return '';\n  const m = String(raw).trim().match(/linkedin\\.com\\/in\\/([^/?#,\\s]+)/i);\n  if (!m) return '';\n  const slug = m[1].toLowerCase();\n  return slug.startsWith('acwa') ? '' : slug;\n}\nfunction linkedinAcwaa(raw) {\n  const m = String(raw || '').match(/\\/in\\/(ACwA[^/?#,\\s]+)|\\/lead\\/(ACwA[^,/?#\\s]+)/);\n  return m ? (m[1] || m[2]).toLowerCase() : '';\n}\nconst linkedinUrl = (slug) => (slug ? `https://www.linkedin.com/in/${slug}` : '');\n\n// ---- email ----\nconst domainOk = (d) => /^[a-z0-9-]+(\\.[a-z0-9-]+)*\\.[a-z]{2,}$/.test(d);\nfunction splitEmails(raw) {\n  if (isBlank(raw)) return [];\n  const text = String(raw).toLowerCase().replace(/mailto:/g, '');\n  return text.split(/[;,\\s]+(?=\\S+@)|;/)\n    .map((p) => p.replace(/\\s+/g, '').replace(/@@/g, '@'))\n    .filter(Boolean);\n}\nfunction classifyEmail(email, knownDomains) {\n  if (PLACEHOLDER_EMAILS.has(email) || email.split('@').length !== 2) return ['invalid', ''];\n  const [local, domain] = email.split('@');\n  if (TEST_EMAIL_DOMAINS.has(domain) || INVALID_EMAIL_DOMAIN_SUFFIXES.some((x) => domain.endsWith(x))) return ['invalid', ''];\n  if (GENERIC_MAILBOXES.has(local)) return ['generic', ''];\n  if (knownDomains.has(domain)) return ['ok', email];\n  const candidates = [domain.replace(/\\.con$/, '.com'), ...[...knownDomains].filter((d) => d.startsWith(`${domain}.`))];\n  for (const cand of candidates) {\n    if (cand !== domain && knownDomains.has(cand)) return ['repaired', `${local}@${cand}`];\n  }\n  return domainOk(domain) ? ['ok', email] : ['invalid', ''];\n}\nconst isPersonalDomain = (email) => PERSONAL_EMAIL_DOMAINS.has(email.split('@').pop());\n\n// ---- phone ----\nconst PHONE_RULES = [\n  ['IN', /^\\+91[6-9]\\d{9}$/, '91', 12], ['US', /^\\+1\\d{10}$/, '1', 11], ['GB', /^\\+447\\d{9}$/, '44', 12],\n  ['AE', /^\\+9715\\d{8}$/, '971', 12], ['SG', /^\\+65[89]\\d{7}$/, '65', 10],\n];\nconst allFake = (d) => new Set(d).size === 1 || ['1234567890', '0123456789', '9876543210'].includes(d);\nconst validE164 = (e) => PHONE_RULES.some((r) => r[1].test(e));\nfunction nationalToE164(digits, iso) {\n  for (const [ruleIso, , prefix, length] of PHONE_RULES) {\n    if (digits.length === length && digits.startsWith(prefix) && ruleIso !== 'US') return `+${digits}`;\n  }\n  if (digits.length === 11 && digits.startsWith('1') && iso === 'US') return `+${digits}`;\n  if (iso === 'IN') {\n    const d = digits.length === 11 && digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 10 ? `+91${d}` : '';\n  }\n  if (iso === 'US') return digits.length === 10 ? `+1${digits}` : '';\n  if (iso === 'SG') return digits.length === 8 ? `+65${digits}` : '';\n  if (iso === 'AE') {\n    const d = digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 9 ? `+971${d}` : '';\n  }\n  return '';\n}\nfunction parseMobile(raw, country) {\n  if (isBlank(raw)) return [null, 'empty'];\n  let text = String(raw).trim().replace(/^'+/, '');\n  if (PLACEHOLDER_PHONES.has(text.toLowerCase())) return [null, 'placeholder'];\n  if (/^\\d\\.\\d+E\\+\\d+$/i.test(text)) return [null, 'scientific-notation (digits lost)'];\n  if (/^\\d+\\.0$/.test(text)) text = text.slice(0, -2);\n  if (/^0\\d{2,4}-\\d{6,8}$/.test(text)) return [null, 'landline (STD code)'];\n  text = text.replace(/\\([^)\\d]*[A-Za-z][^)]*\\)/g, '');\n  const digits = text.replace(/\\D/g, '');\n  if (!digits || allFake(digits.slice(-10))) return [null, 'fake/placeholder number'];\n  let cand;\n  if (text.startsWith('+')) cand = `+${digits}`;\n  else if (digits.startsWith('00')) cand = `+${digits.slice(2)}`;\n  else cand = nationalToE164(digits, COUNTRY_ISO[country] || '');\n  return cand && validE164(cand) ? [cand, 'ok'] : [null, `unrecognised format (${text})`];\n}\nconst phoneFromNotes = (notes) => {\n  const m = String(notes || '').match(/Mob\\s+(\\d{7,12})/);\n  return m ? m[1] : '';\n};\n\n// STEP 2 - Clean fields and REMOVE invalid records (test, spam, job seekers, hidden members, no company).\nfunction invalidReason(r, full) {\n  if (r.is_test) return 'test/spam lead';\n  const text = `${full} ${r.company} ${r.title} ${r.emails.join(' ')}`.toLowerCase();\n  if (/\\b(test|asdf|qa)\\b|\\.invalid/.test(text)) return 'test/spam lead';\n  if (/looking for job|job seek|\\bstudent\\b|\\bfreelanc/.test(text)) return 'job seeker / freelancer';\n  if (full.trim().toLowerCase() === 'linkedin member') return 'hidden LinkedIn Member';\n  // A blank company is NOT rejected here: it may be enriched from another source in step 5.\n  if (['self', 'none', 'n/a', '-'].includes(r.company.trim().toLowerCase())) return 'no company';\n  return '';\n}\nfunction resolveNames(r) {\n  const first = cleanName(r.first_raw);\n  const last = cleanName(r.last_raw);\n  if (r.name_mode === 'pair') return { first, last, full: `${first} ${last}`.trim() };\n  if (r.name_mode === 'pair+full') return { first, last, full: cleanName(r.full_raw) };\n  return { first: '', last: '', full: cleanName(r.full_raw) };\n}\nreturn $input.all().map(({ json: r }) => {\n  const { first, last, full } = resolveNames(r);\n  const slug = r.li_urls.map(linkedinSlug).find(Boolean) || '';\n  const acwaa = linkedinAcwaa(r.li_urls.map((u) => s(u)).join(' '));\n  const reason = invalidReason(r, full);\n  return { json: { ...r, first, last, full, slug, acwaa, status: reason ? 'removed' : 'kept', reason } };\n});\n"
+      },
+      "id": "cm-7eb62baf",
+      "name": "2 Clean & Remove Invalid",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- constants (port of pipeline/constants.py) ----\nconst LEGAL_SUFFIXES = ['private limited', 'pvt ltd', 'pvt. ltd.', 'pvt. ltd', 'pvt ltd.', 'pte. ltd.',\n  'pte ltd', 'pte. ltd', 'limited', 'ltd', 'ltd.', 'inc.', 'inc', 'llc', 'pvt', 'corp'];\nconst CREDENTIALS = new Set(['mba', 'pmp', 'cspo', 'phd', 'cfa', 'cpa', 'csm', 'pmi', 'cissp']);\nconst SALUTATIONS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'ca']);\nconst FIRST_NAME_ALIASES = { vicky: 'vikram', kate: 'katherine', mohd: 'mohammed', mohammad: 'mohammed',\n  srinivas: 'shrinivas', laxmi: 'lakshmi' };\nconst PERSONAL_EMAIL_DOMAINS = new Set(['gmail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com', 'hotmail.com',\n  'icloud.com', 'rediffmail.com', 'proton.me', 'protonmail.com', 'live.com', 'aol.com']);\nconst GENERIC_MAILBOXES = new Set(['info', 'contact', 'sales', 'hello', 'support', 'admin', 'office', 'mail',\n  'enquiries', 'marketing', 'careers', 'hr']);\nconst PLACEHOLDER_EMAILS = new Set(['email_not_unlocked@domain.com']);\nconst INVALID_EMAIL_DOMAIN_SUFFIXES = ['.invalid', '.test', '.example'];\nconst TEST_EMAIL_DOMAINS = new Set(['test.com', 'asdf.invalid', 'google-test.invalid', 'example.com']);\nconst PLACEHOLDER_PHONES = new Set(['na', 'n/a', '-', 'not shared', 'none', 'null', '']);\nconst CITY_INFO = {\n  bengaluru: ['Bengaluru', 'India'], bangalore: ['Bengaluru', 'India'], blr: ['Bengaluru', 'India'],\n  'bangalore urban': ['Bengaluru', 'India'], mumbai: ['Mumbai', 'India'], bombay: ['Mumbai', 'India'],\n  delhi: ['Delhi', 'India'], 'new delhi': ['New Delhi', 'India'], 'delhi ncr': ['Delhi', 'India'],\n  noida: ['Noida', 'India'], gurugram: ['Gurugram', 'India'], gurgaon: ['Gurugram', 'India'],\n  pune: ['Pune', 'India'], hyderabad: ['Hyderabad', 'India'], hyd: ['Hyderabad', 'India'],\n  chennai: ['Chennai', 'India'], madras: ['Chennai', 'India'], kolkata: ['Kolkata', 'India'],\n  calcutta: ['Kolkata', 'India'], ahmedabad: ['Ahmedabad', 'India'], amdavad: ['Ahmedabad', 'India'],\n  dubai: ['Dubai', 'United Arab Emirates'], dxb: ['Dubai', 'United Arab Emirates'],\n  singapore: ['Singapore', 'Singapore'], sg: ['Singapore', 'Singapore'],\n  london: ['London', 'United Kingdom'], manchester: ['Manchester', 'United Kingdom'],\n  'new york': ['New York', 'United States'], nyc: ['New York', 'United States'],\n  'san francisco': ['San Francisco', 'United States'], sf: ['San Francisco', 'United States'],\n  austin: ['Austin', 'United States'], boston: ['Boston', 'United States'],\n};\nconst CITY_KEYWORDS = ['bengaluru', 'bangalore', 'mumbai', 'delhi', 'noida', 'gurugram', 'gurgaon', 'pune',\n  'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'ahmedabad', 'amdavad', 'dubai', 'singapore',\n  'london', 'manchester', 'new york', 'san francisco', 'austin', 'boston'];\nconst COUNTRY_ALIASES = { in: 'India', india: 'India', ae: 'United Arab Emirates', uae: 'United Arab Emirates',\n  'united arab emirates': 'United Arab Emirates', sg: 'Singapore', singapore: 'Singapore', gb: 'United Kingdom',\n  uk: 'United Kingdom', 'united kingdom': 'United Kingdom', england: 'United Kingdom', us: 'United States',\n  usa: 'United States', 'united states': 'United States' };\nconst COUNTRY_ISO = { India: 'IN', 'United Arab Emirates': 'AE', Singapore: 'SG', 'United Kingdom': 'GB',\n  'United States': 'US' };\nconst TOKEN_EXPANSIONS = {\n  mgr: ['manager'], dir: ['director'], sr: ['senior'], vp: ['vice', 'president'], mktg: ['marketing'],\n  biz: ['business'], dev: ['development'], gen: ['generation'], demandgen: ['demand', 'generation'],\n  rev: ['revenue'], revops: ['revenue', 'operations'], sdr: ['sales', 'development'], purchase: ['procurement'],\n  ceo: ['chief', 'executive', 'officer'], cto: ['chief', 'technology', 'officer'],\n  cro: ['chief', 'revenue', 'officer'], cmo: ['chief', 'marketing', 'officer'],\n  coo: ['chief', 'operating', 'officer'], cfo: ['chief', 'financial', 'officer'], it: ['information', 'technology'],\n};\nconst TITLE_DROP_TOKENS = new Set(['of', 'and', 'the', 'team', 'for', 'co', 'founder', 'cofounder']);\nconst SIZE_BUCKETS = [[10, '1-10'], [50, '11-50'], [200, '51-200'], [500, '201-500'], [1000, '501-1,000'],\n  [5000, '1,001-5,000'], [10000, '5,001-10,000']];\nconst SIZE_TOP = '10,001+';\n\n// ---- core text helpers + LinkedIn + email + phone (port of pipeline/normalize.py) ----\nconst isBlank = (v) => v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) || String(v).trim() === '';\nconst s = (v) => (isBlank(v) ? '' : String(v).trim());\n// -: n8n's xlsx reader (SheetJS) decodes 4-byte emoji such as U+1F680 into U+F680 (private use).\nconst EMOJI = /[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{1F000}-\\u{1F2FF}‍️-]+/gu;\nconst stripEmoji = (t) => t.replace(EMOJI, '');\nconst trimDots = (t) => t.replace(/^\\.+|\\.+$/g, '');\nconst capToken = (tok) => tok.split(\"'\").map((p) => p.slice(0, 1).toUpperCase() + p.slice(1).toLowerCase()).join(\"'\");\n\nfunction cleanName(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).replace(/\\([^)]*\\)/g, ' ');\n  let parts = text.split(',').map((p) => p.trim()).filter(Boolean);\n  parts = parts.filter((p) => !CREDENTIALS.has(trimDots(p.toLowerCase())));\n  if (parts.length === 2) parts = [parts[1], parts[0]];\n  let tokens = parts.join(' ').split(/\\s+/).filter(Boolean);\n  while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);\n  return tokens.map(capToken).join(' ');\n}\nconst letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');\nconst aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();\nconst nameKey = (first, last) => `${first ? aliasFirst(first.split(/\\s+/)[0]) : ''}|${letters(last)}`;\nfunction slugToName(slug) {\n  const base = slug.toLowerCase().replace(/-[0-9a-f]{8}$/, '').replace(/\\d+$/, '');\n  return base.replace(/-/g, ' ').trim();\n}\n\n// ---- LinkedIn ----\nfunction linkedinSlug(raw) {\n  if (isBlank(raw)) return '';\n  const m = String(raw).trim().match(/linkedin\\.com\\/in\\/([^/?#,\\s]+)/i);\n  if (!m) return '';\n  const slug = m[1].toLowerCase();\n  return slug.startsWith('acwa') ? '' : slug;\n}\nfunction linkedinAcwaa(raw) {\n  const m = String(raw || '').match(/\\/in\\/(ACwA[^/?#,\\s]+)|\\/lead\\/(ACwA[^,/?#\\s]+)/);\n  return m ? (m[1] || m[2]).toLowerCase() : '';\n}\nconst linkedinUrl = (slug) => (slug ? `https://www.linkedin.com/in/${slug}` : '');\n\n// ---- email ----\nconst domainOk = (d) => /^[a-z0-9-]+(\\.[a-z0-9-]+)*\\.[a-z]{2,}$/.test(d);\nfunction splitEmails(raw) {\n  if (isBlank(raw)) return [];\n  const text = String(raw).toLowerCase().replace(/mailto:/g, '');\n  return text.split(/[;,\\s]+(?=\\S+@)|;/)\n    .map((p) => p.replace(/\\s+/g, '').replace(/@@/g, '@'))\n    .filter(Boolean);\n}\nfunction classifyEmail(email, knownDomains) {\n  if (PLACEHOLDER_EMAILS.has(email) || email.split('@').length !== 2) return ['invalid', ''];\n  const [local, domain] = email.split('@');\n  if (TEST_EMAIL_DOMAINS.has(domain) || INVALID_EMAIL_DOMAIN_SUFFIXES.some((x) => domain.endsWith(x))) return ['invalid', ''];\n  if (GENERIC_MAILBOXES.has(local)) return ['generic', ''];\n  if (knownDomains.has(domain)) return ['ok', email];\n  const candidates = [domain.replace(/\\.con$/, '.com'), ...[...knownDomains].filter((d) => d.startsWith(`${domain}.`))];\n  for (const cand of candidates) {\n    if (cand !== domain && knownDomains.has(cand)) return ['repaired', `${local}@${cand}`];\n  }\n  return domainOk(domain) ? ['ok', email] : ['invalid', ''];\n}\nconst isPersonalDomain = (email) => PERSONAL_EMAIL_DOMAINS.has(email.split('@').pop());\n\n// ---- phone ----\nconst PHONE_RULES = [\n  ['IN', /^\\+91[6-9]\\d{9}$/, '91', 12], ['US', /^\\+1\\d{10}$/, '1', 11], ['GB', /^\\+447\\d{9}$/, '44', 12],\n  ['AE', /^\\+9715\\d{8}$/, '971', 12], ['SG', /^\\+65[89]\\d{7}$/, '65', 10],\n];\nconst allFake = (d) => new Set(d).size === 1 || ['1234567890', '0123456789', '9876543210'].includes(d);\nconst validE164 = (e) => PHONE_RULES.some((r) => r[1].test(e));\nfunction nationalToE164(digits, iso) {\n  for (const [ruleIso, , prefix, length] of PHONE_RULES) {\n    if (digits.length === length && digits.startsWith(prefix) && ruleIso !== 'US') return `+${digits}`;\n  }\n  if (digits.length === 11 && digits.startsWith('1') && iso === 'US') return `+${digits}`;\n  if (iso === 'IN') {\n    const d = digits.length === 11 && digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 10 ? `+91${d}` : '';\n  }\n  if (iso === 'US') return digits.length === 10 ? `+1${digits}` : '';\n  if (iso === 'SG') return digits.length === 8 ? `+65${digits}` : '';\n  if (iso === 'AE') {\n    const d = digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 9 ? `+971${d}` : '';\n  }\n  return '';\n}\nfunction parseMobile(raw, country) {\n  if (isBlank(raw)) return [null, 'empty'];\n  let text = String(raw).trim().replace(/^'+/, '');\n  if (PLACEHOLDER_PHONES.has(text.toLowerCase())) return [null, 'placeholder'];\n  if (/^\\d\\.\\d+E\\+\\d+$/i.test(text)) return [null, 'scientific-notation (digits lost)'];\n  if (/^\\d+\\.0$/.test(text)) text = text.slice(0, -2);\n  if (/^0\\d{2,4}-\\d{6,8}$/.test(text)) return [null, 'landline (STD code)'];\n  text = text.replace(/\\([^)\\d]*[A-Za-z][^)]*\\)/g, '');\n  const digits = text.replace(/\\D/g, '');\n  if (!digits || allFake(digits.slice(-10))) return [null, 'fake/placeholder number'];\n  let cand;\n  if (text.startsWith('+')) cand = `+${digits}`;\n  else if (digits.startsWith('00')) cand = `+${digits.slice(2)}`;\n  else cand = nationalToE164(digits, COUNTRY_ISO[country] || '');\n  return cand && validE164(cand) ? [cand, 'ok'] : [null, `unrecognised format (${text})`];\n}\nconst phoneFromNotes = (notes) => {\n  const m = String(notes || '').match(/Mob\\s+(\\d{7,12})/);\n  return m ? m[1] : '';\n};\n\n// ---- titles, company, location (port of pipeline/normalize.py) ----\nconst titleCase = (t) => t.replace(/[a-z]+/g, (w) => w[0].toUpperCase() + w.slice(1));\n\nfunction canonicalTitle(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).split('|')[0].toLowerCase().replace(/\\./g, '');\n  const tokens = [];\n  for (const tok of text.match(/[a-z]+/g) || []) {\n    if (TITLE_DROP_TOKENS.has(tok)) continue;\n    tokens.push(...(TOKEN_EXPANSIONS[tok] || [tok]));\n  }\n  if (!tokens.length) return '';\n  if (tokens.includes('chief')) {\n    const func = tokens.find((t) => ['executive', 'technology', 'revenue', 'marketing', 'operating', 'financial'].includes(t)) || '';\n    return `Chief ${titleCase(func)} Officer`.replace(/ {2}/g, ' ');\n  }\n  const levels = new Set(['vice', 'president', 'director', 'head', 'manager', 'senior', 'lead']);\n  const func = titleCase(tokens.filter((t) => !levels.has(t)).join(' '));\n  if (tokens.includes('vice')) return `Vice President of ${func}`.trim();\n  if (tokens.includes('director')) return `Director of ${func}`.trim();\n  if (tokens.includes('head')) return `Head of ${func}`.trim();\n  if (tokens.includes('manager')) return `${tokens.includes('senior') ? 'Senior ' : ''}${func} Manager`.replace(/ {2}/g, ' ').trim();\n  if (tokens.includes('lead')) return `${func} Lead`.trim();\n  return titleCase(tokens.join(' '));\n}\n\n// ---- difflib.SequenceMatcher.ratio() (no junk heuristics: strings are short) ----\nfunction matchingBlocks(a, b) {\n  const b2j = new Map();\n  [...b].forEach((ch, j) => { if (!b2j.has(ch)) b2j.set(ch, []); b2j.get(ch).push(j); });\n  const longest = (alo, ahi, blo, bhi) => {\n    let besti = alo; let bestj = blo; let bestsize = 0; let j2len = new Map();\n    for (let i = alo; i < ahi; i += 1) {\n      const newj2len = new Map();\n      for (const j of b2j.get(a[i]) || []) {\n        if (j < blo) continue;\n        if (j >= bhi) break;\n        const k = (j2len.get(j - 1) || 0) + 1;\n        newj2len.set(j, k);\n        if (k > bestsize) { besti = i - k + 1; bestj = j - k + 1; bestsize = k; }\n      }\n      j2len = newj2len;\n    }\n    return [besti, bestj, bestsize];\n  };\n  const queue = [[0, a.length, 0, b.length]];\n  const blocks = [];\n  while (queue.length) {\n    const [alo, ahi, blo, bhi] = queue.pop();\n    const [i, j, k] = longest(alo, ahi, blo, bhi);\n    if (k) {\n      blocks.push(k);\n      if (alo < i && blo < j) queue.push([alo, i, blo, j]);\n      if (i + k < ahi && j + k < bhi) queue.push([i + k, ahi, j + k, bhi]);\n    }\n  }\n  return blocks.reduce((x, y) => x + y, 0);\n}\nconst ratio = (a, b) => (a.length + b.length === 0 ? 1 : (2 * matchingBlocks(a, b)) / (a.length + b.length));\n\nfunction stripLegal(name) {\n  let text = stripEmoji(name).trim().toLowerCase();\n  const suffixes = [...LEGAL_SUFFIXES].sort((x, y) => y.length - x.length);\n  for (let pass = 0; pass < 2; pass += 1) {\n    for (const suffix of suffixes) {\n      if (text.endsWith(` ${suffix}`)) text = text.slice(0, -suffix.length).replace(/^[ ,.]+|[ ,.]+$/g, '');\n    }\n  }\n  return text.replace(/\\s+/g, ' ');\n}\nfunction matchCompany(raw, canonical) {\n  if (isBlank(raw)) return '';\n  const cleaned = stripLegal(String(raw));\n  const byNorm = new Map(canonical.map((c) => [stripLegal(c), c]));\n  if (byNorm.has(cleaned)) return byNorm.get(cleaned);\n  const prefixed = [...byNorm].filter(([n]) => n.startsWith(`${cleaned} `)).map(([, c]) => c);\n  if (prefixed.length === 1) return prefixed[0];\n  const squashed = cleaned.replace(/ /g, '');\n  let best = ''; let score = 0;\n  for (const [norm, canon] of byNorm) {\n    const r = ratio(squashed, norm.replace(/ /g, ''));\n    if (r > score) { best = canon; score = r; }\n  }\n  return score >= 0.86 ? best : '';\n}\nfunction rootDomain(raw) {\n  if (isBlank(raw)) return '';\n  const text = String(raw).trim().toLowerCase().replace(/^[a-z]+:\\/\\//, '');\n  return text.split(/[/?#]/)[0].replace(/^www\\./, '');\n}\nfunction sizeBucket(value) {\n  if (isBlank(value)) return '';\n  const nums = (String(value).match(/\\d[\\d,]*/g) || []).map((n) => parseInt(n.replace(/,/g, ''), 10));\n  if (!nums.length) return '';\n  const count = nums.length === 1 ? nums[0] : Math.floor((nums[0] + nums[1]) / 2);\n  for (const [upper, label] of SIZE_BUCKETS) if (count <= upper) return label;\n  return SIZE_TOP;\n}\nfunction cityCountry(raw) {\n  if (isBlank(raw)) return ['', ''];\n  const low = stripEmoji(String(raw)).toLowerCase();\n  const first = low.split(',')[0].trim();\n  if (CITY_INFO[first]) return CITY_INFO[first];\n  for (const key of CITY_KEYWORDS) if (low.includes(key)) return CITY_INFO[key];\n  return ['', ''];\n}\nconst countryName = (raw) => COUNTRY_ALIASES[String(raw || '').trim().toLowerCase()] || '';\n\n// STEP 3 - Standardize to the Rules tab: company name, job title, email, E.164 mobile, city/country.\nconst recs = $input.all().map((it) => it.json);\n\n// Company universe: ZoomInfo names first, then Apollo (rule 4). Used to fix typos / suffixes / short names.\nconst hqCountry = new Map();\nconst domains = new Set();\nfor (const source of ['ZoomInfo', 'Apollo']) {\n  for (const r of recs.filter((x) => x.source === source)) {\n    if (!hqCountry.has(r.company.trim())) hqCountry.set(r.company.trim(), countryName(r.co_country));\n    domains.add(rootDomain(r.co_website));\n  }\n}\ndomains.delete('');\nconst canonical = [...hqCountry.keys()];\n\nreturn recs.map((r) => {\n  const company_c = matchCompany(r.company, canonical);\n  const [p_city, locCountry] = cityCountry(r.person_loc);\n  const p_country = countryName(r.country) || locCountry || hqCountry.get(company_c) || '';\n  const emails_v = [];\n  for (const raw of r.emails) {\n    for (const cand of splitEmails(raw)) {\n      const [status, fixed] = classifyEmail(cand, domains);\n      if (status === 'ok' || status === 'repaired') emails_v.push([fixed, status]);\n    }\n  }\n  const phones_v = [];\n  for (const [raw, kind] of r.phones) {\n    const [e164] = parseMobile(raw, p_country);\n    if (e164) phones_v.push([e164, kind]);\n  }\n  return { json: { ...r, company_c, title_c: canonicalTitle(r.title), emails_v, phones_v, p_city, p_country,\n    co_country: countryName(r.co_country) } };\n});\n"
+      },
+      "id": "cm-d7e971b6",
+      "name": "3 Standardize (Rules tab)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- constants (port of pipeline/constants.py) ----\nconst LEGAL_SUFFIXES = ['private limited', 'pvt ltd', 'pvt. ltd.', 'pvt. ltd', 'pvt ltd.', 'pte. ltd.',\n  'pte ltd', 'pte. ltd', 'limited', 'ltd', 'ltd.', 'inc.', 'inc', 'llc', 'pvt', 'corp'];\nconst CREDENTIALS = new Set(['mba', 'pmp', 'cspo', 'phd', 'cfa', 'cpa', 'csm', 'pmi', 'cissp']);\nconst SALUTATIONS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'ca']);\nconst FIRST_NAME_ALIASES = { vicky: 'vikram', kate: 'katherine', mohd: 'mohammed', mohammad: 'mohammed',\n  srinivas: 'shrinivas', laxmi: 'lakshmi' };\nconst PERSONAL_EMAIL_DOMAINS = new Set(['gmail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com', 'hotmail.com',\n  'icloud.com', 'rediffmail.com', 'proton.me', 'protonmail.com', 'live.com', 'aol.com']);\nconst GENERIC_MAILBOXES = new Set(['info', 'contact', 'sales', 'hello', 'support', 'admin', 'office', 'mail',\n  'enquiries', 'marketing', 'careers', 'hr']);\nconst PLACEHOLDER_EMAILS = new Set(['email_not_unlocked@domain.com']);\nconst INVALID_EMAIL_DOMAIN_SUFFIXES = ['.invalid', '.test', '.example'];\nconst TEST_EMAIL_DOMAINS = new Set(['test.com', 'asdf.invalid', 'google-test.invalid', 'example.com']);\nconst PLACEHOLDER_PHONES = new Set(['na', 'n/a', '-', 'not shared', 'none', 'null', '']);\nconst CITY_INFO = {\n  bengaluru: ['Bengaluru', 'India'], bangalore: ['Bengaluru', 'India'], blr: ['Bengaluru', 'India'],\n  'bangalore urban': ['Bengaluru', 'India'], mumbai: ['Mumbai', 'India'], bombay: ['Mumbai', 'India'],\n  delhi: ['Delhi', 'India'], 'new delhi': ['New Delhi', 'India'], 'delhi ncr': ['Delhi', 'India'],\n  noida: ['Noida', 'India'], gurugram: ['Gurugram', 'India'], gurgaon: ['Gurugram', 'India'],\n  pune: ['Pune', 'India'], hyderabad: ['Hyderabad', 'India'], hyd: ['Hyderabad', 'India'],\n  chennai: ['Chennai', 'India'], madras: ['Chennai', 'India'], kolkata: ['Kolkata', 'India'],\n  calcutta: ['Kolkata', 'India'], ahmedabad: ['Ahmedabad', 'India'], amdavad: ['Ahmedabad', 'India'],\n  dubai: ['Dubai', 'United Arab Emirates'], dxb: ['Dubai', 'United Arab Emirates'],\n  singapore: ['Singapore', 'Singapore'], sg: ['Singapore', 'Singapore'],\n  london: ['London', 'United Kingdom'], manchester: ['Manchester', 'United Kingdom'],\n  'new york': ['New York', 'United States'], nyc: ['New York', 'United States'],\n  'san francisco': ['San Francisco', 'United States'], sf: ['San Francisco', 'United States'],\n  austin: ['Austin', 'United States'], boston: ['Boston', 'United States'],\n};\nconst CITY_KEYWORDS = ['bengaluru', 'bangalore', 'mumbai', 'delhi', 'noida', 'gurugram', 'gurgaon', 'pune',\n  'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'ahmedabad', 'amdavad', 'dubai', 'singapore',\n  'london', 'manchester', 'new york', 'san francisco', 'austin', 'boston'];\nconst COUNTRY_ALIASES = { in: 'India', india: 'India', ae: 'United Arab Emirates', uae: 'United Arab Emirates',\n  'united arab emirates': 'United Arab Emirates', sg: 'Singapore', singapore: 'Singapore', gb: 'United Kingdom',\n  uk: 'United Kingdom', 'united kingdom': 'United Kingdom', england: 'United Kingdom', us: 'United States',\n  usa: 'United States', 'united states': 'United States' };\nconst COUNTRY_ISO = { India: 'IN', 'United Arab Emirates': 'AE', Singapore: 'SG', 'United Kingdom': 'GB',\n  'United States': 'US' };\nconst TOKEN_EXPANSIONS = {\n  mgr: ['manager'], dir: ['director'], sr: ['senior'], vp: ['vice', 'president'], mktg: ['marketing'],\n  biz: ['business'], dev: ['development'], gen: ['generation'], demandgen: ['demand', 'generation'],\n  rev: ['revenue'], revops: ['revenue', 'operations'], sdr: ['sales', 'development'], purchase: ['procurement'],\n  ceo: ['chief', 'executive', 'officer'], cto: ['chief', 'technology', 'officer'],\n  cro: ['chief', 'revenue', 'officer'], cmo: ['chief', 'marketing', 'officer'],\n  coo: ['chief', 'operating', 'officer'], cfo: ['chief', 'financial', 'officer'], it: ['information', 'technology'],\n};\nconst TITLE_DROP_TOKENS = new Set(['of', 'and', 'the', 'team', 'for', 'co', 'founder', 'cofounder']);\nconst SIZE_BUCKETS = [[10, '1-10'], [50, '11-50'], [200, '51-200'], [500, '201-500'], [1000, '501-1,000'],\n  [5000, '1,001-5,000'], [10000, '5,001-10,000']];\nconst SIZE_TOP = '10,001+';\n\n// ---- core text helpers + LinkedIn + email + phone (port of pipeline/normalize.py) ----\nconst isBlank = (v) => v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) || String(v).trim() === '';\nconst s = (v) => (isBlank(v) ? '' : String(v).trim());\n// -: n8n's xlsx reader (SheetJS) decodes 4-byte emoji such as U+1F680 into U+F680 (private use).\nconst EMOJI = /[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{1F000}-\\u{1F2FF}‍️-]+/gu;\nconst stripEmoji = (t) => t.replace(EMOJI, '');\nconst trimDots = (t) => t.replace(/^\\.+|\\.+$/g, '');\nconst capToken = (tok) => tok.split(\"'\").map((p) => p.slice(0, 1).toUpperCase() + p.slice(1).toLowerCase()).join(\"'\");\n\nfunction cleanName(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).replace(/\\([^)]*\\)/g, ' ');\n  let parts = text.split(',').map((p) => p.trim()).filter(Boolean);\n  parts = parts.filter((p) => !CREDENTIALS.has(trimDots(p.toLowerCase())));\n  if (parts.length === 2) parts = [parts[1], parts[0]];\n  let tokens = parts.join(' ').split(/\\s+/).filter(Boolean);\n  while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);\n  return tokens.map(capToken).join(' ');\n}\nconst letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');\nconst aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();\nconst nameKey = (first, last) => `${first ? aliasFirst(first.split(/\\s+/)[0]) : ''}|${letters(last)}`;\nfunction slugToName(slug) {\n  const base = slug.toLowerCase().replace(/-[0-9a-f]{8}$/, '').replace(/\\d+$/, '');\n  return base.replace(/-/g, ' ').trim();\n}\n\n// ---- LinkedIn ----\nfunction linkedinSlug(raw) {\n  if (isBlank(raw)) return '';\n  const m = String(raw).trim().match(/linkedin\\.com\\/in\\/([^/?#,\\s]+)/i);\n  if (!m) return '';\n  const slug = m[1].toLowerCase();\n  return slug.startsWith('acwa') ? '' : slug;\n}\nfunction linkedinAcwaa(raw) {\n  const m = String(raw || '').match(/\\/in\\/(ACwA[^/?#,\\s]+)|\\/lead\\/(ACwA[^,/?#\\s]+)/);\n  return m ? (m[1] || m[2]).toLowerCase() : '';\n}\nconst linkedinUrl = (slug) => (slug ? `https://www.linkedin.com/in/${slug}` : '');\n\n// ---- email ----\nconst domainOk = (d) => /^[a-z0-9-]+(\\.[a-z0-9-]+)*\\.[a-z]{2,}$/.test(d);\nfunction splitEmails(raw) {\n  if (isBlank(raw)) return [];\n  const text = String(raw).toLowerCase().replace(/mailto:/g, '');\n  return text.split(/[;,\\s]+(?=\\S+@)|;/)\n    .map((p) => p.replace(/\\s+/g, '').replace(/@@/g, '@'))\n    .filter(Boolean);\n}\nfunction classifyEmail(email, knownDomains) {\n  if (PLACEHOLDER_EMAILS.has(email) || email.split('@').length !== 2) return ['invalid', ''];\n  const [local, domain] = email.split('@');\n  if (TEST_EMAIL_DOMAINS.has(domain) || INVALID_EMAIL_DOMAIN_SUFFIXES.some((x) => domain.endsWith(x))) return ['invalid', ''];\n  if (GENERIC_MAILBOXES.has(local)) return ['generic', ''];\n  if (knownDomains.has(domain)) return ['ok', email];\n  const candidates = [domain.replace(/\\.con$/, '.com'), ...[...knownDomains].filter((d) => d.startsWith(`${domain}.`))];\n  for (const cand of candidates) {\n    if (cand !== domain && knownDomains.has(cand)) return ['repaired', `${local}@${cand}`];\n  }\n  return domainOk(domain) ? ['ok', email] : ['invalid', ''];\n}\nconst isPersonalDomain = (email) => PERSONAL_EMAIL_DOMAINS.has(email.split('@').pop());\n\n// ---- phone ----\nconst PHONE_RULES = [\n  ['IN', /^\\+91[6-9]\\d{9}$/, '91', 12], ['US', /^\\+1\\d{10}$/, '1', 11], ['GB', /^\\+447\\d{9}$/, '44', 12],\n  ['AE', /^\\+9715\\d{8}$/, '971', 12], ['SG', /^\\+65[89]\\d{7}$/, '65', 10],\n];\nconst allFake = (d) => new Set(d).size === 1 || ['1234567890', '0123456789', '9876543210'].includes(d);\nconst validE164 = (e) => PHONE_RULES.some((r) => r[1].test(e));\nfunction nationalToE164(digits, iso) {\n  for (const [ruleIso, , prefix, length] of PHONE_RULES) {\n    if (digits.length === length && digits.startsWith(prefix) && ruleIso !== 'US') return `+${digits}`;\n  }\n  if (digits.length === 11 && digits.startsWith('1') && iso === 'US') return `+${digits}`;\n  if (iso === 'IN') {\n    const d = digits.length === 11 && digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 10 ? `+91${d}` : '';\n  }\n  if (iso === 'US') return digits.length === 10 ? `+1${digits}` : '';\n  if (iso === 'SG') return digits.length === 8 ? `+65${digits}` : '';\n  if (iso === 'AE') {\n    const d = digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 9 ? `+971${d}` : '';\n  }\n  return '';\n}\nfunction parseMobile(raw, country) {\n  if (isBlank(raw)) return [null, 'empty'];\n  let text = String(raw).trim().replace(/^'+/, '');\n  if (PLACEHOLDER_PHONES.has(text.toLowerCase())) return [null, 'placeholder'];\n  if (/^\\d\\.\\d+E\\+\\d+$/i.test(text)) return [null, 'scientific-notation (digits lost)'];\n  if (/^\\d+\\.0$/.test(text)) text = text.slice(0, -2);\n  if (/^0\\d{2,4}-\\d{6,8}$/.test(text)) return [null, 'landline (STD code)'];\n  text = text.replace(/\\([^)\\d]*[A-Za-z][^)]*\\)/g, '');\n  const digits = text.replace(/\\D/g, '');\n  if (!digits || allFake(digits.slice(-10))) return [null, 'fake/placeholder number'];\n  let cand;\n  if (text.startsWith('+')) cand = `+${digits}`;\n  else if (digits.startsWith('00')) cand = `+${digits.slice(2)}`;\n  else cand = nationalToE164(digits, COUNTRY_ISO[country] || '');\n  return cand && validE164(cand) ? [cand, 'ok'] : [null, `unrecognised format (${text})`];\n}\nconst phoneFromNotes = (notes) => {\n  const m = String(notes || '').match(/Mob\\s+(\\d{7,12})/);\n  return m ? m[1] : '';\n};\n\n// ---- same-person grouping (port of pipeline/cluster.py) ----\nclass Groups {\n  constructor(preps) {\n    this.parent = preps.map((_, i) => i);\n    this.slugs = preps.map((p) => new Set(p.slug ? [p.slug] : []));\n    this.acwaa = preps.map((p) => new Set(p.acwaa ? [p.acwaa] : []));\n    this.refused = [];\n  }\n\n  find(i) {\n    let x = i;\n    while (this.parent[x] !== x) { this.parent[x] = this.parent[this.parent[x]]; x = this.parent[x]; }\n    return x;\n  }\n\n  disjoint(a, b) {\n    return a.size > 0 && b.size > 0 && ![...a].some((v) => b.has(v));\n  }\n\n  union(i, j, why) {\n    const ri = this.find(i); const rj = this.find(j);\n    if (ri === rj) return true;\n    if (this.disjoint(this.slugs[ri], this.slugs[rj]) || this.disjoint(this.acwaa[ri], this.acwaa[rj])) {\n      this.refused.push([i, j, why]);\n      return false;\n    }\n    this.parent[rj] = ri;\n    this.slugs[rj].forEach((v) => this.slugs[ri].add(v));\n    this.acwaa[rj].forEach((v) => this.acwaa[ri].add(v));\n    return true;\n  }\n}\n\nfunction strongKeys(p) {\n  return [\n    ...p.emails_v.map(([e]) => `email:${e}`),\n    ...p.phones_v.map(([ph]) => `phone:${ph}`),\n    ...(p.slug ? [`slug:${p.slug}`] : []),\n    ...(p.acwaa ? [`acwaa:${p.acwaa}`] : []),\n  ];\n}\nfunction lastOf(p) {\n  if (p.last && p.first) return p.full.startsWith(p.first) ? p.full.slice(p.first.length).trim() : p.last;\n  const idx = p.full.indexOf(' ');\n  return idx >= 0 ? p.full.slice(idx + 1) : '';\n}\nconst keyOf = (p) => nameKey(p.first || p.full.split(' ')[0], lastOf(p));\nconst sameName = (a, b) => keyOf(a) === keyOf(b);\n\nfunction buildClusters(preps) {\n  const groups = new Groups(preps);\n  const links = [];\n  const seen = new Map();\n  preps.forEach((p, i) => {\n    for (const key of strongKeys(p)) {\n      if (seen.has(key)) groups.union(seen.get(key), i, key); else seen.set(key, i);\n    }\n  });\n  for (let i = 0; i < preps.length; i += 1) {\n    for (let j = i + 1; j < preps.length; j += 1) {\n      const a = preps[i]; const b = preps[j];\n      if (groups.find(i) === groups.find(j) || !a.company_c || a.company_c !== b.company_c) continue;\n      if (sameName(a, b) && (!a.title_c || !b.title_c || a.title_c === b.title_c) && groups.union(i, j, 'name+company+title')) {\n        links.push({ kind: 'name+company+title', a: a.ref, b: b.ref, note: `${a.full} @ ${a.company_c} (${a.title_c || b.title_c})` });\n      }\n    }\n  }\n  for (let i = 0; i < preps.length; i += 1) {\n    for (let j = i + 1; j < preps.length; j += 1) {\n      const a = preps[i]; const b = preps[j];\n      if (groups.find(i) === groups.find(j) || !a.company_c || !b.company_c) continue;\n      if (a.company_c !== b.company_c && a.p_city && a.p_city === b.p_city && sameName(a, b) && groups.union(i, j, 'job-change')) {\n        links.push({ kind: 'job-change (verify)', a: a.ref, b: b.ref, note: `${a.full}: ${a.company_c} / ${b.company_c}, both in ${a.p_city}` });\n      }\n    }\n  }\n  const buckets = new Map();\n  preps.forEach((p, i) => {\n    const root = groups.find(i);\n    if (!buckets.has(root)) buckets.set(root, []);\n    buckets.get(root).push(p);\n  });\n  for (const [i, j, why] of groups.refused) {\n    links.push({ kind: 'REFUSED merge', a: preps[i].ref, b: preps[j].ref, note: `${why}: different LinkedIn identities` });\n  }\n  return { clusters: [...buckets.values()], links };\n}\n\n// STEP 4 - Remove duplicates: group every record that describes the same real person.\n// Same person = same email, LinkedIn slug, Sales-Nav id or mobile. Name+company needs a compatible title.\n// A merge is REFUSED if it would join two different LinkedIn identities (name twins stay separate).\nconst preps = $input.all().map((it) => it.json);\nconst { clusters, links } = buildClusters(preps);\nreturn [\n  ...clusters.map((members) => ({ json: { type: 'person', members } })),\n  ...links.map((l) => ({ json: { type: 'link-decision', ...l } })),\n];\n"
+      },
+      "id": "cm-5dbd2e72",
+      "name": "4 Remove Duplicates (group same person)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- constants (port of pipeline/constants.py) ----\nconst LEGAL_SUFFIXES = ['private limited', 'pvt ltd', 'pvt. ltd.', 'pvt. ltd', 'pvt ltd.', 'pte. ltd.',\n  'pte ltd', 'pte. ltd', 'limited', 'ltd', 'ltd.', 'inc.', 'inc', 'llc', 'pvt', 'corp'];\nconst CREDENTIALS = new Set(['mba', 'pmp', 'cspo', 'phd', 'cfa', 'cpa', 'csm', 'pmi', 'cissp']);\nconst SALUTATIONS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'ca']);\nconst FIRST_NAME_ALIASES = { vicky: 'vikram', kate: 'katherine', mohd: 'mohammed', mohammad: 'mohammed',\n  srinivas: 'shrinivas', laxmi: 'lakshmi' };\nconst PERSONAL_EMAIL_DOMAINS = new Set(['gmail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com', 'hotmail.com',\n  'icloud.com', 'rediffmail.com', 'proton.me', 'protonmail.com', 'live.com', 'aol.com']);\nconst GENERIC_MAILBOXES = new Set(['info', 'contact', 'sales', 'hello', 'support', 'admin', 'office', 'mail',\n  'enquiries', 'marketing', 'careers', 'hr']);\nconst PLACEHOLDER_EMAILS = new Set(['email_not_unlocked@domain.com']);\nconst INVALID_EMAIL_DOMAIN_SUFFIXES = ['.invalid', '.test', '.example'];\nconst TEST_EMAIL_DOMAINS = new Set(['test.com', 'asdf.invalid', 'google-test.invalid', 'example.com']);\nconst PLACEHOLDER_PHONES = new Set(['na', 'n/a', '-', 'not shared', 'none', 'null', '']);\nconst CITY_INFO = {\n  bengaluru: ['Bengaluru', 'India'], bangalore: ['Bengaluru', 'India'], blr: ['Bengaluru', 'India'],\n  'bangalore urban': ['Bengaluru', 'India'], mumbai: ['Mumbai', 'India'], bombay: ['Mumbai', 'India'],\n  delhi: ['Delhi', 'India'], 'new delhi': ['New Delhi', 'India'], 'delhi ncr': ['Delhi', 'India'],\n  noida: ['Noida', 'India'], gurugram: ['Gurugram', 'India'], gurgaon: ['Gurugram', 'India'],\n  pune: ['Pune', 'India'], hyderabad: ['Hyderabad', 'India'], hyd: ['Hyderabad', 'India'],\n  chennai: ['Chennai', 'India'], madras: ['Chennai', 'India'], kolkata: ['Kolkata', 'India'],\n  calcutta: ['Kolkata', 'India'], ahmedabad: ['Ahmedabad', 'India'], amdavad: ['Ahmedabad', 'India'],\n  dubai: ['Dubai', 'United Arab Emirates'], dxb: ['Dubai', 'United Arab Emirates'],\n  singapore: ['Singapore', 'Singapore'], sg: ['Singapore', 'Singapore'],\n  london: ['London', 'United Kingdom'], manchester: ['Manchester', 'United Kingdom'],\n  'new york': ['New York', 'United States'], nyc: ['New York', 'United States'],\n  'san francisco': ['San Francisco', 'United States'], sf: ['San Francisco', 'United States'],\n  austin: ['Austin', 'United States'], boston: ['Boston', 'United States'],\n};\nconst CITY_KEYWORDS = ['bengaluru', 'bangalore', 'mumbai', 'delhi', 'noida', 'gurugram', 'gurgaon', 'pune',\n  'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'ahmedabad', 'amdavad', 'dubai', 'singapore',\n  'london', 'manchester', 'new york', 'san francisco', 'austin', 'boston'];\nconst COUNTRY_ALIASES = { in: 'India', india: 'India', ae: 'United Arab Emirates', uae: 'United Arab Emirates',\n  'united arab emirates': 'United Arab Emirates', sg: 'Singapore', singapore: 'Singapore', gb: 'United Kingdom',\n  uk: 'United Kingdom', 'united kingdom': 'United Kingdom', england: 'United Kingdom', us: 'United States',\n  usa: 'United States', 'united states': 'United States' };\nconst COUNTRY_ISO = { India: 'IN', 'United Arab Emirates': 'AE', Singapore: 'SG', 'United Kingdom': 'GB',\n  'United States': 'US' };\nconst TOKEN_EXPANSIONS = {\n  mgr: ['manager'], dir: ['director'], sr: ['senior'], vp: ['vice', 'president'], mktg: ['marketing'],\n  biz: ['business'], dev: ['development'], gen: ['generation'], demandgen: ['demand', 'generation'],\n  rev: ['revenue'], revops: ['revenue', 'operations'], sdr: ['sales', 'development'], purchase: ['procurement'],\n  ceo: ['chief', 'executive', 'officer'], cto: ['chief', 'technology', 'officer'],\n  cro: ['chief', 'revenue', 'officer'], cmo: ['chief', 'marketing', 'officer'],\n  coo: ['chief', 'operating', 'officer'], cfo: ['chief', 'financial', 'officer'], it: ['information', 'technology'],\n};\nconst TITLE_DROP_TOKENS = new Set(['of', 'and', 'the', 'team', 'for', 'co', 'founder', 'cofounder']);\nconst SIZE_BUCKETS = [[10, '1-10'], [50, '11-50'], [200, '51-200'], [500, '201-500'], [1000, '501-1,000'],\n  [5000, '1,001-5,000'], [10000, '5,001-10,000']];\nconst SIZE_TOP = '10,001+';\n\n// ---- core text helpers + LinkedIn + email + phone (port of pipeline/normalize.py) ----\nconst isBlank = (v) => v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) || String(v).trim() === '';\nconst s = (v) => (isBlank(v) ? '' : String(v).trim());\n// -: n8n's xlsx reader (SheetJS) decodes 4-byte emoji such as U+1F680 into U+F680 (private use).\nconst EMOJI = /[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{1F000}-\\u{1F2FF}‍️-]+/gu;\nconst stripEmoji = (t) => t.replace(EMOJI, '');\nconst trimDots = (t) => t.replace(/^\\.+|\\.+$/g, '');\nconst capToken = (tok) => tok.split(\"'\").map((p) => p.slice(0, 1).toUpperCase() + p.slice(1).toLowerCase()).join(\"'\");\n\nfunction cleanName(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).replace(/\\([^)]*\\)/g, ' ');\n  let parts = text.split(',').map((p) => p.trim()).filter(Boolean);\n  parts = parts.filter((p) => !CREDENTIALS.has(trimDots(p.toLowerCase())));\n  if (parts.length === 2) parts = [parts[1], parts[0]];\n  let tokens = parts.join(' ').split(/\\s+/).filter(Boolean);\n  while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);\n  return tokens.map(capToken).join(' ');\n}\nconst letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');\nconst aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();\nconst nameKey = (first, last) => `${first ? aliasFirst(first.split(/\\s+/)[0]) : ''}|${letters(last)}`;\nfunction slugToName(slug) {\n  const base = slug.toLowerCase().replace(/-[0-9a-f]{8}$/, '').replace(/\\d+$/, '');\n  return base.replace(/-/g, ' ').trim();\n}\n\n// ---- LinkedIn ----\nfunction linkedinSlug(raw) {\n  if (isBlank(raw)) return '';\n  const m = String(raw).trim().match(/linkedin\\.com\\/in\\/([^/?#,\\s]+)/i);\n  if (!m) return '';\n  const slug = m[1].toLowerCase();\n  return slug.startsWith('acwa') ? '' : slug;\n}\nfunction linkedinAcwaa(raw) {\n  const m = String(raw || '').match(/\\/in\\/(ACwA[^/?#,\\s]+)|\\/lead\\/(ACwA[^,/?#\\s]+)/);\n  return m ? (m[1] || m[2]).toLowerCase() : '';\n}\nconst linkedinUrl = (slug) => (slug ? `https://www.linkedin.com/in/${slug}` : '');\n\n// ---- email ----\nconst domainOk = (d) => /^[a-z0-9-]+(\\.[a-z0-9-]+)*\\.[a-z]{2,}$/.test(d);\nfunction splitEmails(raw) {\n  if (isBlank(raw)) return [];\n  const text = String(raw).toLowerCase().replace(/mailto:/g, '');\n  return text.split(/[;,\\s]+(?=\\S+@)|;/)\n    .map((p) => p.replace(/\\s+/g, '').replace(/@@/g, '@'))\n    .filter(Boolean);\n}\nfunction classifyEmail(email, knownDomains) {\n  if (PLACEHOLDER_EMAILS.has(email) || email.split('@').length !== 2) return ['invalid', ''];\n  const [local, domain] = email.split('@');\n  if (TEST_EMAIL_DOMAINS.has(domain) || INVALID_EMAIL_DOMAIN_SUFFIXES.some((x) => domain.endsWith(x))) return ['invalid', ''];\n  if (GENERIC_MAILBOXES.has(local)) return ['generic', ''];\n  if (knownDomains.has(domain)) return ['ok', email];\n  const candidates = [domain.replace(/\\.con$/, '.com'), ...[...knownDomains].filter((d) => d.startsWith(`${domain}.`))];\n  for (const cand of candidates) {\n    if (cand !== domain && knownDomains.has(cand)) return ['repaired', `${local}@${cand}`];\n  }\n  return domainOk(domain) ? ['ok', email] : ['invalid', ''];\n}\nconst isPersonalDomain = (email) => PERSONAL_EMAIL_DOMAINS.has(email.split('@').pop());\n\n// ---- phone ----\nconst PHONE_RULES = [\n  ['IN', /^\\+91[6-9]\\d{9}$/, '91', 12], ['US', /^\\+1\\d{10}$/, '1', 11], ['GB', /^\\+447\\d{9}$/, '44', 12],\n  ['AE', /^\\+9715\\d{8}$/, '971', 12], ['SG', /^\\+65[89]\\d{7}$/, '65', 10],\n];\nconst allFake = (d) => new Set(d).size === 1 || ['1234567890', '0123456789', '9876543210'].includes(d);\nconst validE164 = (e) => PHONE_RULES.some((r) => r[1].test(e));\nfunction nationalToE164(digits, iso) {\n  for (const [ruleIso, , prefix, length] of PHONE_RULES) {\n    if (digits.length === length && digits.startsWith(prefix) && ruleIso !== 'US') return `+${digits}`;\n  }\n  if (digits.length === 11 && digits.startsWith('1') && iso === 'US') return `+${digits}`;\n  if (iso === 'IN') {\n    const d = digits.length === 11 && digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 10 ? `+91${d}` : '';\n  }\n  if (iso === 'US') return digits.length === 10 ? `+1${digits}` : '';\n  if (iso === 'SG') return digits.length === 8 ? `+65${digits}` : '';\n  if (iso === 'AE') {\n    const d = digits.startsWith('0') ? digits.slice(1) : digits;\n    return d.length === 9 ? `+971${d}` : '';\n  }\n  return '';\n}\nfunction parseMobile(raw, country) {\n  if (isBlank(raw)) return [null, 'empty'];\n  let text = String(raw).trim().replace(/^'+/, '');\n  if (PLACEHOLDER_PHONES.has(text.toLowerCase())) return [null, 'placeholder'];\n  if (/^\\d\\.\\d+E\\+\\d+$/i.test(text)) return [null, 'scientific-notation (digits lost)'];\n  if (/^\\d+\\.0$/.test(text)) text = text.slice(0, -2);\n  if (/^0\\d{2,4}-\\d{6,8}$/.test(text)) return [null, 'landline (STD code)'];\n  text = text.replace(/\\([^)\\d]*[A-Za-z][^)]*\\)/g, '');\n  const digits = text.replace(/\\D/g, '');\n  if (!digits || allFake(digits.slice(-10))) return [null, 'fake/placeholder number'];\n  let cand;\n  if (text.startsWith('+')) cand = `+${digits}`;\n  else if (digits.startsWith('00')) cand = `+${digits.slice(2)}`;\n  else cand = nationalToE164(digits, COUNTRY_ISO[country] || '');\n  return cand && validE164(cand) ? [cand, 'ok'] : [null, `unrecognised format (${text})`];\n}\nconst phoneFromNotes = (notes) => {\n  const m = String(notes || '').match(/Mob\\s+(\\d{7,12})/);\n  return m ? m[1] : '';\n};\n\n// ---- titles, company, location (port of pipeline/normalize.py) ----\nconst titleCase = (t) => t.replace(/[a-z]+/g, (w) => w[0].toUpperCase() + w.slice(1));\n\nfunction canonicalTitle(raw) {\n  if (isBlank(raw)) return '';\n  const text = stripEmoji(String(raw)).split('|')[0].toLowerCase().replace(/\\./g, '');\n  const tokens = [];\n  for (const tok of text.match(/[a-z]+/g) || []) {\n    if (TITLE_DROP_TOKENS.has(tok)) continue;\n    tokens.push(...(TOKEN_EXPANSIONS[tok] || [tok]));\n  }\n  if (!tokens.length) return '';\n  if (tokens.includes('chief')) {\n    const func = tokens.find((t) => ['executive', 'technology', 'revenue', 'marketing', 'operating', 'financial'].includes(t)) || '';\n    return `Chief ${titleCase(func)} Officer`.replace(/ {2}/g, ' ');\n  }\n  const levels = new Set(['vice', 'president', 'director', 'head', 'manager', 'senior', 'lead']);\n  const func = titleCase(tokens.filter((t) => !levels.has(t)).join(' '));\n  if (tokens.includes('vice')) return `Vice President of ${func}`.trim();\n  if (tokens.includes('director')) return `Director of ${func}`.trim();\n  if (tokens.includes('head')) return `Head of ${func}`.trim();\n  if (tokens.includes('manager')) return `${tokens.includes('senior') ? 'Senior ' : ''}${func} Manager`.replace(/ {2}/g, ' ').trim();\n  if (tokens.includes('lead')) return `${func} Lead`.trim();\n  return titleCase(tokens.join(' '));\n}\n\n// ---- difflib.SequenceMatcher.ratio() (no junk heuristics: strings are short) ----\nfunction matchingBlocks(a, b) {\n  const b2j = new Map();\n  [...b].forEach((ch, j) => { if (!b2j.has(ch)) b2j.set(ch, []); b2j.get(ch).push(j); });\n  const longest = (alo, ahi, blo, bhi) => {\n    let besti = alo; let bestj = blo; let bestsize = 0; let j2len = new Map();\n    for (let i = alo; i < ahi; i += 1) {\n      const newj2len = new Map();\n      for (const j of b2j.get(a[i]) || []) {\n        if (j < blo) continue;\n        if (j >= bhi) break;\n        const k = (j2len.get(j - 1) || 0) + 1;\n        newj2len.set(j, k);\n        if (k > bestsize) { besti = i - k + 1; bestj = j - k + 1; bestsize = k; }\n      }\n      j2len = newj2len;\n    }\n    return [besti, bestj, bestsize];\n  };\n  const queue = [[0, a.length, 0, b.length]];\n  const blocks = [];\n  while (queue.length) {\n    const [alo, ahi, blo, bhi] = queue.pop();\n    const [i, j, k] = longest(alo, ahi, blo, bhi);\n    if (k) {\n      blocks.push(k);\n      if (alo < i && blo < j) queue.push([alo, i, blo, j]);\n      if (i + k < ahi && j + k < bhi) queue.push([i + k, ahi, j + k, bhi]);\n    }\n  }\n  return blocks.reduce((x, y) => x + y, 0);\n}\nconst ratio = (a, b) => (a.length + b.length === 0 ? 1 : (2 * matchingBlocks(a, b)) / (a.length + b.length));\n\nfunction stripLegal(name) {\n  let text = stripEmoji(name).trim().toLowerCase();\n  const suffixes = [...LEGAL_SUFFIXES].sort((x, y) => y.length - x.length);\n  for (let pass = 0; pass < 2; pass += 1) {\n    for (const suffix of suffixes) {\n      if (text.endsWith(` ${suffix}`)) text = text.slice(0, -suffix.length).replace(/^[ ,.]+|[ ,.]+$/g, '');\n    }\n  }\n  return text.replace(/\\s+/g, ' ');\n}\nfunction matchCompany(raw, canonical) {\n  if (isBlank(raw)) return '';\n  const cleaned = stripLegal(String(raw));\n  const byNorm = new Map(canonical.map((c) => [stripLegal(c), c]));\n  if (byNorm.has(cleaned)) return byNorm.get(cleaned);\n  const prefixed = [...byNorm].filter(([n]) => n.startsWith(`${cleaned} `)).map(([, c]) => c);\n  if (prefixed.length === 1) return prefixed[0];\n  const squashed = cleaned.replace(/ /g, '');\n  let best = ''; let score = 0;\n  for (const [norm, canon] of byNorm) {\n    const r = ratio(squashed, norm.replace(/ /g, ''));\n    if (r > score) { best = canon; score = r; }\n  }\n  return score >= 0.86 ? best : '';\n}\nfunction rootDomain(raw) {\n  if (isBlank(raw)) return '';\n  const text = String(raw).trim().toLowerCase().replace(/^[a-z]+:\\/\\//, '');\n  return text.split(/[/?#]/)[0].replace(/^www\\./, '');\n}\nfunction sizeBucket(value) {\n  if (isBlank(value)) return '';\n  const nums = (String(value).match(/\\d[\\d,]*/g) || []).map((n) => parseInt(n.replace(/,/g, ''), 10));\n  if (!nums.length) return '';\n  const count = nums.length === 1 ? nums[0] : Math.floor((nums[0] + nums[1]) / 2);\n  for (const [upper, label] of SIZE_BUCKETS) if (count <= upper) return label;\n  return SIZE_TOP;\n}\nfunction cityCountry(raw) {\n  if (isBlank(raw)) return ['', ''];\n  const low = stripEmoji(String(raw)).toLowerCase();\n  const first = low.split(',')[0].trim();\n  if (CITY_INFO[first]) return CITY_INFO[first];\n  for (const key of CITY_KEYWORDS) if (low.includes(key)) return CITY_INFO[key];\n  return ['', ''];\n}\nconst countryName = (raw) => COUNTRY_ALIASES[String(raw || '').trim().toLowerCase()] || '';\n\n// ---- enrichment + merge into one row per person (port of pipeline/build.py) ----\nconst COLUMNS = ['Company Name', 'Website', 'HQ Location', 'Company Size', 'Contact Person Name', 'First Name',\n  'Last Name', 'Designation/Job Title', 'LinkedIn URL', 'Mobile No.', 'Email ID'];\nconst STRUCTURED = { 'LinkedIn Lead Gen Form': 0, ZoomInfo: 1, Apollo: 2, 'LinkedIn Scraped': 3,\n  'Event Delegate': 4, 'Event Booth Scan': 5, 'Google Ads': 6 };\nconst when = (p) => (p.date === null || p.date === undefined ? -Infinity : p.date);\n\nfunction mostCommon(values) {\n  const counts = new Map();\n  values.forEach((v) => counts.set(v, (counts.get(v) || 0) + 1));\n  let best = ''; let top = 0;\n  for (const [v, c] of counts) if (c > top) { best = v; top = c; }\n  return best;\n}\nfunction cmp(a, b) {\n  if (Array.isArray(a)) {\n    for (let i = 0; i < a.length; i += 1) { const c = cmp(a[i], b[i]); if (c) return c; }\n    return 0;\n  }\n  const x = typeof a === 'boolean' ? Number(a) : a; const y = typeof b === 'boolean' ? Number(b) : b;\n  return x === y ? 0 : (x > y ? 1 : -1);\n}\nfunction argmax(keys, keyFn) {\n  let best; let bestKey;\n  for (const k of keys) {\n    const kk = keyFn(k);\n    if (best === undefined || cmp(kk, bestKey) > 0) { best = k; bestKey = kk; }\n  }\n  return best;\n}\nfunction hqOf(city, country) {\n  const [canonCity, canonCountry] = cityCountry(city);\n  const c = canonCity || city; const k = country || canonCountry;\n  return c && k ? `${c}, ${k}` : '';\n}\n\n// Rule 4: ZoomInfo first, then Apollo, then everything else.\nfunction companyFacts(company, allPreps) {\n  const at = allPreps.filter((p) => p.company_c === company);\n  const facts = { 'Company Name': company, Website: '', 'HQ Location': '', 'Company Size': '' };\n  for (const source of ['ZoomInfo', 'Apollo']) {\n    const rows = at.filter((p) => p.source === source);\n    if (!facts.Website) facts.Website = mostCommon(rows.filter((r) => r.co_website).map((r) => rootDomain(r.co_website)));\n    if (!facts['HQ Location']) {\n      facts['HQ Location'] = hqOf(mostCommon(rows.filter((r) => r.co_city).map((r) => r.co_city)),\n        mostCommon(rows.filter((r) => r.co_country).map((r) => r.co_country)));\n    }\n    if (!facts['Company Size']) facts['Company Size'] = mostCommon(rows.map((r) => sizeBucket(r.co_size_raw)).filter(Boolean));\n  }\n  if (!facts['Company Size']) facts['Company Size'] = mostCommon(at.map((p) => sizeBucket(p.co_size_raw)).filter(Boolean));\n  if (!facts['HQ Location']) {\n    facts['HQ Location'] = mostCommon(at.filter((p) => cityCountry(p.co_loc_raw)[0]).map((p) => hqOf(...cityCountry(p.co_loc_raw))));\n  }\n  return facts;\n}\n\n// Rule 3: most recent dated source wins for employer, then title at that employer.\nfunction currentJob(cluster) {\n  const dated = cluster.filter((p) => p.company_c).sort((a, b) => when(b) - when(a) || 0);\n  const company = dated[0].company_c;\n  const titled = dated.filter((p) => p.company_c === company && p.title_c);\n  return [company, titled.length ? titled[0].title_c : ''];\n}\nfunction pickName(cluster) {\n  const slugs = [...new Set(cluster.map((p) => p.slug).filter(Boolean))];\n  let cands = cluster.filter((p) => p.full).map((p) => [p.full, STRUCTURED[p.source]]);\n  if (slugs.length) {\n    const target = letters(slugToName(slugs[0]));\n    const matched = cands.filter((c) => letters(c[0]) === target);\n    if (matched.length) cands = matched;\n  }\n  const counts = new Map();\n  cands.forEach(([n]) => counts.set(n, (counts.get(n) || 0) + 1));\n  const best = argmax([...counts.keys()], (n) => [counts.get(n), -Math.min(...cands.filter((c) => c[0] === n).map((c) => c[1]))]);\n  for (const p of cluster) {\n    if (p.first && p.last && letters(p.first + p.last) === letters(best)) return [best, p.first, p.last];\n  }\n  const idx = best.indexOf(' ');\n  return idx < 0 ? [best, best, ''] : [best, best.slice(0, idx), best.slice(idx + 1)];\n}\nfunction pickEmail(cluster, domain) {\n  const flags = []; const score = new Map();\n  for (const p of cluster) {\n    for (const [email, status] of p.emails_v) {\n      const rank = [email.split('@')[1] === domain, !isPersonalDomain(email)];\n      const old = score.get(email) || [rank, 0, -Infinity, status];\n      const merged = old[3] === 'ok' || status === 'ok' ? 'ok' : 'repaired';\n      score.set(email, [rank, old[1] + 1, Math.max(old[2], when(p)), merged]);\n    }\n  }\n  if (!score.size) return ['', ['no valid email in any source']];\n  const best = argmax([...score.keys()], (e) => score.get(e).slice(0, 3));\n  const [rank, , , status] = score.get(best);\n  if (status === 'repaired') flags.push(`email typo repaired to ${best} (domain confirmed from ZoomInfo/Apollo)`);\n  if (!rank[1]) flags.push('personal email used: no work email in any source');\n  else if (!rank[0]) flags.push(\"work email is on a previous employer's domain: no current-employer email found\");\n  return [best, flags];\n}\nfunction pickMobile(cluster) {\n  const seen = new Map(); const flags = []; const usable = new Map();\n  for (const p of cluster) {\n    for (const [number, kind] of p.phones_v) {\n      if (!seen.has(number)) seen.set(number, []);\n      seen.get(number).push(kind);\n    }\n  }\n  for (const [number, kinds] of seen) {\n    if (kinds.every((k) => k === 'apollo_direct')) {\n      flags.push(`${number} only in Apollo 'Work Direct Phone' (uncorroborated): excluded as a direct line`);\n      continue;\n    }\n    usable.set(number, [kinds.includes('mobile'), kinds.length]);\n  }\n  if (!usable.size) return ['', flags.length ? flags : ['no mobile number in any source']];\n  return [argmax([...usable.keys()], (n) => usable.get(n)), flags];\n}\nfunction buildPerson(cluster, allPreps) {\n  const [company, title] = currentJob(cluster);\n  const facts = companyFacts(company, allPreps);\n  const [name, first, last] = pickName(cluster);\n  const slugs = [...new Set(cluster.map((p) => p.slug).filter(Boolean))].sort();\n  const [email, flags] = pickEmail(cluster, facts.Website);\n  const [mobile, mflags] = pickMobile(cluster);\n  const companies = [...new Set(cluster.map((p) => p.company_c).filter(Boolean))].sort();\n  if (companies.length > 1) flags.push(`employer changed across sources: latest dated source used (${companies.join(' / ')})`);\n  if (!slugs.length) flags.push('no public LinkedIn slug in any source (Sales Navigator / ACwAA ids only)');\n  const row = { ...facts, 'Contact Person Name': name, 'First Name': first, 'Last Name': last,\n    'Designation/Job Title': title, 'LinkedIn URL': slugs.length ? linkedinUrl(slugs[0]) : '',\n    'Mobile No.': mobile, 'Email ID': email };\n  return { row, flags: [...flags, ...mflags], refs: cluster.map((p) => `${p.source}: ${p.ref}`) };\n}\n\n// STEP 5 - Enrich gaps from other sources and merge each group into ONE row.\n// Employer/title: latest dated source. Company facts: ZoomInfo > Apollo > rest. Email: current-domain work email first.\n// Mobile only (no board/direct lines). Anything no source has stays blank.\nconst groups = $input.all().map((it) => it.json).filter((j) => j.type === 'person').map((j) => j.members);\nconst allPreps = groups.flat();\nconst people = groups\n  .filter((g) => g.some((p) => p.company_c)) // a person with no company in ANY source is dropped\n  .map((g) => buildPerson(g, allPreps))\n  .sort((a, b) => cmp([a.row['Company Name'], a.row['Last Name'], a.row['First Name']],\n    [b.row['Company Name'], b.row['Last Name'], b.row['First Name']]));\nreturn people.map((p) => ({ json: { ...p.row, _flags: p.flags, _merged_from: p.refs } }));\n"
+      },
+      "id": "cm-70a18f97",
+      "name": "5 Enrich & Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ---- enrichment + merge into one row per person (port of pipeline/build.py) ----\nconst COLUMNS = ['Company Name', 'Website', 'HQ Location', 'Company Size', 'Contact Person Name', 'First Name',\n  'Last Name', 'Designation/Job Title', 'LinkedIn URL', 'Mobile No.', 'Email ID'];\nconst STRUCTURED = { 'LinkedIn Lead Gen Form': 0, ZoomInfo: 1, Apollo: 2, 'LinkedIn Scraped': 3,\n  'Event Delegate': 4, 'Event Booth Scan': 5, 'Google Ads': 6 };\nconst when = (p) => (p.date === null || p.date === undefined ? -Infinity : p.date);\n\nfunction mostCommon(values) {\n  const counts = new Map();\n  values.forEach((v) => counts.set(v, (counts.get(v) || 0) + 1));\n  let best = ''; let top = 0;\n  for (const [v, c] of counts) if (c > top) { best = v; top = c; }\n  return best;\n}\nfunction cmp(a, b) {\n  if (Array.isArray(a)) {\n    for (let i = 0; i < a.length; i += 1) { const c = cmp(a[i], b[i]); if (c) return c; }\n    return 0;\n  }\n  const x = typeof a === 'boolean' ? Number(a) : a; const y = typeof b === 'boolean' ? Number(b) : b;\n  return x === y ? 0 : (x > y ? 1 : -1);\n}\nfunction argmax(keys, keyFn) {\n  let best; let bestKey;\n  for (const k of keys) {\n    const kk = keyFn(k);\n    if (best === undefined || cmp(kk, bestKey) > 0) { best = k; bestKey = kk; }\n  }\n  return best;\n}\nfunction hqOf(city, country) {\n  const [canonCity, canonCountry] = cityCountry(city);\n  const c = canonCity || city; const k = country || canonCountry;\n  return c && k ? `${c}, ${k}` : '';\n}\n\n// Rule 4: ZoomInfo first, then Apollo, then everything else.\nfunction companyFacts(company, allPreps) {\n  const at = allPreps.filter((p) => p.company_c === company);\n  const facts = { 'Company Name': company, Website: '', 'HQ Location': '', 'Company Size': '' };\n  for (const source of ['ZoomInfo', 'Apollo']) {\n    const rows = at.filter((p) => p.source === source);\n    if (!facts.Website) facts.Website = mostCommon(rows.filter((r) => r.co_website).map((r) => rootDomain(r.co_website)));\n    if (!facts['HQ Location']) {\n      facts['HQ Location'] = hqOf(mostCommon(rows.filter((r) => r.co_city).map((r) => r.co_city)),\n        mostCommon(rows.filter((r) => r.co_country).map((r) => r.co_country)));\n    }\n    if (!facts['Company Size']) facts['Company Size'] = mostCommon(rows.map((r) => sizeBucket(r.co_size_raw)).filter(Boolean));\n  }\n  if (!facts['Company Size']) facts['Company Size'] = mostCommon(at.map((p) => sizeBucket(p.co_size_raw)).filter(Boolean));\n  if (!facts['HQ Location']) {\n    facts['HQ Location'] = mostCommon(at.filter((p) => cityCountry(p.co_loc_raw)[0]).map((p) => hqOf(...cityCountry(p.co_loc_raw))));\n  }\n  return facts;\n}\n\n// Rule 3: most recent dated source wins for employer, then title at that employer.\nfunction currentJob(cluster) {\n  const dated = cluster.filter((p) => p.company_c).sort((a, b) => when(b) - when(a) || 0);\n  const company = dated[0].company_c;\n  const titled = dated.filter((p) => p.company_c === company && p.title_c);\n  return [company, titled.length ? titled[0].title_c : ''];\n}\nfunction pickName(cluster) {\n  const slugs = [...new Set(cluster.map((p) => p.slug).filter(Boolean))];\n  let cands = cluster.filter((p) => p.full).map((p) => [p.full, STRUCTURED[p.source]]);\n  if (slugs.length) {\n    const target = letters(slugToName(slugs[0]));\n    const matched = cands.filter((c) => letters(c[0]) === target);\n    if (matched.length) cands = matched;\n  }\n  const counts = new Map();\n  cands.forEach(([n]) => counts.set(n, (counts.get(n) || 0) + 1));\n  const best = argmax([...counts.keys()], (n) => [counts.get(n), -Math.min(...cands.filter((c) => c[0] === n).map((c) => c[1]))]);\n  for (const p of cluster) {\n    if (p.first && p.last && letters(p.first + p.last) === letters(best)) return [best, p.first, p.last];\n  }\n  const idx = best.indexOf(' ');\n  return idx < 0 ? [best, best, ''] : [best, best.slice(0, idx), best.slice(idx + 1)];\n}\nfunction pickEmail(cluster, domain) {\n  const flags = []; const score = new Map();\n  for (const p of cluster) {\n    for (const [email, status] of p.emails_v) {\n      const rank = [email.split('@')[1] === domain, !isPersonalDomain(email)];\n      const old = score.get(email) || [rank, 0, -Infinity, status];\n      const merged = old[3] === 'ok' || status === 'ok' ? 'ok' : 'repaired';\n      score.set(email, [rank, old[1] + 1, Math.max(old[2], when(p)), merged]);\n    }\n  }\n  if (!score.size) return ['', ['no valid email in any source']];\n  const best = argmax([...score.keys()], (e) => score.get(e).slice(0, 3));\n  const [rank, , , status] = score.get(best);\n  if (status === 'repaired') flags.push(`email typo repaired to ${best} (domain confirmed from ZoomInfo/Apollo)`);\n  if (!rank[1]) flags.push('personal email used: no work email in any source');\n  else if (!rank[0]) flags.push(\"work email is on a previous employer's domain: no current-employer email found\");\n  return [best, flags];\n}\nfunction pickMobile(cluster) {\n  const seen = new Map(); const flags = []; const usable = new Map();\n  for (const p of cluster) {\n    for (const [number, kind] of p.phones_v) {\n      if (!seen.has(number)) seen.set(number, []);\n      seen.get(number).push(kind);\n    }\n  }\n  for (const [number, kinds] of seen) {\n    if (kinds.every((k) => k === 'apollo_direct')) {\n      flags.push(`${number} only in Apollo 'Work Direct Phone' (uncorroborated): excluded as a direct line`);\n      continue;\n    }\n    usable.set(number, [kinds.includes('mobile'), kinds.length]);\n  }\n  if (!usable.size) return ['', flags.length ? flags : ['no mobile number in any source']];\n  return [argmax([...usable.keys()], (n) => usable.get(n)), flags];\n}\nfunction buildPerson(cluster, allPreps) {\n  const [company, title] = currentJob(cluster);\n  const facts = companyFacts(company, allPreps);\n  const [name, first, last] = pickName(cluster);\n  const slugs = [...new Set(cluster.map((p) => p.slug).filter(Boolean))].sort();\n  const [email, flags] = pickEmail(cluster, facts.Website);\n  const [mobile, mflags] = pickMobile(cluster);\n  const companies = [...new Set(cluster.map((p) => p.company_c).filter(Boolean))].sort();\n  if (companies.length > 1) flags.push(`employer changed across sources: latest dated source used (${companies.join(' / ')})`);\n  if (!slugs.length) flags.push('no public LinkedIn slug in any source (Sales Navigator / ACwAA ids only)');\n  const row = { ...facts, 'Contact Person Name': name, 'First Name': first, 'Last Name': last,\n    'Designation/Job Title': title, 'LinkedIn URL': slugs.length ? linkedinUrl(slugs[0]) : '',\n    'Mobile No.': mobile, 'Email ID': email };\n  return { row, flags: [...flags, ...mflags], refs: cluster.map((p) => `${p.source}: ${p.ref}`) };\n}\n\n// STEP 6 - Final Output: exactly the 11 template columns, in template order (audit fields stay on the previous node).\nreturn $input.all().map(({ json }) => ({ json: Object.fromEntries(COLUMNS.map((c) => [c, json[c] ?? ''])) }));\n"
+      },
+      "id": "cm-a5637afa",
+      "name": "6 Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "kept-check",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "kept",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cm-5b0ff20e",
+      "name": "Kept or removed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1400,
+        450
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "cm-68645b85",
+      "name": "Removed Records (log)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        750
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "cm-0037f0bb",
+      "name": "Audit: Merge Log & Review Flags",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "fileName": "Final_Contact_List.xlsx",
+          "sheetName": "Final Output"
+        }
+      },
+      "id": "cm-268e2a0f",
+      "name": "Convert to Final_Contact_List.xlsx",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        3080,
+        450
+      ]
+    }
+  ],
+  "connections": {
+    "Contact Merge Form": {
+      "main": [
+        [
+          {
+            "node": "Extract Google Ads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Event Delegates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Event Scans",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract LinkedIn Form",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Scraped LinkedIn",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Apollo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract ZoomInfo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Google Ads": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Event Delegates": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract Event Scans": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Extract LinkedIn Form": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Extract Scraped LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Extract Apollo": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Extract ZoomInfo": {
+      "main": [
+        [
+          {
+            "node": "Wait for all 7 sheets",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Wait for all 7 sheets": {
+      "main": [
+        [
+          {
+            "node": "1 Map Columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1 Map Columns": {
+      "main": [
+        [
+          {
+            "node": "2 Clean & Remove Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 Clean & Remove Invalid": {
+      "main": [
+        [
+          {
+            "node": "Kept or removed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kept or removed?": {
+      "main": [
+        [
+          {
+            "node": "3 Standardize (Rules tab)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Removed Records (log)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3 Standardize (Rules tab)": {
+      "main": [
+        [
+          {
+            "node": "4 Remove Duplicates (group same person)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 Remove Duplicates (group same person)": {
+      "main": [
+        [
+          {
+            "node": "5 Enrich & Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5 Enrich & Merge": {
+      "main": [
+        [
+          {
+            "node": "6 Final Output",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit: Merge Log & Review Flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6 Final Output": {
+      "main": [
+        [
+          {
+            "node": "Convert to Final_Contact_List.xlsx",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

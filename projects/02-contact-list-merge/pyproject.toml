@@ -1,0 +1,21 @@
+[project]
+name = "contact-list-merge"
+version = "1.0.0"
+description = "Reference implementation of the Contact List Merge (clean, standardize, de-duplicate, enrich)."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["pipeline/tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"pipeline/run.py" = ["E501"]  # COLUMN_MAP is a wide documentation table
+"scripts/make_sample_data.py" = ["E501"]  # rows of sample data are intentionally one line each
