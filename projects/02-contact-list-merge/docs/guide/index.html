@@ -120,9 +120,9 @@ figcaption b { color: var(--ink); font-weight: 600; }
 
 pre { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; margin: 18px 0; }
 pre .c { color: #7F90AB; }
-.steps-list { list-style: none; padding: 0; margin: 18px 0; display: grid; gap: 10px; counter-reset: s; }
-.steps-list li { counter-increment: s; display: grid; grid-template-columns: 2rem 1fr; gap: 12px; align-items: start; }
-.steps-list li::before { content: counter(s); font-family: var(--font-mono); font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; text-align: center; padding: 2px 0; }
+.steps-list { list-style: none; padding: 0; margin: 18px 0; display: grid; gap: 14px; counter-reset: s; }
+.steps-list li { counter-increment: s; position: relative; padding-left: 3rem; min-height: 2rem; line-height: 1.6; overflow-wrap: anywhere; }
+.steps-list li::before { content: counter(s); position: absolute; left: 0; top: 0.1rem; width: 2rem; height: 2rem; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; font-size: 0.9rem; color: var(--accent); background: var(--accent-soft); border-radius: 6px; }
 footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
 </style>
 
