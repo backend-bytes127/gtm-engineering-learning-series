@@ -13,7 +13,7 @@ Six messy lead exports in, one clean, de-duplicated contact list out. Implemente
 
 ![The merge flow after a successful run, with item counts on every connection (run on the instructor dataset)](docs/guide/assets/04-flow2-zoom-item-counts.png)
 
-> A visual walkthrough with screenshots is in [`docs/guide/`](docs/guide/) (`make guide`, then open `docs/guide/index.html`).
+> **Walk through it step by step:** [`notebooks/walkthrough.ipynb`](notebooks/walkthrough.ipynb) runs every stage on the sample data with charts and explanations (GitHub renders it, outputs included). A screenshot-based build guide is in [`docs/guide/`](docs/guide/).
 
 ## The task
 
@@ -116,6 +116,7 @@ projects/02-contact-list-merge/
 ├── sample-data/               small SYNTHETIC sample + README on how the data looks in Excel
 ├── expected-output/           golden Final_Contact_List.xlsx and Cleaning_Audit.xlsx
 ├── scripts/                   parity_check.py, e2e.py, read_run.js
+├── notebooks/                 step-by-step walkthrough notebook (executed, with charts)
 ├── scripts/make_sample_data.py  regenerates the synthetic sample
 └── docs/                      algorithms, data-quality catalogue, rules traceability, visual guide
 ```

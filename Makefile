@@ -4,7 +4,7 @@ P1 := projects/01-linkedin-icp-scraper
 PY ?= python3
 
 .DEFAULT_GOAL := help
-.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide
+.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide notebook notebook-test
 
 help:  ## show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-16s\033[0m %s\n",$$1,$$2}'
@@ -47,6 +47,12 @@ logs:  ## follow n8n logs
 
 e2e:  ## import + run Contact List Merge in the n8n container, compare to golden
 	cd $(P2) && $(PY) scripts/e2e.py --port $${N8N_HOST_PORT:-5678}
+
+notebook:  ## build, run and tidy the walkthrough notebook + HTML export (needs requirements-notebook.txt)
+	cd $(P2)/notebooks && $(PY) make_walkthrough.py && $(PY) -m jupyter nbconvert --to notebook --execute --inplace walkthrough.ipynb && $(PY) finalize_notebook.py && $(PY) -m jupyter nbconvert --to html walkthrough.ipynb
+
+notebook-test:  ## run the notebook as a test: fails if any cell errors
+	cd $(P2) && $(PY) -m pytest --nbmake notebooks/walkthrough.ipynb
 
 guide:  ## rebuild the HTML guide for Project 02
 	cd $(P2)/docs/guide && $(PY) build_guide.py

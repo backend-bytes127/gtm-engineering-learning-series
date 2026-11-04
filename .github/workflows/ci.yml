@@ -63,3 +63,17 @@ jobs:
       - name: Workflow JSON files are valid
         run: |
           for f in projects/*/workflow/*.json; do python -m json.tool "$f" > /dev/null && echo "ok $f"; done
+
+  notebook:
+    name: Walkthrough notebook runs end to end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: pip install -r projects/02-contact-list-merge/requirements.txt -r projects/02-contact-list-merge/requirements-notebook.txt
+      - name: Execute every cell (includes the JS/Python parity cell)
+        working-directory: projects/02-contact-list-merge
+        run: python -m pytest --nbmake notebooks/walkthrough.ipynb

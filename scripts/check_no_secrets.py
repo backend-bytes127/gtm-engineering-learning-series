@@ -39,7 +39,7 @@ SECRET_PATTERNS = {
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache", "output"}
 SKIP_PARTS = ("sample-data", "expected-output")  # fictional data; Office files are not text-scanned anyway
 TEXT_SUFFIXES = {".py", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".toml", ".txt", ".html", ".csv", ".sh",
-                 ".cfg", ".ini", ".example", ""}
+                 ".cfg", ".ini", ".example", ".ipynb", ""}
 
 
 def identity_tokens() -> list[str]:
@@ -80,6 +80,9 @@ def main() -> int:
             text = path.read_text(errors="ignore")
         except OSError:
             continue
+        # embedded base64 images (notebook outputs, HTML data URIs) are random text, never secrets
+        text = re.sub(r'"image/png": "[^"]*"', '"image/png": ""', text)
+        text = re.sub(r"data:image/[a-z+]+;base64,[A-Za-z0-9+/=]+", "data:image;base64,", text)
         for _tok, rx in identity:
             for m in rx.finditer(text):
                 findings.append(f"{rel}:{text.count(chr(10), 0, m.start()) + 1}: personal identity (git/OS user) in text")
