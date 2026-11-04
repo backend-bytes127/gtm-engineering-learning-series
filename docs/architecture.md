@@ -4,18 +4,9 @@ This document describes the platform every project in the series runs on, and th
 
 ## 1. Runtime
 
-```mermaid
-flowchart TB
-    U[User / browser] -->|form upload, manual run| N
-    subgraph Docker["Docker (infra/docker-compose.yml)"]
-      N["n8n 2.32.6<br/>task runner for Code nodes<br/>SQLite: workflows, executions, credentials"]
-      V[("volume: n8n_data")]
-      N --- V
-    end
-    N -->|HTTPS| A[Apify actors]
-    N -->|OAuth2| G[Google Sheets API]
-    N --> X[xlsx download<br/>from execution binary data]
-```
+![Runtime: sources, n8n in Docker, outputs](diagrams/platform-overview.png)
+
+*Editable source: [`platform-overview.excalidraw`](diagrams/platform-overview.excalidraw) (open in excalidraw.com).*
 
 | Component | Choice | Reason |
 |---|---|---|
@@ -34,20 +25,9 @@ flowchart TB
 
 ## 2. Data flow (Project 02 as the reference example)
 
-```mermaid
-flowchart LR
-    F[Form: 6 xlsx uploads] --> E[Extract From File x7]
-    E --> M[Merge: wait for all]
-    M --> S1[1 Map columns]
-    S1 --> S2[2 Clean + remove invalid]
-    S2 -->|kept| S3[3 Standardize]
-    S2 -->|removed| R[(Removed log)]
-    S3 --> S4[4 Group same person]
-    S4 --> S5[5 Enrich + merge]
-    S5 --> S6[6 Final output]
-    S5 --> A[(Audit: provenance + flags)]
-    S6 --> X[Convert to xlsx]
-```
+![Contact List Merge data flow with real before/after values](diagrams/contact-merge-flow.png)
+
+*Editable source: [`contact-merge-flow.excalidraw`](diagrams/contact-merge-flow.excalidraw) (open in excalidraw.com).*
 
 Design principles visible here:
 
@@ -57,13 +37,9 @@ Design principles visible here:
 
 ## 3. Build pipeline: source of truth is not the workflow JSON
 
-```mermaid
-flowchart LR
-    SRC["n8n/src/*.js<br/>shared modules + one file per step"] --> B[build_workflow.py]
-    B --> J["workflow/*.workflow.json<br/>(generated, committed)"]
-    J --> I[n8n import:workflow]
-    J --> H["harness.mjs<br/>runs the node code in plain Node"]
-```
+![Build pipeline and the five test gates](diagrams/build-and-test-pipeline.png)
+
+*Editable source: [`build-and-test-pipeline.excalidraw`](diagrams/build-and-test-pipeline.excalidraw) (open in excalidraw.com).*
 
 `build_workflow.py` concatenates, for each Code node, the shared modules it needs followed by that step's file, and assembles nodes and connections. Node ids are derived from a stable hash of the node name so rebuilds are byte-for-byte reproducible (Python's built-in `hash()` is salted per process and would churn the diff). CI rebuilds the JSON and fails if it differs from what is committed.
 

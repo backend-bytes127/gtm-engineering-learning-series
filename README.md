@@ -17,21 +17,9 @@ More projects will be added as the series continues; see the [roadmap](#roadmap)
 
 ## How the pieces fit
 
-```mermaid
-flowchart LR
-    subgraph Sources
-      A[Spreadsheet exports<br/>ads, events, enrichment vendors]
-      B[Scraping APIs<br/>Apify]
-    end
-    subgraph n8n["n8n (Docker, pinned version)"]
-      F[Form / manual trigger] --> X[Extract + Code nodes<br/>generated from src/]
-      X --> O[Convert to file / Sheets]
-    end
-    A --> F
-    B --> X
-    O --> R[Clean contact list<br/>+ audit trail]
-    P[Python reference build<br/>+ golden files] -. parity check .-> X
-```
+![How the pieces fit: sources, n8n in Docker, outputs, and the Python reference checked against it](docs/diagrams/platform-overview.png)
+
+*Editable source: [`platform-overview.excalidraw`](docs/diagrams/platform-overview.excalidraw) (open in excalidraw.com).*
 
 Two ideas run through the whole repo:
 

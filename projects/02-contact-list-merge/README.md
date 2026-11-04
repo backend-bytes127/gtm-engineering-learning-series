@@ -27,21 +27,9 @@ The Rules tab defines both the format of each field (E.164 phones, spelled-out t
 
 *The human and automated steps, and the validity fork, as a process map. The diagram below shows the n8n node wiring.*
 
-```mermaid
-flowchart LR
-    F["Contact Merge Form<br/>6 xlsx uploads"] --> E["Extract From File x7"]
-    E --> W[Wait for all 7 sheets]
-    W --> S1["1 Map Columns"]
-    S1 --> S2["2 Clean &<br/>Remove Invalid"]
-    S2 --> K{Kept?}
-    K -->|no| R[(Removed Records log)]
-    K -->|yes| S3["3 Standardize<br/>(Rules tab)"]
-    S3 --> S4["4 Remove Duplicates<br/>(group same person)"]
-    S4 -->|people + link decisions| S5["5 Enrich & Merge"]
-    S5 --> S6["6 Final Output"]
-    S5 --> AU[(Audit: provenance + flags)]
-    S6 --> X["Convert to<br/>Final_Contact_List.xlsx"]
-```
+![Contact List Merge data flow: six sources, five stages, a validity fork, evidence at every stage, and the parity check](../../docs/diagrams/contact-merge-flow.png)
+
+*Editable source: [`contact-merge-flow.excalidraw`](../../docs/diagrams/contact-merge-flow.excalidraw) (open in excalidraw.com).*
 
 | Step | Node | Responsibility |
 |---|---|---|

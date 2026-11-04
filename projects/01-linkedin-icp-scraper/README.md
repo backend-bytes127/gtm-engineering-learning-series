@@ -58,16 +58,7 @@ Because headcount/industry cannot be applied server-side, the ICP is enforced th
 
 ## 4. Workflow design
 
-```mermaid
-flowchart LR
-    M[Manual trigger] --> I["Inputs (Keyword Matrix)<br/>15 rows"]
-    F["ICP Form"] --> N[Normalize Form Input]
-    I --> B[Build Apify Input]
-    N --> B
-    B --> A["Apify: LinkedIn Profile Search<br/>HTTP POST, 1 at a time, 2s gap"]
-    A --> X[Flatten Raw Data]
-    X --> S[(Google Sheet<br/>Raw LinkedIn Data)]
-```
+*The flow is shown in the process map at the top of this page. The table below specifies each node.*
 
 Two entry points converge on the same contract (an item per search): the manual trigger uses the stored matrix, the form builds the same shape from free text.
 
