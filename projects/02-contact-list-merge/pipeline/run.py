@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 import openpyxl
@@ -10,7 +11,7 @@ from openpyxl.styles import Font
 
 from .build import COLUMNS, build_all
 from .cluster import build_clusters, prepare
-from .loaders import load_all
+from .loaders import Removed, load_all
 
 LOG = logging.getLogger("session3")
 ROOT = Path(__file__).resolve().parent.parent
@@ -45,38 +46,61 @@ def _sheet(wb: openpyxl.Workbook, title: str, head: tuple, rows: list[tuple]) ->
         ws.column_dimensions[col[0].column_letter].width = min(60, max(12, max(len(str(c.value or "")) for c in col) + 2))
 
 
-def main() -> None:
-    OUT.mkdir(exist_ok=True)
-    recs, removed = load_all(DATA)
+@dataclass(frozen=True)
+class Consolidated:
+    """Everything one run produces, as plain data (nothing is written to disk)."""
+
+    source_rows: int
+    people: tuple
+    removed: tuple
+    links: tuple
+
+
+def consolidate(data: Path) -> Consolidated:
+    """Load the six source files in `data`, clean, standardize, de-duplicate and merge them."""
+    recs, removed = load_all(data)
+    removed = list(removed)
     preps = prepare(recs)
     clusters, links = build_clusters(preps)
     people, dropped = build_all(clusters, preps)
     for cluster in dropped:
-        removed.append(type(removed[0])(cluster[0].rec.source, cluster[0].rec.ref, cluster[0].rec.full, "",
-                                        "no company in any source"))
+        first = cluster[0].rec
+        removed.append(Removed(first.source, first.ref, first.full, "", "no company in any source"))
+    return Consolidated(len(recs) + len(removed),tuple(people), tuple(removed), tuple(links))
 
-    wb = openpyxl.load_workbook(DATA / "00_Final_Output_Template_and_Rules.xlsx")
+
+def write_final(people, template: Path, target: Path) -> None:
+    wb = openpyxl.load_workbook(template)
     ws = wb["Final Output"]
     for p in people:
         ws.append([p.row[c] for c in COLUMNS])
     for col, width in zip("ABCDEFGHIJK", (28, 28, 26, 14, 24, 14, 16, 34, 52, 16, 42), strict=False):
         ws.column_dimensions[col].width = width
-    wb.save(OUT / "Final_Contact_List.xlsx")
+    wb.save(target)
 
+
+def write_audit(result: Consolidated, target: Path) -> None:
     audit = openpyxl.Workbook()
     audit.remove(audit.worksheets[0])
     _sheet(audit, "Column Mapping", MAP_HEAD, list(COLUMN_MAP))
     _sheet(audit, "Removed Records", ("Source", "Row", "Name", "Company", "Reason"),
-           [(r.source, r.ref, r.name, r.company, r.reason) for r in removed])
+           [(r.source, r.ref, r.name, r.company, r.reason) for r in result.removed])
     _sheet(audit, "Merge Log", ("Contact", "Company", "Records merged", "Source records"),
-           [(p.row["Contact Person Name"], p.row["Company Name"], len(p.refs), "; ".join(p.refs)) for p in people])
+           [(p.row["Contact Person Name"], p.row["Company Name"], len(p.refs), "; ".join(p.refs)) for p in result.people])
     _sheet(audit, "Link Decisions", ("Link type", "Record A", "Record B", "Detail"),
-           [(link.kind, link.a, link.b, link.note) for link in links])
+           [(link.kind, link.a, link.b, link.note) for link in result.links])
     _sheet(audit, "Review Flags", ("Contact", "Company", "Flag"),
-           [(p.row["Contact Person Name"], p.row["Company Name"], f) for p in people for f in p.flags])
-    audit.save(OUT / "Cleaning_Audit.xlsx")
-    LOG.info("%d source rows -> %d removed -> %d people", len(recs) + len(removed), len(removed), len(people))
-    print(f"{len(recs) + len(removed)} source rows | {len(removed)} removed | {len(people)} final contacts")
+           [(p.row["Contact Person Name"], p.row["Company Name"], f) for p in result.people for f in p.flags])
+    audit.save(target)
+
+
+def main() -> None:
+    OUT.mkdir(exist_ok=True)
+    result = consolidate(DATA)
+    write_final(result.people, DATA / "00_Final_Output_Template_and_Rules.xlsx", OUT / "Final_Contact_List.xlsx")
+    write_audit(result, OUT / "Cleaning_Audit.xlsx")
+    LOG.info("%d source rows -> %d removed -> %d people", result.source_rows, len(result.removed), len(result.people))
+    print(f"{result.source_rows} source rows | {len(result.removed)} removed | {len(result.people)} final contacts")
 
 
 if __name__ == "__main__":
