@@ -32,6 +32,21 @@ jobs:
         working-directory: projects/02-contact-list-merge
         run: python -m pytest --cov=pipeline --cov-report=term-missing --cov-fail-under=90
 
+  sequencer:
+    name: Outreach Sequencer tests (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -r projects/03-outreach-sequencer/requirements.txt pytest-cov
+      - name: Unit, integration and golden-file tests (coverage gate 90%)
+        working-directory: projects/03-outreach-sequencer
+        run: python -m pytest --cov=sequencer --cov-report=term-missing --cov-fail-under=90
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

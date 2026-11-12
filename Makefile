@@ -1,10 +1,11 @@
 # GTM Engineering Learning Series: common tasks. `make help` lists them.
 P2 := projects/02-contact-list-merge
 P1 := projects/01-linkedin-icp-scraper
+P3 := projects/03-outreach-sequencer
 PY ?= python3
 
 .DEFAULT_GOAL := help
-.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide notebook notebook-test
+.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide notebook notebook-test sequencer-demo sequencer-app
 
 help:  ## show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-16s\033[0m %s\n",$$1,$$2}'
@@ -12,11 +13,12 @@ help:  ## show this help
 install:  ## install Python test dependencies
 	$(PY) -m pip install -r $(P2)/requirements.txt ruff pytest-cov
 
-test:  ## unit + integration + golden-file tests (Python reference build)
+test:  ## unit + integration + golden-file tests (projects 02 and 03)
 	cd $(P2) && $(PY) -m pytest --cov=pipeline --cov-report=term-missing --cov-fail-under=90
+	cd $(P3) && $(PY) -m pytest --cov=sequencer --cov-report=term-missing --cov-fail-under=90
 
 lint:  ## ruff
-	ruff check $(P1)/scripts $(P2)
+	ruff check $(P1)/scripts $(P2) $(P3)
 
 parity:  ## n8n JavaScript nodes must reproduce the Python golden output exactly
 	cd $(P2) && $(PY) scripts/parity_check.py
@@ -53,6 +55,12 @@ notebook:  ## build, run and tidy the walkthrough notebook + HTML export (needs 
 
 notebook-test:  ## run the notebook as a test: fails if any cell errors
 	cd $(P2) && $(PY) -m pytest --nbmake notebooks/walkthrough.ipynb
+
+sequencer-demo:  ## project 03: run the whole pipeline on the sample data (simulated sending) -> output/
+	cd $(P3) && $(PY) -m sequencer demo
+
+sequencer-app:  ## project 03: open the web app on http://127.0.0.1:8765
+	cd $(P3) && $(PY) -m sequencer serve
 
 guide:  ## rebuild the HTML guide for Project 02
 	cd $(P2)/docs/guide && $(PY) build_guide.py

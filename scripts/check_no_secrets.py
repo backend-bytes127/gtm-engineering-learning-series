@@ -36,7 +36,7 @@ SECRET_PATTERNS = {
     "Google spreadsheet/drive id": re.compile(r"(?<![A-Za-z0-9_-])1[A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])"),
     "Absolute home path": re.compile(r"/Users/[A-Za-z0-9._-]+/"),
 }
-SKIP_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache", "output"}
+SKIP_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache", "output", ".venv", "venv"}
 SKIP_PARTS = ("sample-data", "expected-output")  # fictional data; Office files are not text-scanned anyway
 TEXT_SUFFIXES = {".py", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".toml", ".txt", ".html", ".csv", ".sh",
                  ".cfg", ".ini", ".example", ".ipynb", ""}
@@ -49,11 +49,14 @@ def identity_tokens() -> list[str]:
     so this check is a local guard; the pattern checks above are what CI enforces.)
     """
     if os.environ.get("CI"):  # CI runners have a generic user ("runner"); there is no personal identity to leak
-        return []
+        return []  # (.private-terms is git-ignored, so it does not exist on CI either)
     tokens = [os.environ.get("USER", ""), Path.home().name]
     for key in ("user.email", "user.name"):
         done = subprocess.run(["git", "config", "--global", key], capture_output=True, text=True)
         tokens.append(done.stdout.strip())
+    private = ROOT / ".private-terms"  # optional, git-ignored: one word or phrase per line (names, street, employers)
+    if private.is_file():
+        tokens += [ln.strip() for ln in private.read_text(encoding="utf-8").splitlines() if ln.strip() and not ln.startswith("#")]
     return sorted({t for t in tokens if len(t) >= 4}, key=str.lower)
 
 

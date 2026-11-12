@@ -22,3 +22,13 @@ node_modules/
 output/
 *.zip
 *.sqlite
+
+# --- virtual environments (hold absolute paths) ---
+.venv/
+venv/
+
+# --- local-only helpers and Jupyter state ---
+command.sh
+.ipynb_checkpoints/
+.virtual_documents/
+.private-terms
