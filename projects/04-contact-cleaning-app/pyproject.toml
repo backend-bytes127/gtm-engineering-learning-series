@@ -1,0 +1,17 @@
+[project]
+name = "contact-cleaning-app"
+version = "1.0.0"
+description = "Web app: upload source files, clean and standardize, consolidate, then plan a CRM update."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "../02-contact-list-merge"]
+testpaths = ["contactapp/tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 140
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

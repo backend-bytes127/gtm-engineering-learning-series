@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="page-token" content="__PAGE_TOKEN__">
+<title>Contact Cleaning App</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header><h1>Contact Cleaning App</h1><p>Upload the lead exports, clean and merge them, then update the CRM.</p></header>
+<p id="banner" class="banner hidden"></p>
+<ol class="steps" id="steps">
+  <li data-step="1" class="on">1 Upload</li><li data-step="2">2 Clean and standardize</li><li data-step="3">3 Consolidate</li><li data-step="4">4 CRM update</li>
+</ol>
+<main>
+  <section id="s1" class="panel">
+    <h2>1. Upload your data files</h2>
+    <p class="hint">One Excel file per source. The sheet names must match what the pipeline expects. The Rules template is optional.</p>
+    <form id="upload"><div id="slots" class="slots"></div>
+      <label class="slot"><span>Rules template (optional)</span><input type="file" name="template" accept=".xlsx"></label>
+      <div class="row"><button type="submit" class="primary">Clean and merge</button><button type="button" id="sample">Try the sample data</button></div>
+    </form>
+    <div id="upload-msg" class="msg" role="alert"></div>
+  </section>
+  <section id="s2" class="panel hidden"><h2>2. Cleaned and standardized</h2><div id="clean"></div></section>
+  <section id="s3" class="panel hidden"><h2>3. Consolidated contacts</h2><div id="merge"></div></section>
+  <section id="s4" class="panel hidden"><h2>4. Update the CRM (HubSpot)</h2><div id="crm"></div></section>
+</main>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>
