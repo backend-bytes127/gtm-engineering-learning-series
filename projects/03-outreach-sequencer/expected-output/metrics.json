@@ -1,0 +1,102 @@
+{
+  "contacts": {
+    "total": 26,
+    "launched": 25,
+    "replied": 4,
+    "meetings": 1,
+    "bounced": 1
+  },
+  "statuses": {
+    "Not Started": 0,
+    "In Sequence": 0,
+    "Replied": 3,
+    "Meeting Booked": 1,
+    "Completed": 19,
+    "Stopped": 3
+  },
+  "stop_reasons": {
+    "bounced": 1,
+    "draft_incomplete": 1,
+    "opted_out": 1
+  },
+  "removed_by_reason": {
+    "duplicate": 2,
+    "invalid_email": 2,
+    "missing_name": 1,
+    "no_reachable_channel": 1,
+    "opted_out": 4
+  },
+  "by_step": [
+    {
+      "step": 1,
+      "channel": "email",
+      "template": "intro_email",
+      "sent": 22,
+      "opened": 15,
+      "accepted": 0,
+      "replied": 2,
+      "meetings": 0
+    },
+    {
+      "step": 2,
+      "channel": "linkedin_invite",
+      "template": "connect_invite",
+      "sent": 20,
+      "opened": 0,
+      "accepted": 10,
+      "replied": 0,
+      "meetings": 0
+    },
+    {
+      "step": 3,
+      "channel": "email",
+      "template": "followup_email",
+      "sent": 18,
+      "opened": 10,
+      "accepted": 0,
+      "replied": 0,
+      "meetings": 0
+    },
+    {
+      "step": 4,
+      "channel": "linkedin_message",
+      "template": "thanks_dm",
+      "sent": 9,
+      "opened": 0,
+      "accepted": 0,
+      "replied": 1,
+      "meetings": 1
+    },
+    {
+      "step": 5,
+      "channel": "email",
+      "template": "breakup_email",
+      "sent": 17,
+      "opened": 12,
+      "accepted": 0,
+      "replied": 1,
+      "meetings": 0
+    }
+  ],
+  "by_channel": {
+    "email": {
+      "sent": 57,
+      "opened": 37,
+      "accepted": 0,
+      "replied": 3,
+      "meetings": 0
+    },
+    "linkedin": {
+      "sent": 29,
+      "opened": 0,
+      "accepted": 10,
+      "replied": 1,
+      "meetings": 1
+    }
+  },
+  "first_reply_by_step": {
+    "1": 2,
+    "4": 1,
+    "5": 1
+  }
+}

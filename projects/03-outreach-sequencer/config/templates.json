@@ -1,0 +1,32 @@
+{
+  "templates": [
+    {
+      "id": "intro_email",
+      "channel": "email",
+      "subject": "Idea for {{company}}",
+      "body": "Hi {{first_name}},\n\nI work with {{title|sales}} teams at companies like {{company}} on turning a clean contact list into booked meetings, without hand-sending every message.\n\nWorth a short chat to see if it fits how {{company}} sells today?\n\n{{sender_name}}\n\n{{unsubscribe_line}}"
+    },
+    {
+      "id": "connect_invite",
+      "channel": "linkedin_invite",
+      "body": "Hi {{first_name}}, I follow how {{company|your team}} approaches outbound and would like to connect."
+    },
+    {
+      "id": "followup_email",
+      "channel": "email",
+      "subject": "Re: idea for {{company}}",
+      "body": "Hi {{first_name}},\n\nFollowing up in case my note slipped past. If {{company}} is looking at outbound this quarter, I can share how similar teams set up their first sequence in a week.\n\n{{sender_name}}\n\n{{unsubscribe_line}}"
+    },
+    {
+      "id": "thanks_dm",
+      "channel": "linkedin_message",
+      "body": "Thanks for connecting, {{first_name}}. I sent a short email about outbound at {{company}}; happy to answer anything here instead if that is easier."
+    },
+    {
+      "id": "breakup_email",
+      "channel": "email",
+      "subject": "Should I close this out, {{first_name}}?",
+      "body": "Hi {{first_name}},\n\nI have not heard back, so I will assume the timing is off for {{company}} and stop writing. If that changes, just reply and we will pick it up.\n\n{{sender_name}}\n\n{{unsubscribe_line}}"
+    }
+  ]
+}

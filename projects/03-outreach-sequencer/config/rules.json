@@ -1,0 +1,10 @@
+{
+  "timezone": "Europe/London",
+  "email_per_day": 15,
+  "linkedin_invites_per_day": 8,
+  "linkedin_messages_per_day": 15,
+  "start_hour": 9,
+  "end_hour": 17,
+  "active_days": [1, 2, 3, 4, 5],
+  "stop_on": ["replied", "bounced", "meeting_booked"]
+}

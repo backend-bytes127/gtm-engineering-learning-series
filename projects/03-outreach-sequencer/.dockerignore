@@ -1,0 +1,9 @@
+output/
+**/__pycache__/
+**/tests/
+.coverage
+.pytest_cache/
+.ruff_cache/
+requirements.txt
+expected-output/
+*.md

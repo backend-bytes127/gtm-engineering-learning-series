@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Outreach Sequencer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232346d4'/%3E%3Cpath d='M8 21h6v-5h5v-5h5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <aside class="side" aria-label="Setup steps">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Sequencer</span></div>
+      <nav id="steps" aria-label="Steps"></nav>
+      <div class="side-foot">
+        <button class="btn btn-quiet btn-block" id="menu-sample" type="button">Load sample project</button>
+        <button class="btn btn-quiet btn-block" id="menu-reset" type="button">Start over</button>
+        <p class="fine">Sending is simulated unless you start live sending.</p>
+      </div>
+    </aside>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <div id="overlay"></div>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

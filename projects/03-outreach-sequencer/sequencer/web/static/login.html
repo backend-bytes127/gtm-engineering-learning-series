@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · Outreach Sequencer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Hanken+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <style>.login{min-height:100vh;display:grid;place-items:center;padding:16px}.login .card{width:min(400px,100%);display:grid;gap:18px}</style>
+</head>
+<body>
+  <main class="login">
+    <form class="card" id="form" novalidate>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Sequencer</span></div>
+      <h1 style="font-size:24px">Sign in</h1>
+      <label class="field"><span>Password</span><input id="pw" type="password" autocomplete="current-password" autofocus required></label>
+      <div id="msg" class="err" role="alert" aria-live="assertive"></div>
+      <button class="btn btn-primary" id="go" type="submit">Sign in</button>
+      <p class="fine">Private tool. Sending is limited to the contacts you choose.</p>
+    </form>
+  </main>
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>

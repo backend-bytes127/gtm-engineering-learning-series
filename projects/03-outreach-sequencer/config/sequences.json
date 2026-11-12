@@ -1,0 +1,14 @@
+{
+  "sequences": [
+    {
+      "name": "Outbound Intro",
+      "steps": [
+        { "channel": "email", "wait_days": 0, "template": "intro_email" },
+        { "channel": "linkedin_invite", "wait_days": 1, "template": "connect_invite" },
+        { "channel": "email", "wait_days": 3, "template": "followup_email" },
+        { "channel": "linkedin_message", "wait_days": 2, "template": "thanks_dm" },
+        { "channel": "email", "wait_days": 4, "template": "breakup_email" }
+      ]
+    }
+  ]
+}

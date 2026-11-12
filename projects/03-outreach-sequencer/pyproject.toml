@@ -1,0 +1,22 @@
+[project]
+name = "outreach-sequencer"
+version = "1.0.0"
+description = "Email and LinkedIn sequencing tool: import, validate, personalise, gate, send (simulated), track and report."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["sequencer/tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/make_sample_data.py" = ["E501"]
+"sequencer/tests/*.py" = ["F811"]  # pytest fixtures are imported and then used as parameters
+"sequencer/ai/drafting.py" = ["E501"]  # the system prompt is prose, wrapped by meaning not by column
