@@ -21,8 +21,9 @@ def stage(dest: Path) -> None:
     shutil.copytree(REPO / p2 / "sample-data", dest / p2 / "sample-data", ignore=IGNORE)
     shutil.copytree(REPO / p4 / "contactapp", dest / p4 / "contactapp", ignore=IGNORE)
     shutil.copy(REPO / p4 / "requirements-prod.txt", dest / p4 / "requirements-prod.txt")
-    shutil.copy(REPO / p4 / "Dockerfile", dest / p4 / "Dockerfile")
-    shutil.copy(REPO / p4 / "railway.json", dest / "railway.json")
+    shutil.copy(REPO / p4 / "Dockerfile", dest / "Dockerfile")  # Railway looks for a Dockerfile at the root
+    config = (REPO / p4 / "railway.json").read_text().replace(f"{p4}/Dockerfile", "Dockerfile")
+    (dest / "railway.json").write_text(config)
 
 
 if __name__ == "__main__":
