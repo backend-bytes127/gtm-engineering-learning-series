@@ -13,6 +13,7 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 | 01 | [LinkedIn ICP Scraper](projects/01-linkedin-icp-scraper/) | Turn an Ideal Customer Profile into a keyword matrix and pull matching LinkedIn profiles into a sheet | n8n, Apify, Google Sheets API | 15 searches, 255 profiles, about $0.40 per full run |
 | 02 | [Contact List Merge](projects/02-contact-list-merge/) | Merge 6 messy lead exports (ads, event, LinkedIn, scraper, Apollo, ZoomInfo) into one clean, de-duplicated contact list | n8n, JavaScript, Python reference build | built and verified on a 292-row instructor dataset (90 people out; dataset not included) and a bundled synthetic sample (37 rows, 12 people); 102 tests, 98% coverage, n8n output identical to the Python reference |
 | 03 | [Outreach Sequencer](projects/03-outreach-sequencer/) | Take a clean contact list through a multi-step email and LinkedIn sequence, with validation, personalised and approved messages, send limits and stop rules, and a results report | Python, SQLite, openpyxl (sending is simulated) | 36 rows → 26 valid → 25 launched; rules proved over a 60-day simulated run; 475 tests, 98% coverage, report numbers recounted independently from SQL |
+| 04 | [Contact Cleaning App](projects/04-contact-cleaning-app/) | A web app around Project 02: upload the lead exports, clean, standardize and consolidate them, then preview and (when switched on) push the result to HubSpot | Python, standard-library server, JavaScript, openpyxl | 37 rows → 12 people → 12 contacts and 5 companies planned for the CRM; 56 tests, 96% coverage; push off by default |
 
 More projects will be added as the series continues; see the [roadmap](#roadmap).
 
@@ -38,6 +39,7 @@ cd gtm-engineering-learning-series
 make install      # Python test dependencies
 make check        # lint + tests + build workflows + JS/Python parity + secret scan (what CI runs)
 make sequencer-demo  # project 03: the whole outreach pipeline on sample data (no n8n, no keys)
+make contact-app     # project 04: the contact cleaning web app (CRM preview only)
 
 make up           # start a local n8n (pinned image) on http://localhost:5678
 make e2e          # import Contact List Merge, submit the real form, compare to golden output
@@ -59,7 +61,8 @@ Process maps of both workflows (who does what, with which tool, where the forks 
 ├── projects/
 │   ├── 01-linkedin-icp-scraper/     ICP design, keyword matrix, scraper workflow, docs
 │   ├── 02-contact-list-merge/       reference build (Python), n8n source (JS), workflow, sample data, golden files, guide
-│   └── 03-outreach-sequencer/       import, validate, sequence, personalise, gate, simulated send, track, report
+│   ├── 03-outreach-sequencer/       import, validate, sequence, personalise, gate, simulated send, track, report
+│   └── 04-contact-cleaning-app/     web app over project 02: upload, clean, consolidate, CRM preview and push
 ├── docs/
 │   ├── architecture.md              platform design, build pipeline, testing strategy
 │   ├── n8n-operations.md            import/export/publish, reading execution data, known gotchas

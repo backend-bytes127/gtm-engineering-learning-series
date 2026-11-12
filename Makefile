@@ -1,11 +1,12 @@
 # GTM Engineering Learning Series: common tasks. `make help` lists them.
 P2 := projects/02-contact-list-merge
 P1 := projects/01-linkedin-icp-scraper
-P3 := projects/03-outreach-sequencer
+P3 := projects/03-outreach-sequencer projects/04-contact-cleaning-app
+P4 := projects/04-contact-cleaning-app
 PY ?= python3
 
 .DEFAULT_GOAL := help
-.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide notebook notebook-test sequencer-demo sequencer-app
+.PHONY: help install test lint parity secrets check build-workflows env hooks up down logs e2e guide notebook notebook-test sequencer-demo sequencer-app contact-app
 
 help:  ## show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-16s\033[0m %s\n",$$1,$$2}'
@@ -13,12 +14,13 @@ help:  ## show this help
 install:  ## install Python test dependencies
 	$(PY) -m pip install -r $(P2)/requirements.txt ruff pytest-cov
 
-test:  ## unit + integration + golden-file tests (projects 02 and 03)
+test:  ## unit + integration + golden-file tests (projects 02, 03 and 04)
 	cd $(P2) && $(PY) -m pytest --cov=pipeline --cov-report=term-missing --cov-fail-under=90
 	cd $(P3) && $(PY) -m pytest --cov=sequencer --cov-report=term-missing --cov-fail-under=90
+	cd $(P4) && $(PY) -m pytest --cov=contactapp --cov-report=term-missing --cov-fail-under=90
 
 lint:  ## ruff
-	ruff check $(P1)/scripts $(P2) $(P3)
+	ruff check $(P1)/scripts $(P2) $(P3) $(P4)
 
 parity:  ## n8n JavaScript nodes must reproduce the Python golden output exactly
 	cd $(P2) && $(PY) scripts/parity_check.py
@@ -64,3 +66,6 @@ sequencer-app:  ## project 03: open the web app on http://127.0.0.1:8765
 
 guide:  ## rebuild the HTML guide for Project 02
 	cd $(P2)/docs/guide && $(PY) build_guide.py
+
+contact-app:  ## project 04: contact cleaning web app on http://127.0.0.1:8770 (CRM preview only)
+	cd $(P4) && $(PY) -m contactapp

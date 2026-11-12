@@ -2,6 +2,14 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions are per repository.
 
+## [Unreleased]
+
+### Added
+- Project 04: Contact Cleaning App. A web app over Project 02's pipeline: upload the six exports, clean, standardize and consolidate, download the workbooks, and get a HubSpot update plan (match on e-mail and domain, blanks never sent, rows without e-mail skipped). A real push is off by default and needs a startup flag, a typed confirmation and a matching portal id. Deployable as a public no-login demo: isolated in-memory sessions per visitor with expiry and a run cap, no disk writes, and the server refuses to run publicly with a HubSpot token. 56 tests, 96% coverage.
+
+### Changed
+- Project 02 `pipeline/run.py` is split into `consolidate`, `write_final` and `write_audit` so other code can reuse it; output is unchanged.
+
 ## [1.1.0] - 2026-11-10
 
 ### Fixed
