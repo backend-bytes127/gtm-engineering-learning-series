@@ -8,6 +8,10 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 
 ## Projects
 
+**4 built and tested · 14 specced, not started.** [Built](#built) · [Next up](#next-up) · [Roadmap](docs/roadmap.md) · [Research behind the list](docs/research.md)
+
+### Built
+
 | # | Project | Problem | Stack | Proof it works |
 |---|---|---|---|---|
 | 01 | [LinkedIn ICP Scraper](projects/01-linkedin-icp-scraper/) | Turn an Ideal Customer Profile into a keyword matrix and pull matching LinkedIn profiles into a sheet | n8n, Apify, Google Sheets API | 15 searches, 255 profiles, about $0.40 per full run |
@@ -15,7 +19,26 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 | 03 | [Outreach Sequencer](projects/03-outreach-sequencer/) | Take a clean contact list through a multi-step email and LinkedIn sequence, with validation, personalised and approved messages, send limits and stop rules, and a results report | Python, SQLite, openpyxl (sending is simulated) | 36 rows → 26 valid → 25 launched; rules proved over a 60-day simulated run; 475 tests, 98% coverage, report numbers recounted independently from SQL |
 | 04 | [Contact Cleaning App](projects/04-contact-cleaning-app/) | A web app around Project 02: upload the lead exports, clean, standardize and consolidate them, then preview and (when switched on) push the result to HubSpot | Python, standard-library server, JavaScript, openpyxl | 37 rows → 12 people → 12 contacts and 5 companies planned for the CRM; 56 tests, 96% coverage; push off by default |
 
-More projects will be added as the series continues; see the [roadmap](#roadmap).
+### Next up
+
+Specs only: no code yet. Each link opens the project's spec. Listed in suggested build order.
+
+| # | Project | What it will do | Priority |
+|---|---|---|---|
+| 16 | [Enrichment Waterfall Engine](projects/16-enrichment-waterfall/) | Try providers in cost order, stop at the first verified result, report coverage and cost per contact | P1 |
+| 05 | [Real-Time Intent Webhook Router](projects/05-intent-webhook-router/) | Turn buying signals into routed alerts | P1 |
+| 06 | [AI SDR Research Agent](projects/06-ai-sdr-research-agent/) | Research a prospect and return a structured, outreach-ready record | P1 |
+| 17 | [Signal and Fit Account Scoring](projects/17-signal-fit-scoring/) | Score fit x time-decayed intent and backtest the weights | P1 |
+| 11 | [Churn and NRR Alerts](projects/11-churn-alert-system/) | Flag accounts at risk | P1 |
+| 15 | [GTM Architecture Teardown](projects/15-gtm-architecture-teardown/) | Written analysis of real GTM motions | P1 |
+| 07 | [PQL Scorer](projects/07-pql-scorer/) | Score product usage to find sales-ready users | P2 |
+| 08 | [Usage-Based Pricing Meter](projects/08-usage-pricing-meter/) | Meter usage events for billing | P2 |
+| 09 | [Multi-Touch Attribution Engine](projects/09-attribution-engine/) | Credit pipeline across touchpoints | P2 |
+| 10 | [Call Coaching and Battlecards](projects/10-call-coaching-battlecard/) | Turn call transcripts into coaching notes and battlecards | P2 |
+| 14 | [Competitor Battlecard Updater](projects/14-competitor-battlecard-updater/) | Watch competitor changes and refresh battlecards | P2 |
+| 18 | [GTM MCP Server](projects/18-gtm-mcp-server/) | Let an AI assistant run enrichment, scoring and cleaning safely | P2 |
+| 12 | [QBR Generator](projects/12-qbr-generator/) | Draft quarterly business reviews from account data | P3 |
+| 13 | [Dark Social Attribution Bot](projects/13-dark-social-attribution/) | Classify self-reported "how did you hear about us" answers | P3 |
 
 ## How the pieces fit
 
@@ -62,8 +85,10 @@ Process maps of both workflows (who does what, with which tool, where the forks 
 │   ├── 01-linkedin-icp-scraper/     ICP design, keyword matrix, scraper workflow, docs
 │   ├── 02-contact-list-merge/       reference build (Python), n8n source (JS), workflow, sample data, golden files, guide
 │   ├── 03-outreach-sequencer/       import, validate, sequence, personalise, gate, simulated send, track, report
-│   └── 04-contact-cleaning-app/     web app over project 02: upload, clean, consolidate, CRM preview and push
+│   ├── 04-contact-cleaning-app/     web app over project 02: upload, clean, consolidate, CRM preview and push
+│   └── 05-… to 18-…                 specs for the next projects (no code yet)
 ├── docs/
+│   ├── roadmap.md, research.md      what comes next and why
 │   ├── architecture.md              platform design, build pipeline, testing strategy
 │   ├── n8n-operations.md            import/export/publish, reading execution data, known gotchas
 │   └── adr/                         architecture decision records
@@ -100,10 +125,7 @@ Project 02 was built against an instructor-provided exercise (six synthetic lead
 
 ## Roadmap
 
-- Idempotent sheet writes for the scraper (upsert on profile id) and scheduled runs
-- Email enrichment and verification waterfall
-- Scoring and routing of the merged contact list
-- Move the entity-resolution step to blocking + similarity scoring for larger lists
+The full list, priorities and shared stack are in [docs/roadmap.md](docs/roadmap.md). [docs/research.md](docs/research.md) records the web and GitHub research behind projects 16 to 18 and links open-source work worth studying.
 
 ## License
 

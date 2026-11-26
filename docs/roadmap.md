@@ -26,7 +26,7 @@ Each project is a real, tested, reproducible system — not a demo. Stack: Pytho
 
 ---
 
-## Roadmap: Next 11 Projects
+## Roadmap: Next 14 Projects
 
 | # | Project | Priority | Effort | Status | Data Sources |
 |---|---|---|---|---|---|
@@ -41,6 +41,9 @@ Each project is a real, tested, reproducible system — not a demo. Stack: Pytho
 | 13 | [Dark Social Attribution Bot](../projects/13-dark-social-attribution/) | 🟢 P3 | 1 day | 📋 | HubSpot forms, inbound lead webhook, Claude |
 | 14 | [Competitor Battlecard Auto-Updater](../projects/14-competitor-battlecard-updater/) | 🟡 P2 | 2 days | 📋 | G2 RSS, competitor sitemap diff, Claude summariser |
 | 15 | [GTM Architecture Teardown](../projects/15-gtm-architecture-teardown/) | 🔴 P1 | 1 day | 📋 | Public pricing pages, SEC filings, Sacra research |
+| 16 | [Enrichment Waterfall Engine](../projects/16-enrichment-waterfall/) | 🔴 P1 | 3 days | 📋 | Enrichment provider APIs (fake provider for tests) |
+| 17 | [Signal and Fit Account Scoring](../projects/17-signal-fit-scoring/) | 🔴 P1 | 3 days | 📋 | Account signals, outcome labels |
+| 18 | [GTM MCP Server](../projects/18-gtm-mcp-server/) | 🟡 P2 | 2 days | 📋 | Projects 02, 16, 17 |
 
 ---
 
@@ -48,12 +51,13 @@ Each project is a real, tested, reproducible system — not a demo. Stack: Pytho
 
 | Project | Status |
 |---|---|
-| [Wingrowth Capstone](../projects/wingrowth/) | 🚧 ABM scorer + EU GTM + outreach |
 | [School Assignments](../projects/school-assignments/) | 🚧 GTM Engineering Cohort 1 — GTME.SCHOOL |
 
 ---
 
 ## Build Order Rationale
+
+**Start with 16:** the research ([research.md](research.md)) names an enrichment waterfall as a core portfolio project, and the series did not have one.
 
 **P1 first:** Projects 05, 06, 11 produce the most demonstrable "GTM engineer" work for a portfolio — real signals, real routing, real research automation. Project 15 (architecture teardown) is a written analysis that doubles as a blog post.
 
@@ -71,7 +75,7 @@ Automation:  n8n (Docker, pinned image)
 Storage:     SQLite for dev, Postgres (Neon) for prod
 AI:          Claude Haiku (workers) / Sonnet (orchestrator) via Anthropic API
 Enrichment:  Prospeo + Clay
-Email:       Email Bison (send.roister.ai)
+Email:       Email Bison
 CRM:         HubSpot (sandbox)
 Billing:     Stripe (test mode)
 CI:          GitHub Actions
