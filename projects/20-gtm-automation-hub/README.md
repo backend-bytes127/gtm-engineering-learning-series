@@ -5,8 +5,9 @@ a tool fails. How do you build that last step safely?
 
 Three local [n8n](https://n8n.io) workflows connect the output shapes of earlier projects to Slack.
 
-> **Every payload is synthetic.** No row from any dataset is used. The workflows ran in real n8n 2.32.6 with a **local fake in place of
-> Slack**. No message has been posted to Slack, so rendering in Slack and real button clicks are **not verified**.
+> **Every payload is synthetic.** No row from any dataset is used. The automated tests run in real n8n 2.32.6 with a **local fake in place
+> of Slack**. A short [manual test against real Slack](#manual-test-against-real-slack) delivered all three message types. Real button
+> clicks and the weekly schedule are **not verified**.
 
 ![The three workflows, their checks and their failure paths](docs/signal-to-action-hub.png)
 
@@ -170,6 +171,32 @@ The most useful result is a measurement, from one machine:
 
 The replay and dedupe code was correct one request at a time and useless in parallel. Each execution loaded the same old state, and the
 last one to finish overwrote the others. This project therefore runs one production execution at a time.
+
+## Manual test against real Slack
+
+Run once by hand on 2026-11-26: local n8n 2.32.6, one private channel, an app whose only scope is `incoming-webhook`. All payloads were
+synthetic. This is a smoke test, not part of the automated 48 checks.
+
+| What was sent | What happened |
+|---|---|
+| A signed signal | `200 delivered`; the message appeared in the channel |
+| The same event, signed again | `200 duplicate`; no second message seen |
+| A tier A lead for review | `200 pending`; the message appeared with both buttons |
+| The weekly digest, run by hand | The execution succeeded; the digest appeared in the channel |
+| After replacing the webhook, a new signal | `200 delivered`; the message appeared. The other two were not re-sent |
+
+Signal and lead review, as rendered by Slack:
+
+![A new-signal alert and a lead review with Approve and Dismiss buttons in Slack](docs/screenshots/slack-signal-and-pql.png)
+
+Weekly churn-risk digest (the account keys and amounts come from the synthetic sample queue):
+
+![The weekly churn-risk digest in Slack](docs/screenshots/slack-churn-digest.png)
+
+The buttons render but were not clicked: Slack cannot reach an n8n that listens only on this machine.
+
+One lesson from the day: a webhook URL was pasted somewhere it should not have been. It was removed in the app settings and a new one was
+created. Treat the URL like a password.
 
 ## What did not work
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## Project 20: real Slack smoke test
+
+- Sent synthetic signal, lead-review and digest messages from local n8n to a real Slack channel, and added two cropped screenshots. Button clicks and the weekly schedule remain unverified.
+
 ## Projects 07, 09, 11, 17, 19, 20 and industry guides
 
 - Added product-qualified lead scoring, attribution, revenue retention and churn, account scoring with a backtest, a Clay playbook, a Slack and n8n automation hub, and four industry GTM guides.

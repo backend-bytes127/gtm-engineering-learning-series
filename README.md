@@ -41,7 +41,7 @@ Two exercises link the projects: check an ideal customer profile against **reten
 | 16 | [Enrichment Waterfall](projects/16-enrichment-waterfall/) | Synthetic providers | Never paying twice or passing a spend cap |
 | 17 | [Account Scoring with a Backtest](projects/17-signal-fit-scoring/) | Real bank marketing records, consumer not B2B | Whether a score beats simple rules on later data |
 | 19 | [Clay Playbook](projects/19-clay-playbook/) | A live Clay table of 25 companies; no row data published | Free formulas first, paid lookups only on rows that qualify, measured credit cost |
-| 20 | [Signal-to-Action Hub](projects/20-gtm-automation-hub/) | Synthetic payloads | Local n8n workflows with signed webhooks and approvals; Slack tested against a fake only |
+| 20 | [Signal-to-Action Hub](projects/20-gtm-automation-hub/) | Synthetic payloads | Local n8n workflows with signed webhooks and approvals; automated tests use a fake Slack; message delivery smoke-tested in real Slack, buttons not connected |
 
 Projects 02 to 04, 07, 09, 11, 16, 17 and 20 have automated tests that run in CI.
 
