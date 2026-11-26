@@ -15,14 +15,15 @@ help:  ## show this help
 install:  ## install Python test dependencies
 	$(PY) -m pip install -r $(P2)/requirements.txt ruff pytest-cov
 
-test:  ## unit + integration + golden-file tests (projects 02, 03, 04 and 16)
+test:  ## unit + integration + golden-file tests (every project with tests; see each requirements.txt)
 	cd $(P2) && $(PY) -m pytest --cov=pipeline --cov-report=term-missing --cov-fail-under=90
 	cd $(P3) && $(PY) -m pytest --cov=sequencer --cov-report=term-missing --cov-fail-under=90
 	cd $(P4) && $(PY) -m pytest --cov=contactapp --cov-report=term-missing --cov-fail-under=90
 	cd $(P16) && $(PY) -m pytest --cov=waterfall --cov-report=term-missing --cov-fail-under=90
+	for p in 07-pql-scorer:pql 09-attribution-engine:attribution 11-churn-alert-system:churnalert 17-signal-fit-scoring:fitscore 20-gtm-automation-hub:hub; do (cd projects/$${p%:*} && $(PY) -m pytest --cov=$${p#*:} --cov-fail-under=80) || exit 1; done
 
 lint:  ## ruff
-	ruff check $(P1)/scripts $(P2) $(P3) $(P4) $(P16)
+	ruff check projects
 
 parity:  ## n8n JavaScript nodes must reproduce the Python golden output exactly
 	cd $(P2) && $(PY) scripts/parity_check.py

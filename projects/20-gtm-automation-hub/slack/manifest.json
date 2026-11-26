@@ -1,0 +1,23 @@
+{
+  "display_information": {
+    "name": "GTM Signal Hub (demo)",
+    "description": "Learning demo: posts synthetic GTM alerts to one channel.",
+    "background_color": "#1e3a5f"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "GTM Signal Hub",
+      "always_online": false
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": ["incoming-webhook"]
+    }
+  },
+  "settings": {
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}

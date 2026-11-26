@@ -1,0 +1,7 @@
+{
+  "event_id": "syn-evt-0001",
+  "type": "pricing_page_visit",
+  "account_domain": "northwind-demo.example",
+  "occurred_at": "2026-01-12T09:30:00Z",
+  "source": "synthetic-sample"
+}

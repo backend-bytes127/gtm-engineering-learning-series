@@ -1,0 +1,205 @@
+{
+  "id": "gtmHubChurn00001",
+  "name": "GTM Hub A: weekly churn-risk digest",
+  "active": false,
+  "nodes": [
+    {
+      "id": "795a4259-df0d-5624-8d63-b853cde87c0c",
+      "name": "Every Monday 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f17ea4c8-5919-5a4e-9b5d-5c86271b4ca7",
+      "name": "Run by hand",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "1b0a69aa-6a15-57b6-8b21-84599e0a71b4",
+      "name": "Read queue files",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "fileSelector": "/home/node/.n8n-files/inbox/alert_queue_*.csv",
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "fd66e157-70f2-57bf-97d4-542ba27c55d1",
+      "name": "Pick latest queue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Choose the newest alert_queue_YYYY-MM-DD.csv in the inbox. Python reference: churn.as_of_from_name.\nconst NAME = /^alert_queue_([0-9]{4}-[0-9]{2}-[0-9]{2})\\.csv$/;\nconst dated = $input.all()\n  .map((item) => {\n    const name = item.binary && item.binary.data ? item.binary.data.fileName : '';\n    const match = NAME.exec(name || '');\n    return match ? { item, asOf: match[1] } : null;\n  })\n  .filter(Boolean)\n  .sort((a, b) => (a.asOf < b.asOf ? 1 : -1));\nif (!dated.length) throw new Error('no alert_queue_YYYY-MM-DD.csv in the inbox; nothing was posted');\nreturn [{ json: { asOf: dated[0].asOf }, binary: dated[0].item.binary }];\n"
+      }
+    },
+    {
+      "id": "e543f8ca-cb57-5b84-a04d-e322dc7ce4f7",
+      "name": "Parse CSV",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "operation": "csv",
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "c89b6be7-414d-58cb-8fe7-56ffcc56d732",
+      "name": "Build digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Build the weekly digest. Python reference: churn.py and messages.churn_digest.\n// Any bad row throws, which fails the execution before anything is posted.\nconst COLUMNS = ['rank', 'customer_id', 'churn_score', 'net_180d_gbp', 'value_at_risk_gbp', 'primary_reason',\n  'all_reasons', 'suggested_action', 'delivery_status'];\nconst TOP_ACCOUNTS = 5;\nconst STALE_AFTER_DAYS = 8;\n\nconst rows = $input.all().map((item) => item.json).filter((row) => Object.keys(row).length);\nif (!rows.length) throw new Error('queue is empty');\nif (Object.keys(rows[0]).join(',') !== COLUMNS.join(',')) throw new Error('unexpected columns');\n\nconst accounts = rows.map((row) => {\n  const amount = String(row.value_at_risk_gbp);\n  if (!/^[0-9]{1,6}$/.test(String(row.rank)) || !row.customer_id || !row.primary_reason) {\n    throw new Error('rank, customer_id and primary_reason are required');\n  }\n  if (!/^[0-9]{1,12}(\\.[0-9]+)?$/.test(amount)) throw new Error('value_at_risk_gbp must be a plain number, zero or more');\n  return {\n    rank: Number(row.rank),\n    id: String(row.customer_id),\n    pence: Math.floor(Number(amount) * 100 + 0.5),\n    reason: String(row.primary_reason),\n    action: String(row.suggested_action || ''),\n  };\n}).sort((a, b) => a.rank - b.rank);\n\nconst escapeMrkdwn = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst pounds = (pence) => `£${String(Math.floor((pence + 50) / 100)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',')}`;\nconst section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });\nconst context = (text) => ({ type: 'context', elements: [{ type: 'mrkdwn', text }] });\n\nconst groups = accounts.reduce((totals, account) => {\n  const previous = totals.get(account.reason) || { count: 0, pence: 0 };\n  return new Map(totals).set(account.reason, { count: previous.count + 1, pence: previous.pence + account.pence });\n}, new Map());\nconst reasons = [...groups]\n  .sort(([a, x], [b, y]) => y.count - x.count || (a < b ? -1 : 1))\n  .map(([name, g]) => `• ${escapeMrkdwn(name)}: ${g.count} (${pounds(g.pence)})`)\n  .join('\\n');\nconst top = accounts.slice(0, TOP_ACCOUNTS)\n  .map((a) => `${a.rank}. \\`${escapeMrkdwn(a.id)}\\` ${escapeMrkdwn(a.reason)}, ${pounds(a.pence)}: ${escapeMrkdwn(a.action)}`)\n  .join('\\n');\n\nconst { asOf } = $('Pick latest queue').first().json;\nconst total = accounts.reduce((sum, account) => sum + account.pence, 0);\nconst summary = `Churn-risk queue as of ${asOf}: ${accounts.length} accounts, ${pounds(total)} score-weighted trailing revenue`;\nconst blocks = [\n  { type: 'header', text: { type: 'plain_text', text: 'Weekly churn-risk digest' } },\n  section(summary),\n  section(`*By primary reason*\\n${reasons}`),\n  section(`*Top ${Math.min(TOP_ACCOUNTS, accounts.length)} to review*\\n${top}`),\n  context('A ranking aid, not a forecast of lost money. Reasons describe behaviour; they do not prove a cause.'),\n];\nconst today = new Date().toISOString().slice(0, 10);\nconst age = Math.round((Date.parse(today) - Date.parse(asOf)) / 86400000);\nconst stale = context(`:warning: This queue is ${age} days old. Check that the scoring job ran.`);\nreturn [{ json: { message: { text: summary, blocks: age > STALE_AFTER_DAYS ? [...blocks, stale] : blocks } } }];\n"
+      }
+    },
+    {
+      "id": "6df784b9-15af-574f-a215-07bbef8c1719",
+      "name": "Send to Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.GTM_HUB_SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.message) }}",
+        "options": {
+          "timeout": 5000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "onError": "stopWorkflow"
+    }
+  ],
+  "connections": {
+    "Every Monday 08:00": {
+      "main": [
+        [
+          {
+            "node": "Read queue files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run by hand": {
+      "main": [
+        [
+          {
+            "node": "Read queue files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read queue files": {
+      "main": [
+        [
+          {
+            "node": "Pick latest queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick latest queue": {
+      "main": [
+        [
+          {
+            "node": "Parse CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse CSV": {
+      "main": [
+        [
+          {
+            "node": "Build digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build digest": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "pinData": {}
+}

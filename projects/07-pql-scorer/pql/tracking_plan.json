@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "source": "RetailRocket events.csv",
+  "window": {"start": "2015-05-01", "end": "2015-10-01"},
+  "max_quarantine_rate": 0.01,
+  "columns": {
+    "timestamp": {"type": "integer", "required": true, "unit": "unix milliseconds, UTC"},
+    "visitorid": {"type": "integer", "required": true, "min": 0},
+    "event": {"type": "string", "required": true},
+    "itemid": {"type": "integer", "required": true, "min": 0},
+    "transactionid": {"type": "number", "required": false}
+  },
+  "events": {
+    "view": {"meaning": "visitor viewed an item", "required": ["itemid"], "forbidden": ["transactionid"]},
+    "addtocart": {"meaning": "visitor added an item to the cart", "required": ["itemid"], "forbidden": ["transactionid"]},
+    "transaction": {"meaning": "item bought; one row per item in an order", "required": ["itemid", "transactionid"], "forbidden": []}
+  }
+}

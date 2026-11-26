@@ -1,0 +1,9 @@
+rank,customer_id,churn_score,net_180d_gbp,value_at_risk_gbp,primary_reason,all_reasons,suggested_action,delivery_status
+1,900001,0.71,5200.00,3692.00,OVERDUE,synthetic example,"Call this week: ask whether the usual reorder moved, stalled, or went to another supplier.",not sent (local file only)
+2,900002,0.52,6100.50,3172.26,FEWER_ORDERS,synthetic example,Account review: compare the last two quarters of orders and agree the next reorder date.,not sent (local file only)
+3,900003,0.44,4800.00,2112.00,SPEND_DOWN,synthetic example,"Check basket mix: which lines stopped, and was it stock, price or demand?",not sent (local file only)
+4,900004,0.39,4200.75,1638.29,RETURNS_UP,synthetic example,Open a service review first: resolve returns or credits before any sales ask.,not sent (local file only)
+5,900005,0.66,2100.00,1386.00,OVERDUE,synthetic example,"Call this week: ask whether the usual reorder moved, stalled, or went to another supplier.",not sent (local file only)
+6,900006,0.48,1500.00,720.00,THIN_HISTORY,synthetic example,Early-life follow-up: confirm the second order landed well and set a reorder reminder.,not sent (local file only)
+7,900007,0.31,1900.00,589.00,SCORE_ONLY,synthetic example,"Light check-in; no single behaviour stands out, so do not claim a reason to the customer.",not sent (local file only)
+8,900008,0.58,900.00,522.00,OVERDUE,synthetic example,"Call this week: ask whether the usual reorder moved, stalled, or went to another supplier.",not sent (local file only)

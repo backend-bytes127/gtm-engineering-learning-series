@@ -1,0 +1,19 @@
+{
+  "comment": "Weights and policy are configuration. points_rules was written by hand before any later-period (test) result was computed.",
+  "recency_half_life_days": 7,
+  "previous_cap": 5,
+  "points_rules": {
+    "previous_success": 50,
+    "previous_failure": 5,
+    "recency_max": 20,
+    "job": {"retired": 15, "student": 15, "management": 5, "admin.": 5},
+    "education": {"university.degree": 5},
+    "no_credit_default_on_file": 5
+  },
+  "tiers": [
+    {"name": "A", "top_share": 0.10, "action": "Work first: call or follow up the same day"},
+    {"name": "B", "top_share": 0.30, "action": "Work this week, after every A row has been tried"},
+    {"name": "C", "top_share": 1.00, "action": "Low-touch queue; sample some at random so the next model still learns about them"}
+  ],
+  "exploration_share": 0.10
+}

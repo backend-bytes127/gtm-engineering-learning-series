@@ -1,5 +1,10 @@
 # Changelog
 
+## Projects 07, 09, 11, 17, 19, 20 and industry guides
+
+- Added product-qualified lead scoring, attribution, revenue retention and churn, account scoring with a backtest, a Clay playbook, a Slack and n8n automation hub, and four industry GTM guides.
+- 07, 09, 11, 17 and the guides went through an independent review and its fixes before publication. 19 and 20 were checked by the integrator only.
+
 ## Corrections after an independent review
 
 - 03: the stop-request check missed common wording ("please stop", curly apostrophes) and most non-English requests. Added Dutch, German, French and Spanish basics, and routed data-erasure requests to suppression plus a person.

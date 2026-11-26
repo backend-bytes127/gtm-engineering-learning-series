@@ -1,0 +1,6 @@
+{
+  "type": "block_actions",
+  "user": {"id": "U0SYNTHETIC1"},
+  "actions": [{"action_id": "pql_approve", "value": "syn-visitor-001:demo-v1"}],
+  "response_url": "REPLACED_AT_RUN_TIME"
+}

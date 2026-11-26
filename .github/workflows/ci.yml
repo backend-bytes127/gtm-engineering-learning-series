@@ -77,6 +77,27 @@ jobs:
         working-directory: projects/16-enrichment-waterfall
         run: python -m pytest --cov=waterfall --cov-report=term-missing --cov-fail-under=90
 
+  data-projects:
+    name: ${{ matrix.project }} (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
+        project: [07-pql-scorer, 09-attribution-engine, 11-churn-alert-system, 17-signal-fit-scoring, 20-gtm-automation-hub]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -r projects/${{ matrix.project }}/requirements.txt
+      - name: Offline tests (coverage gate 80%)
+        working-directory: projects/${{ matrix.project }}
+        run: |
+          case "${{ matrix.project }}" in
+            07-*) pkg=pql ;; 09-*) pkg=attribution ;; 11-*) pkg=churnalert ;; 17-*) pkg=fitscore ;; 20-*) pkg=hub ;;
+          esac
+          python -m pytest --cov=$pkg --cov-report=term-missing --cov-fail-under=80
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -84,7 +105,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install ruff
+      - run: pip install ruff==0.7.3
       - run: ruff check projects
 
   workflow:

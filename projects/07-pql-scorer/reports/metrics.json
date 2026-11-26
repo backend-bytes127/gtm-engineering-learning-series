@@ -1,0 +1,1011 @@
+{
+  "tracking": {
+    "rows_in": 2756101,
+    "rows_clean": 2755641,
+    "violations": {
+      "exact_duplicate": 460
+    }
+  },
+  "cohort": {
+    "visitors_total": 1407580,
+    "excluded_burn_in": 147098,
+    "excluded_label_window_incomplete": 59643,
+    "excluded_bought_before_cutoff": 5716,
+    "excluded_automation_like": 1,
+    "excluded_automation_like_later_buyers": 0,
+    "eligible": 1195122,
+    "eligible_later_buyers": 3152
+  },
+  "buyer_timing": [
+    {
+      "cutoff_minutes": 5,
+      "buyers": 10112,
+      "share_already_bought": 0.20233386075949367
+    },
+    {
+      "cutoff_minutes": 10,
+      "buyers": 10112,
+      "share_already_bought": 0.37480221518987344
+    },
+    {
+      "cutoff_minutes": 30,
+      "buyers": 10112,
+      "share_already_bought": 0.5900909810126582
+    },
+    {
+      "cutoff_minutes": 60,
+      "buyers": 10112,
+      "share_already_bought": 0.6722705696202531
+    },
+    {
+      "cutoff_minutes": 1440,
+      "buyers": 10112,
+      "share_already_bought": 0.8321795886075949
+    },
+    {
+      "cutoff_minutes": 10080,
+      "buyers": 10112,
+      "share_already_bought": 0.9124802215189873
+    }
+  ],
+  "splits": {
+    "train": {
+      "visitors": 586821,
+      "buyers": 1602,
+      "rate": 0.00272996365160756
+    },
+    "validation": {
+      "visitors": 212942,
+      "buyers": 564,
+      "rate": 0.0026486085412929343
+    },
+    "test": {
+      "visitors": 251323,
+      "buyers": 664,
+      "rate": 0.002642018438423861
+    }
+  },
+  "sensitivity": [
+    {
+      "cutoff_minutes": 5,
+      "bought_before_cutoff": 1957,
+      "later_buyers": 6911,
+      "share_excluded_as_already_bought": 0.00162931806753053,
+      "validation_rate": 0.005855173316871504,
+      "average_precision": 0.12335809427877197,
+      "roc_auc": 0.7905068302728281,
+      "lift_at_1pct": 35.70755117350126,
+      "recall_at_1pct": 0.3570287539936102
+    },
+    {
+      "cutoff_minutes": 30,
+      "bought_before_cutoff": 5716,
+      "later_buyers": 3152,
+      "share_excluded_as_already_bought": 0.0047600052962970055,
+      "validation_rate": 0.0026486085412929343,
+      "average_precision": 0.06735269738764468,
+      "roc_auc": 0.8122059722030485,
+      "lift_at_1pct": 29.083750570473935,
+      "recall_at_1pct": 0.2907801418439716
+    },
+    {
+      "cutoff_minutes": 1440,
+      "bought_before_cutoff": 8004,
+      "later_buyers": 844,
+      "share_excluded_as_already_bought": 0.006728379909683016,
+      "validation_rate": 0.000709282737831368,
+      "average_precision": 0.012235504323841987,
+      "roc_auc": 0.7806431937475287,
+      "lift_at_1pct": 20.835591133004925,
+      "recall_at_1pct": 0.20833333333333334
+    }
+  ],
+  "milestones": [
+    {
+      "milestone": "M1_compared_2_items",
+      "reach": 0.1383795058459053,
+      "buy_rate_reached": 0.00955617949854687,
+      "buy_rate_not_reached": 0.00163364760282981,
+      "lift_over_base": 3.5004786576259503,
+      "share_of_later_buyers": 0.484394506866417
+    },
+    {
+      "milestone": "M2_returned_to_an_item",
+      "reach": 0.10443900269417761,
+      "buy_rate_reached": 0.012025388744758269,
+      "buy_rate_not_reached": 0.0016459448865344584,
+      "lift_over_base": 4.404962951677772,
+      "share_of_later_buyers": 0.4600499375780275
+    },
+    {
+      "milestone": "M3_explored_5_items",
+      "reach": 0.013271508688339375,
+      "buy_rate_reached": 0.032742681047765794,
+      "buy_rate_not_reached": 0.002326292283859469,
+      "lift_over_base": 11.993815752266523,
+      "share_of_later_buyers": 0.15917602996254682
+    },
+    {
+      "milestone": "M4_added_to_cart",
+      "reach": 0.016470099059167957,
+      "buy_rate_reached": 0.0578375581996896,
+      "buy_rate_not_reached": 0.001807137065195545,
+      "lift_over_base": 21.186200836641728,
+      "share_of_later_buyers": 0.3489388264669164
+    },
+    {
+      "milestone": "M5_carted_2_items",
+      "reach": 0.0021369378396478653,
+      "buy_rate_reached": 0.12599681020733652,
+      "buy_rate_not_reached": 0.0024659859589082037,
+      "lift_over_base": 46.153292236379166,
+      "share_of_later_buyers": 0.0986267166042447
+    }
+  ],
+  "funnel": [
+    {
+      "step": "viewed",
+      "visitors": 588799,
+      "from_previous": 0.9979238132686128,
+      "median_minutes": 0.0
+    },
+    {
+      "step": "added_to_cart",
+      "visitors": 12983,
+      "from_previous": 0.022049969514214528,
+      "median_minutes": 2.8125833333333334
+    },
+    {
+      "step": "purchased",
+      "visitors": 3816,
+      "from_previous": 0.29392282215204496,
+      "median_minutes": 5.440216666666666
+    },
+    {
+      "step": "purchased_without_that_path",
+      "visitors": 656,
+      "from_previous": 0.0,
+      "median_minutes": 0.0
+    }
+  ],
+  "selection": {
+    "chosen": "boosting",
+    "validation_table": [
+      {
+        "scorer": "logistic",
+        "average_precision": 0.06735269738764468,
+        "roc_auc": 0.8122059722030485,
+        "precision_at_capacity": 0.07703147017379051
+      },
+      {
+        "scorer": "boosting",
+        "average_precision": 0.08500561606647254,
+        "roc_auc": 0.8135933227313349,
+        "precision_at_capacity": 0.08172851103804603
+      },
+      {
+        "scorer": "cart_rule",
+        "average_precision": 0.02118916301985071,
+        "roc_auc": 0.6659802817791294,
+        "precision_at_capacity": 0.056
+      },
+      {
+        "scorer": "points_rule",
+        "average_precision": 0.04338651011656666,
+        "roc_auc": 0.7902495159674148,
+        "precision_at_capacity": 0.07258816636240817
+      }
+    ],
+    "boosting_minus_logistic_ap_interval": [
+      0.003118949260371662,
+      0.03161078662618094
+    ]
+  },
+  "leak_window": [
+    {
+      "features": "features up to the cut-off",
+      "average_precision": 0.06735269738764468,
+      "roc_auc": 0.8122059722030485
+    },
+    {
+      "features": "features from the whole label window (LEAK)",
+      "average_precision": 0.35222731322818457,
+      "roc_auc": 0.9874342083688732
+    }
+  ],
+  "calibrator": {
+    "slope": 0.978569236303616,
+    "intercept": -0.14681459984935535
+  },
+  "policy": {
+    "version": "boosting-t30m-v1",
+    "thresholds": [
+      0.06719804304744548,
+      0.006750924039817187
+    ],
+    "validation_per_day": 11207.473684210527
+  },
+  "test": {
+    "ranking": [
+      {
+        "scorer": "model",
+        "average_precision": 0.08413253046889352,
+        "roc_auc": 0.8123504093811125,
+        "intervals": {
+          "average_precision": [
+            0.06559039229359705,
+            0.10800608697216489
+          ],
+          "precision_at_capacity": [
+            0.07261241543971349,
+            0.09611022682053322
+          ],
+          "average_precision_minus_points_rule": [
+            0.030357531796851068,
+            0.06094193011513281
+          ],
+          "precision_at_capacity_minus_points_rule": [
+            0.007530676914510917,
+            0.021114730136591323
+          ]
+        }
+      },
+      {
+        "scorer": "cart_rule",
+        "average_precision": 0.021229083267838646,
+        "roc_auc": 0.672346970494211,
+        "intervals": {
+          "average_precision": [
+            0.017294405223454285,
+            0.02611199028352518
+          ],
+          "precision_at_capacity": [
+            0.047474753936337905,
+            0.06116762682531435
+          ],
+          "average_precision_minus_points_rule": [
+            -0.027780982066621336,
+            -0.014112997008356488
+          ],
+          "precision_at_capacity_minus_points_rule": [
+            -0.02158597349850444,
+            -0.010712000390961022
+          ]
+        }
+      },
+      {
+        "scorer": "points_rule",
+        "average_precision": 0.04082945333815012,
+        "roc_auc": 0.7970632244728199,
+        "intervals": {
+          "average_precision": [
+            0.033149159651713035,
+            0.05142124232685753
+          ],
+          "precision_at_capacity": [
+            0.06021529490917246,
+            0.08104862397852662
+          ],
+          "average_precision_minus_points_rule": [
+            0.0,
+            0.0
+          ],
+          "precision_at_capacity_minus_points_rule": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      {
+        "scorer": "logistic_not_chosen",
+        "average_precision": 0.05821753743711087,
+        "roc_auc": 0.8105598401649398,
+        "intervals": {
+          "average_precision": [
+            0.04803624895693629,
+            0.07450492532137441
+          ],
+          "precision_at_capacity": [
+            0.06446478312773578,
+            0.08536609629924392
+          ],
+          "average_precision_minus_points_rule": [
+            0.010752092925385662,
+            0.02582704410113439
+          ],
+          "precision_at_capacity_minus_points_rule": [
+            -0.0009829091162052719,
+            0.010827335167190104
+          ]
+        }
+      }
+    ],
+    "capacity": [
+      {
+        "scorer": "model",
+        "fraction": 0.005,
+        "contacted": 1257,
+        "precision": 0.12330946698488465,
+        "recall": 0.23343373493975902,
+        "lift": 46.67244754675025
+      },
+      {
+        "scorer": "cart_rule",
+        "fraction": 0.005,
+        "contacted": 1257,
+        "precision": 0.0540662311331381,
+        "recall": 0.102351283937281,
+        "lift": 20.463987058845884
+      },
+      {
+        "scorer": "points_rule",
+        "fraction": 0.005,
+        "contacted": 1257,
+        "precision": 0.08046995173865898,
+        "recall": 0.1523354357462264,
+        "lift": 30.457755543396072
+      },
+      {
+        "scorer": "logistic_not_chosen",
+        "fraction": 0.005,
+        "contacted": 1257,
+        "precision": 0.12092283214001591,
+        "recall": 0.2289156626506024,
+        "lift": 45.769109852297014
+      },
+      {
+        "scorer": "model",
+        "fraction": 0.01,
+        "contacted": 2513,
+        "precision": 0.08515718265021886,
+        "recall": 0.32228915662650603,
+        "lift": 32.23186538433879
+      },
+      {
+        "scorer": "cart_rule",
+        "fraction": 0.01,
+        "contacted": 2513,
+        "precision": 0.0540662311331381,
+        "recall": 0.20462114282767474,
+        "lift": 20.463987058845884
+      },
+      {
+        "scorer": "points_rule",
+        "fraction": 0.01,
+        "contacted": 2513,
+        "precision": 0.07018989061756913,
+        "recall": 0.2656433661475169,
+        "lift": 26.566767891083323
+      },
+      {
+        "scorer": "logistic_not_chosen",
+        "fraction": 0.01,
+        "contacted": 2513,
+        "precision": 0.07520891364902507,
+        "recall": 0.28463855421686746,
+        "lift": 28.466460549719773
+      },
+      {
+        "scorer": "model",
+        "fraction": 0.05,
+        "contacted": 12566,
+        "precision": 0.027773356676746776,
+        "recall": 0.5256024096385542,
+        "lift": 10.512173674804263
+      },
+      {
+        "scorer": "cart_rule",
+        "fraction": 0.05,
+        "contacted": 12566,
+        "precision": 0.020209880351051063,
+        "recall": 0.3824658983302826,
+        "lift": 7.6494092763060335
+      },
+      {
+        "scorer": "points_rule",
+        "fraction": 0.05,
+        "contacted": 12566,
+        "precision": 0.026461599076553433,
+        "recall": 0.5007777921626061,
+        "lift": 10.015675398669636
+      },
+      {
+        "scorer": "logistic_not_chosen",
+        "fraction": 0.05,
+        "contacted": 12566,
+        "precision": 0.027295877765398695,
+        "recall": 0.516566265060241,
+        "lift": 10.33144862595376
+      },
+      {
+        "scorer": "model",
+        "fraction": 0.1,
+        "contacted": 25132,
+        "precision": 0.016950501352856917,
+        "recall": 0.641566265060241,
+        "lift": 6.41573923419286
+      },
+      {
+        "scorer": "cart_rule",
+        "fraction": 0.1,
+        "contacted": 25132,
+        "precision": 0.01096364304812967,
+        "recall": 0.41496728476746214,
+        "lift": 4.149722382206466
+      },
+      {
+        "scorer": "points_rule",
+        "fraction": 0.1,
+        "contacted": 25132,
+        "precision": 0.015443781407474256,
+        "recall": 0.584537822790125,
+        "lift": 5.845448004022067
+      },
+      {
+        "scorer": "logistic_not_chosen",
+        "fraction": 0.1,
+        "contacted": 25132,
+        "precision": 0.016831131625019896,
+        "recall": 0.6370481927710844,
+        "lift": 6.370557971980234
+      }
+    ],
+    "probability": {
+      "constant_train_rate": {
+        "brier": 0.0026350459113554116,
+        "log_loss": 0.01832354294397156,
+        "mean_predicted": 0.002729963651607561,
+        "observed_rate": 0.002642018438423861
+      },
+      "model_before_calibration": {
+        "brier": 0.0025121251381374247,
+        "log_loss": 0.014761081470348271,
+        "mean_predicted": 0.002714536092459498,
+        "observed_rate": 0.002642018438423861
+      },
+      "model_calibrated_on_validation": {
+        "brier": 0.002512347812225353,
+        "log_loss": 0.014761715123210437,
+        "mean_predicted": 0.0025975351437686157,
+        "observed_rate": 0.002642018438423861
+      }
+    },
+    "calibration": [
+      {
+        "n": 62442,
+        "predicted": 0.0008206123340795275,
+        "observed": 0.0007847282277953941,
+        "low": 0.0005936716965476742,
+        "high": 0.0010372071160456692
+      },
+      {
+        "n": 61826,
+        "predicted": 0.0009770070092974762,
+        "observed": 0.0008895933749555203,
+        "low": 0.0006835712325711756,
+        "high": 0.0011576367837210738
+      },
+      {
+        "n": 60379,
+        "predicted": 0.0011939315302101946,
+        "observed": 0.0011096573311913083,
+        "low": 0.0008739531292867226,
+        "high": 0.001408841061041677
+      },
+      {
+        "n": 41538,
+        "predicted": 0.0017317212670557153,
+        "observed": 0.001612980884972796,
+        "low": 0.0012704247786102297,
+        "high": 0.0020477141071728214
+      },
+      {
+        "n": 12571,
+        "predicted": 0.004796837792699768,
+        "observed": 0.006125208813936839,
+        "low": 0.004904027648640249,
+        "high": 0.007648146368406614
+      },
+      {
+        "n": 10053,
+        "predicted": 0.012786207361474879,
+        "observed": 0.013329354421565702,
+        "low": 0.011266178593879315,
+        "high": 0.015764335638342456
+      },
+      {
+        "n": 2011,
+        "predicted": 0.05758037012949902,
+        "observed": 0.05271009448035803,
+        "low": 0.04376854838659993,
+        "high": 0.06335729217575495
+      },
+      {
+        "n": 503,
+        "predicted": 0.18393572472178973,
+        "observed": 0.21669980119284293,
+        "low": 0.18291434735940557,
+        "high": 0.2547797961363138
+      }
+    ],
+    "routing": {
+      "model": {
+        "tiers": [
+          {
+            "tier": "A_assist",
+            "visitors": 1067,
+            "per_day": 38.107142857142854,
+            "buyers": 144,
+            "buy_rate": 0.13495782567947517,
+            "buy_rate_low": 0.11576057085109659,
+            "buy_rate_high": 0.15677422794641,
+            "share_of_buyers": 0.21686746987951808
+          },
+          {
+            "tier": "B_nudge",
+            "visitors": 10636,
+            "per_day": 379.85714285714283,
+            "buyers": 200,
+            "buy_rate": 0.018804061677322303,
+            "buy_rate_low": 0.016390935458558503,
+            "buy_rate_high": 0.021564667188759105,
+            "share_of_buyers": 0.30120481927710846
+          },
+          {
+            "tier": "C_none",
+            "visitors": 239620,
+            "per_day": 8557.857142857143,
+            "buyers": 320,
+            "buy_rate": 0.0013354477923378683,
+            "buy_rate_low": 0.0011970013565792666,
+            "buy_rate_high": 0.0014898832025738826,
+            "share_of_buyers": 0.4819277108433735
+          }
+        ],
+        "visitors_hitting_a_full_tier": 194
+      },
+      "points_rule": {
+        "tiers": [
+          {
+            "tier": "A_assist",
+            "visitors": 1140,
+            "per_day": 40.714285714285715,
+            "buyers": 94,
+            "buy_rate": 0.0824561403508772,
+            "buy_rate_low": 0.06785654268508726,
+            "buy_rate_high": 0.09986038595258426,
+            "share_of_buyers": 0.14156626506024098
+          },
+          {
+            "tier": "B_nudge",
+            "visitors": 11786,
+            "per_day": 420.92857142857144,
+            "buyers": 242,
+            "buy_rate": 0.020532835567622604,
+            "buy_rate_low": 0.018124411069067207,
+            "buy_rate_high": 0.023253719066285924,
+            "share_of_buyers": 0.3644578313253012
+          },
+          {
+            "tier": "C_none",
+            "visitors": 238397,
+            "per_day": 8514.17857142857,
+            "buyers": 328,
+            "buy_rate": 0.0013758562398016754,
+            "buy_rate_low": 0.0012348788275676123,
+            "buy_rate_high": 0.0015329033479127617,
+            "share_of_buyers": 0.4939759036144578
+          }
+        ],
+        "visitors_hitting_a_full_tier": 86
+      }
+    },
+    "segments": [
+      {
+        "segment": "one event only before cut-off",
+        "share_of_visitors": 0.811008144897204,
+        "later_buyers": 199,
+        "share_of_buyers": 0.2996987951807229,
+        "buy_rate": 0.0009763277321231448,
+        "buyers_above_lowest_threshold": 0.01507537688442211
+      },
+      {
+        "segment": "2+ events, no cart",
+        "share_of_visitors": 0.17395940681911326,
+        "later_buyers": 231,
+        "share_of_buyers": 0.34789156626506024,
+        "buy_rate": 0.005283623055809698,
+        "buyers_above_lowest_threshold": 0.47619047619047616
+      },
+      {
+        "segment": "added to cart",
+        "share_of_visitors": 0.01766252989181253,
+        "later_buyers": 240,
+        "share_of_buyers": 0.3614457831325301,
+        "buy_rate": 0.0540662311331381,
+        "buyers_above_lowest_threshold": 0.9875
+      }
+    ],
+    "days": 28
+  },
+  "weekly": [
+    {
+      "week": "2015-08-10",
+      "visitors": 15076,
+      "buyers": 32,
+      "observed_rate": 0.0021225789334040858,
+      "mean_predicted": 0.002254362571478674,
+      "average_precision": 0.07902376735353028
+    },
+    {
+      "week": "2015-08-17",
+      "visitors": 64927,
+      "buyers": 195,
+      "observed_rate": 0.003003373018928951,
+      "mean_predicted": 0.0026266820063033576,
+      "average_precision": 0.09310461352707894
+    },
+    {
+      "week": "2015-08-24",
+      "visitors": 64977,
+      "buyers": 168,
+      "observed_rate": 0.0025855302645551503,
+      "mean_predicted": 0.002651442873538066,
+      "average_precision": 0.07772693132599703
+    },
+    {
+      "week": "2015-08-31",
+      "visitors": 62068,
+      "buyers": 151,
+      "observed_rate": 0.0024328156215763356,
+      "mean_predicted": 0.002445834596863735,
+      "average_precision": 0.09531843929967765
+    },
+    {
+      "week": "2015-09-07",
+      "visitors": 44275,
+      "buyers": 118,
+      "observed_rate": 0.002665160926030491,
+      "mean_predicted": 0.0028051972181698023,
+      "average_precision": 0.09963487211267054
+    }
+  ],
+  "experiment": {
+    "designs": [
+      {
+        "tier": "A_assist",
+        "baseline": 0.13495782567947517,
+        "per_day": 38.107142857142854,
+        "rows": [
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.5,
+            "treated_rate": 0.1484536082474227,
+            "n_treated": 10482,
+            "n_control": 10482,
+            "enrol_days": 551,
+            "days_to_readout": 558
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.5,
+            "treated_rate": 0.16194939081537021,
+            "n_treated": 2723,
+            "n_control": 2723,
+            "enrol_days": 143,
+            "days_to_readout": 150
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.5,
+            "treated_rate": 0.17544517338331772,
+            "n_treated": 1255,
+            "n_control": 1255,
+            "enrol_days": 66,
+            "days_to_readout": 73
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.5,
+            "treated_rate": 0.20243673851921276,
+            "n_treated": 483,
+            "n_control": 483,
+            "enrol_days": 26,
+            "days_to_readout": 33
+          },
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.9,
+            "treated_rate": 0.1484536082474227,
+            "n_treated": 53056,
+            "n_control": 5895,
+            "enrol_days": 1547,
+            "days_to_readout": 1554
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.9,
+            "treated_rate": 0.16194939081537021,
+            "n_treated": 13924,
+            "n_control": 1547,
+            "enrol_days": 406,
+            "days_to_readout": 413
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.9,
+            "treated_rate": 0.17544517338331772,
+            "n_treated": 6472,
+            "n_control": 719,
+            "enrol_days": 189,
+            "days_to_readout": 196
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.9,
+            "treated_rate": 0.20243673851921276,
+            "n_treated": 2521,
+            "n_control": 280,
+            "enrol_days": 74,
+            "days_to_readout": 81
+          }
+        ],
+        "break_even_lift": 0.5557291666666666
+      },
+      {
+        "tier": "B_nudge",
+        "baseline": 0.018804061677322303,
+        "per_day": 379.85714285714283,
+        "rows": [
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.5,
+            "treated_rate": 0.020684467845054535,
+            "n_treated": 85923,
+            "n_control": 85923,
+            "enrol_days": 453,
+            "days_to_readout": 460
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.5,
+            "treated_rate": 0.022564874012786763,
+            "n_treated": 22482,
+            "n_control": 22482,
+            "enrol_days": 119,
+            "days_to_readout": 126
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.5,
+            "treated_rate": 0.024445280180518995,
+            "n_treated": 10436,
+            "n_control": 10436,
+            "enrol_days": 55,
+            "days_to_readout": 62
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.5,
+            "treated_rate": 0.028206092515983452,
+            "n_treated": 4075,
+            "n_control": 4075,
+            "enrol_days": 22,
+            "days_to_readout": 29
+          },
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.9,
+            "treated_rate": 0.020684467845054535,
+            "n_treated": 435889,
+            "n_control": 48432,
+            "enrol_days": 1276,
+            "days_to_readout": 1283
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.9,
+            "treated_rate": 0.022564874012786763,
+            "n_treated": 115480,
+            "n_control": 12831,
+            "enrol_days": 338,
+            "days_to_readout": 345
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.9,
+            "treated_rate": 0.024445280180518995,
+            "n_treated": 54181,
+            "n_control": 6020,
+            "enrol_days": 159,
+            "days_to_readout": 166
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.9,
+            "treated_rate": 0.028206092515983452,
+            "n_treated": 21538,
+            "n_control": 2393,
+            "enrol_days": 64,
+            "days_to_readout": 71
+          }
+        ],
+        "break_even_lift": 0.13294999999999998
+      },
+      {
+        "tier": "A_and_B_pooled",
+        "baseline": 0.029394172434418525,
+        "per_day": 417.96428571428567,
+        "rows": [
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.5,
+            "treated_rate": 0.03233358967786038,
+            "n_treated": 54343,
+            "n_control": 54343,
+            "enrol_days": 261,
+            "days_to_readout": 268
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.5,
+            "treated_rate": 0.03527300692130223,
+            "n_treated": 14211,
+            "n_control": 14211,
+            "enrol_days": 69,
+            "days_to_readout": 76
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.5,
+            "treated_rate": 0.03821242416474408,
+            "n_treated": 6593,
+            "n_control": 6593,
+            "enrol_days": 32,
+            "days_to_readout": 39
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.5,
+            "treated_rate": 0.04409125865162779,
+            "n_treated": 2571,
+            "n_control": 2571,
+            "enrol_days": 13,
+            "days_to_readout": 20
+          },
+          {
+            "relative_lift": 0.1,
+            "treated_share": 0.9,
+            "treated_rate": 0.03233358967786038,
+            "n_treated": 275635,
+            "n_control": 30626,
+            "enrol_days": 733,
+            "days_to_readout": 740
+          },
+          {
+            "relative_lift": 0.2,
+            "treated_share": 0.9,
+            "treated_rate": 0.03527300692130223,
+            "n_treated": 72964,
+            "n_control": 8107,
+            "enrol_days": 194,
+            "days_to_readout": 201
+          },
+          {
+            "relative_lift": 0.3,
+            "treated_share": 0.9,
+            "treated_rate": 0.03821242416474408,
+            "n_treated": 34210,
+            "n_control": 3801,
+            "enrol_days": 91,
+            "days_to_readout": 98
+          },
+          {
+            "relative_lift": 0.5,
+            "treated_share": 0.9,
+            "treated_rate": 0.04409125865162779,
+            "n_treated": 13573,
+            "n_control": 1508,
+            "enrol_days": 37,
+            "days_to_readout": 44
+          }
+        ]
+      }
+    ],
+    "simulation_check": {
+      "tier": "A_and_B_pooled",
+      "relative_lift": 0.2,
+      "power": 0.7966
+    },
+    "assumptions": {
+      "margin_per_order": 20.0,
+      "cost_per_action": {
+        "A_assist": 1.5,
+        "B_nudge": 0.05
+      }
+    }
+  },
+  "importance": [
+    {
+      "feature": "cart_adds",
+      "ap_drop": 0.061127594477432434
+    },
+    {
+      "feature": "active_minutes",
+      "ap_drop": 0.042291957600837045
+    },
+    {
+      "feature": "idle_minutes_at_cutoff",
+      "ap_drop": 0.022543299568884963
+    },
+    {
+      "feature": "first_hour_utc",
+      "ap_drop": 0.007804415828708847
+    },
+    {
+      "feature": "views",
+      "ap_drop": 0.007165745342803398
+    },
+    {
+      "feature": "cart_items",
+      "ap_drop": 0.004463604177712466
+    },
+    {
+      "feature": "first_weekday",
+      "ap_drop": 0.0021306335197836257
+    },
+    {
+      "feature": "repeat_views",
+      "ap_drop": 0.0012806835661045152
+    },
+    {
+      "feature": "distinct_items",
+      "ap_drop": 0.0011241657746579314
+    },
+    {
+      "feature": "visits",
+      "ap_drop": 0.0
+    },
+    {
+      "feature": "minutes_to_first_cart",
+      "ap_drop": -0.0005087589493844025
+    },
+    {
+      "feature": "max_views_one_item",
+      "ap_drop": -0.0008171835393919608
+    }
+  ],
+  "uci": {
+    "sessions": 12330,
+    "buy_rate": 0.15474452554744525,
+    "train_sessions": 7056,
+    "test_sessions": 5274,
+    "test_buy_rate": 0.2068638604474782,
+    "pv_positive_among_buyers": 0.8060796645702306,
+    "pv_positive_among_non_buyers": 0.11437344079831127,
+    "buy_rate_pv_positive": 0.5633699633699634,
+    "buy_rate_pv_zero": 0.03854166666666667,
+    "variants": [
+      {
+        "variant": "all columns, PageValues included",
+        "average_precision": 0.6657162136543766,
+        "roc_auc": 0.8352329811227979
+      },
+      {
+        "variant": "PageValues alone",
+        "average_precision": 0.5589019444069547,
+        "roc_auc": 0.8126315694904936
+      },
+      {
+        "variant": "without PageValues (still end-of-session totals)",
+        "average_precision": 0.3382998777730102,
+        "roc_auc": 0.6918565017980113
+      },
+      {
+        "variant": "context only (plausibly known at session start)",
+        "average_precision": 0.2600153463277747,
+        "roc_auc": 0.5923293247755691
+      }
+    ]
+  }
+}

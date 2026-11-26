@@ -1,0 +1,7 @@
+row_id,job,education,default,housing,loan,previous,pdays,poutcome
+EXAMPLE-001,retired,university.degree,no,yes,no,2,3,success
+EXAMPLE-002,admin.,high.school,no,no,no,0,999,nonexistent
+EXAMPLE-003,blue-collar,basic.9y,unknown,yes,no,1,999,failure
+EXAMPLE-004,student,unknown,no,unknown,unknown,,,
+EXAMPLE-005,astronaut,university.degree,no,yes,no,0,999,nonexistent
+EXAMPLE-006,technician,professional.course,no,no,yes,1,12,failure

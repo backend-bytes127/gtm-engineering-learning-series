@@ -1,0 +1,42 @@
+{
+  "text": "Churn-risk queue as of 2026-11-23: 8 accounts, £13,832 score-weighted trailing revenue",
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "Weekly churn-risk digest"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Churn-risk queue as of 2026-11-23: 8 accounts, £13,832 score-weighted trailing revenue"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*By primary reason*\n• OVERDUE: 3 (£5,600)\n• FEWER_ORDERS: 1 (£3,172)\n• RETURNS_UP: 1 (£1,638)\n• SCORE_ONLY: 1 (£589)\n• SPEND_DOWN: 1 (£2,112)\n• THIN_HISTORY: 1 (£720)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Top 5 to review*\n1. `900001` OVERDUE, £3,692: Call this week: ask whether the usual reorder moved, stalled, or went to another supplier.\n2. `900002` FEWER_ORDERS, £3,172: Account review: compare the last two quarters of orders and agree the next reorder date.\n3. `900003` SPEND_DOWN, £2,112: Check basket mix: which lines stopped, and was it stock, price or demand?\n4. `900004` RETURNS_UP, £1,638: Open a service review first: resolve returns or credits before any sales ask.\n5. `900005` OVERDUE, £1,386: Call this week: ask whether the usual reorder moved, stalled, or went to another supplier."
+      }
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "A ranking aid, not a forecast of lost money. Reasons describe behaviour; they do not prove a cause."
+        }
+      ]
+    }
+  ]
+}

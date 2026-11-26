@@ -1,0 +1,236 @@
+{
+  "id": "gtmHubSignal0001",
+  "name": "GTM Hub C: signed inbound signal",
+  "active": false,
+  "nodes": [
+    {
+      "id": "7f8613de-332c-5e67-a9e1-10183e957662",
+      "name": "Signal webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gtm-hub-signal",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "webhookId": "dd31775f-937a-5fe7-96e5-270b3364deae"
+    },
+    {
+      "id": "676a86fd-bfc7-523e-80db-86220b5bc261",
+      "name": "Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Shared by every webhook gate. The generator pastes this above each node script.\n// Python reference: hub/signing.py, hub/state.py, hub/pipeline.py.\nconst crypto = require('crypto');\n\nconst TOLERANCE_SECONDS = 300;\nconst MIN_SECRET_LENGTH = 16;\nconst MAX_BODY_BYTES = 16384;\nconst EVENT_RETENTION_SECONDS = 7 * 24 * 3600;\nconst MAX_EVENTS = 2000;\nconst MAX_DEAD_LETTERS = 100;\nconst GENERIC = { version: 'v1', ts: 'x-gtm-timestamp', sig: 'x-gtm-signature' };\nconst SLACK = { version: 'v0', ts: 'x-slack-request-timestamp', sig: 'x-slack-signature' };\nconst ID = /^[A-Za-z0-9_.:-]{1,80}$/;\nconst UTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/;\n\nconst sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');\nconst has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);\nconst isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);\nconst matches = (pattern, value) => typeof value === 'string' && pattern.test(value);\nconst isText = (value, limit) => typeof value === 'string' && value.trim().length > 0 && value.length <= limit;\nconst escapeMrkdwn = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });\nconst context = (text) => ({ type: 'context', elements: [{ type: 'mrkdwn', text }] });\nconst header = (text) => ({ type: 'header', text: { type: 'plain_text', text } });\n\n// The whole hub state lives in one top-level key, replaced on every change so n8n notices and saves it.\nconst store = $getWorkflowStaticData('global');\nconst readState = () => store.hub || { signatures: {}, events: {}, deadLetters: [] };\nconst writeState = (state) => { store.hub = state; };\n\nfunction rememberSignature(state, signature, timestamp, now) {\n  const live = Object.entries(state.signatures).filter(([, expiry]) => expiry >= now);\n  return { ...state, signatures: { ...Object.fromEntries(live), [signature]: timestamp + TOLERANCE_SECONDS } };\n}\n\nfunction recordEvent(state, key, record, now) {\n  const live = Object.entries(state.events).filter(([k, v]) => k !== key && now - v.at <= EVENT_RETENTION_SECONDS);\n  const kept = Object.fromEntries(live.slice(-(MAX_EVENTS - 1)));\n  return { ...state, events: { ...kept, [key]: { ...record, at: Math.floor(now) } } };\n}\n\nfunction addDeadLetter(state, reason, key, detail, now) {\n  const entry = { reason, key, detail, at: Math.floor(now) };\n  return { ...state, deadLetters: [...state.deadLetters, entry].slice(-MAX_DEAD_LETTERS) };\n}\n\nconst answer = (status, outcome, extra = {}) => [{ json: { status, reply: { outcome }, deliver: false, ...extra } }];\n\nfunction verify(scheme, secret, headers, body, now) {\n  if ((secret || '').length < MIN_SECRET_LENGTH) return 'not_configured';\n  const timestamp = headers[scheme.ts] || '';\n  const signature = headers[scheme.sig] || '';\n  if (!timestamp || !signature) return 'missing_headers';\n  if (!/^[0-9]{1,12}$/.test(timestamp)) return 'bad_timestamp';\n  if (Math.abs(now - Number(timestamp)) > TOLERANCE_SECONDS) return 'stale_timestamp';\n  const base = Buffer.concat([Buffer.from(`${scheme.version}:${timestamp}:`), body]);\n  const expected = Buffer.from(`${scheme.version}=${crypto.createHmac('sha256', secret).update(base).digest('hex')}`);\n  const given = Buffer.from(signature);\n  return expected.length === given.length && crypto.timingSafeEqual(expected, given) ? 'ok' : 'bad_signature';\n}\n\n// Authentication first. A rejected request writes nothing, so strangers cannot fill the state.\nasync function gate(scheme, secret, node) {\n  const item = node.getInputData()[0];\n  const hasBody = Boolean(item.binary && item.binary.data);\n  const body = hasBody ? await node.helpers.getBinaryDataBuffer(0, 'data') : Buffer.alloc(0);\n  if (body.length > MAX_BODY_BYTES) return { done: answer(413, 'too_large') };\n  const now = Date.now() / 1000;\n  const headers = item.json.headers || {};\n  const reason = verify(scheme, secret, headers, body, now);\n  if (reason !== 'ok') return { done: answer(reason === 'not_configured' ? 503 : 401, reason) };\n  const state = readState();\n  const signature = headers[scheme.sig];\n  if (has(state.signatures, signature) && state.signatures[signature] >= now) return { done: answer(409, 'replay') };\n  const next = rememberSignature(state, signature, Number(headers[scheme.ts]), now);\n  writeState(next);\n  return { body, now, state: next };\n}\n\nfunction dead(state, status, reason, key, detail, now) {\n  writeState(addDeadLetter(state, reason, key, detail, now));\n  return answer(status, reason);\n}\n\nfunction parseJsonEvent(passed, validate) {\n  const { body, state, now } = passed;\n  const digest = sha256(body);\n  let event;\n  try {\n    const text = body.toString('utf8');\n    if (!Buffer.from(text, 'utf8').equals(body)) throw new Error('not utf-8');\n    event = JSON.parse(text);\n  } catch (error) {\n    return { done: dead(state, 422, 'invalid_json', null, { sha256: digest }, now) };\n  }\n  const fields = validate(event);\n  if (fields.length) return { done: dead(state, 422, 'invalid_schema', null, { sha256: digest, fields }, now) };\n  return { event };\n}\n\nconst failing = (checks) => Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);\n\n// Gate for POST /webhook/gtm-hub-signal. Python reference: pipeline.handle_signal.\nconst TYPES = ['pricing_page_visit', 'demo_request', 'job_change', 'funding_news'];\nconst DOMAIN = /^(?=.{4,100}$)([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,24}$/;\n\nfunction signalErrors(event) {\n  if (!isObject(event)) return ['not_an_object'];\n  return failing({\n    event_id: matches(ID, event.event_id),\n    type: TYPES.includes(event.type),\n    account_domain: matches(DOMAIN, event.account_domain),\n    occurred_at: matches(UTC, event.occurred_at),\n    source: isText(event.source, 40),\n  });\n}\n\nfunction signalMessage(event) {\n  const summary = `New signal: ${event.type} at ${escapeMrkdwn(event.account_domain)}`;\n  const detail = `*${summary}*\\n*Source:* ${escapeMrkdwn(event.source)}\\n*Occurred at:* ${event.occurred_at}`;\n  return { text: summary, blocks: [section(detail), context(`Event \\`${escapeMrkdwn(event.event_id)}\\``)] };\n}\n\nconst passed = await gate(GENERIC, $env.GTM_HUB_WEBHOOK_SECRET, { getInputData: () => $input.all(), helpers: this.helpers });\nif (passed.done) return passed.done;\nconst parsed = parseJsonEvent(passed, signalErrors);\nif (parsed.done) return parsed.done;\nconst { event } = parsed;\nif (has(passed.state.events, event.event_id)) return answer(200, 'duplicate');\nreturn [{ json: { deliver: true, key: event.event_id, event, record: { status: 'delivered' }, message: signalMessage(event) } }];\n"
+      }
+    },
+    {
+      "id": "aa962e23-b090-5777-af24-f94228750f03",
+      "name": "Deliver?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8fe24981-634e-5cf5-a88f-1e7ece75f0bd",
+              "leftValue": "={{ $json.deliver }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6df784b9-15af-574f-a215-07bbef8c1719",
+      "name": "Send to Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.GTM_HUB_SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.message) }}",
+        "options": {
+          "timeout": 5000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "6052addf-3871-5700-aecf-e3ec0fe4e901",
+      "name": "Mark delivered",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        140
+      ],
+      "parameters": {
+        "jsCode": "// Shared by every webhook gate. The generator pastes this above each node script.\n// Python reference: hub/signing.py, hub/state.py, hub/pipeline.py.\nconst crypto = require('crypto');\n\nconst TOLERANCE_SECONDS = 300;\nconst MIN_SECRET_LENGTH = 16;\nconst MAX_BODY_BYTES = 16384;\nconst EVENT_RETENTION_SECONDS = 7 * 24 * 3600;\nconst MAX_EVENTS = 2000;\nconst MAX_DEAD_LETTERS = 100;\nconst GENERIC = { version: 'v1', ts: 'x-gtm-timestamp', sig: 'x-gtm-signature' };\nconst SLACK = { version: 'v0', ts: 'x-slack-request-timestamp', sig: 'x-slack-signature' };\nconst ID = /^[A-Za-z0-9_.:-]{1,80}$/;\nconst UTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/;\n\nconst sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');\nconst has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);\nconst isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);\nconst matches = (pattern, value) => typeof value === 'string' && pattern.test(value);\nconst isText = (value, limit) => typeof value === 'string' && value.trim().length > 0 && value.length <= limit;\nconst escapeMrkdwn = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });\nconst context = (text) => ({ type: 'context', elements: [{ type: 'mrkdwn', text }] });\nconst header = (text) => ({ type: 'header', text: { type: 'plain_text', text } });\n\n// The whole hub state lives in one top-level key, replaced on every change so n8n notices and saves it.\nconst store = $getWorkflowStaticData('global');\nconst readState = () => store.hub || { signatures: {}, events: {}, deadLetters: [] };\nconst writeState = (state) => { store.hub = state; };\n\nfunction rememberSignature(state, signature, timestamp, now) {\n  const live = Object.entries(state.signatures).filter(([, expiry]) => expiry >= now);\n  return { ...state, signatures: { ...Object.fromEntries(live), [signature]: timestamp + TOLERANCE_SECONDS } };\n}\n\nfunction recordEvent(state, key, record, now) {\n  const live = Object.entries(state.events).filter(([k, v]) => k !== key && now - v.at <= EVENT_RETENTION_SECONDS);\n  const kept = Object.fromEntries(live.slice(-(MAX_EVENTS - 1)));\n  return { ...state, events: { ...kept, [key]: { ...record, at: Math.floor(now) } } };\n}\n\nfunction addDeadLetter(state, reason, key, detail, now) {\n  const entry = { reason, key, detail, at: Math.floor(now) };\n  return { ...state, deadLetters: [...state.deadLetters, entry].slice(-MAX_DEAD_LETTERS) };\n}\n\nconst answer = (status, outcome, extra = {}) => [{ json: { status, reply: { outcome }, deliver: false, ...extra } }];\n\nfunction verify(scheme, secret, headers, body, now) {\n  if ((secret || '').length < MIN_SECRET_LENGTH) return 'not_configured';\n  const timestamp = headers[scheme.ts] || '';\n  const signature = headers[scheme.sig] || '';\n  if (!timestamp || !signature) return 'missing_headers';\n  if (!/^[0-9]{1,12}$/.test(timestamp)) return 'bad_timestamp';\n  if (Math.abs(now - Number(timestamp)) > TOLERANCE_SECONDS) return 'stale_timestamp';\n  const base = Buffer.concat([Buffer.from(`${scheme.version}:${timestamp}:`), body]);\n  const expected = Buffer.from(`${scheme.version}=${crypto.createHmac('sha256', secret).update(base).digest('hex')}`);\n  const given = Buffer.from(signature);\n  return expected.length === given.length && crypto.timingSafeEqual(expected, given) ? 'ok' : 'bad_signature';\n}\n\n// Authentication first. A rejected request writes nothing, so strangers cannot fill the state.\nasync function gate(scheme, secret, node) {\n  const item = node.getInputData()[0];\n  const hasBody = Boolean(item.binary && item.binary.data);\n  const body = hasBody ? await node.helpers.getBinaryDataBuffer(0, 'data') : Buffer.alloc(0);\n  if (body.length > MAX_BODY_BYTES) return { done: answer(413, 'too_large') };\n  const now = Date.now() / 1000;\n  const headers = item.json.headers || {};\n  const reason = verify(scheme, secret, headers, body, now);\n  if (reason !== 'ok') return { done: answer(reason === 'not_configured' ? 503 : 401, reason) };\n  const state = readState();\n  const signature = headers[scheme.sig];\n  if (has(state.signatures, signature) && state.signatures[signature] >= now) return { done: answer(409, 'replay') };\n  const next = rememberSignature(state, signature, Number(headers[scheme.ts]), now);\n  writeState(next);\n  return { body, now, state: next };\n}\n\nfunction dead(state, status, reason, key, detail, now) {\n  writeState(addDeadLetter(state, reason, key, detail, now));\n  return answer(status, reason);\n}\n\nfunction parseJsonEvent(passed, validate) {\n  const { body, state, now } = passed;\n  const digest = sha256(body);\n  let event;\n  try {\n    const text = body.toString('utf8');\n    if (!Buffer.from(text, 'utf8').equals(body)) throw new Error('not utf-8');\n    event = JSON.parse(text);\n  } catch (error) {\n    return { done: dead(state, 422, 'invalid_json', null, { sha256: digest }, now) };\n  }\n  const fields = validate(event);\n  if (fields.length) return { done: dead(state, 422, 'invalid_schema', null, { sha256: digest, fields }, now) };\n  return { event };\n}\n\nconst failing = (checks) => Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);\n\n// Slack accepted the message: only now is the event recorded as seen.\nconst gated = $('Gate').first().json;\nwriteState(recordEvent(readState(), gated.key, gated.record, Date.now() / 1000));\nreturn answer(200, gated.record.status);\n"
+      }
+    },
+    {
+      "id": "8507361a-1fb5-5d5a-adf9-b16bda311ae4",
+      "name": "Dead-letter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Shared by every webhook gate. The generator pastes this above each node script.\n// Python reference: hub/signing.py, hub/state.py, hub/pipeline.py.\nconst crypto = require('crypto');\n\nconst TOLERANCE_SECONDS = 300;\nconst MIN_SECRET_LENGTH = 16;\nconst MAX_BODY_BYTES = 16384;\nconst EVENT_RETENTION_SECONDS = 7 * 24 * 3600;\nconst MAX_EVENTS = 2000;\nconst MAX_DEAD_LETTERS = 100;\nconst GENERIC = { version: 'v1', ts: 'x-gtm-timestamp', sig: 'x-gtm-signature' };\nconst SLACK = { version: 'v0', ts: 'x-slack-request-timestamp', sig: 'x-slack-signature' };\nconst ID = /^[A-Za-z0-9_.:-]{1,80}$/;\nconst UTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/;\n\nconst sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');\nconst has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);\nconst isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);\nconst matches = (pattern, value) => typeof value === 'string' && pattern.test(value);\nconst isText = (value, limit) => typeof value === 'string' && value.trim().length > 0 && value.length <= limit;\nconst escapeMrkdwn = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });\nconst context = (text) => ({ type: 'context', elements: [{ type: 'mrkdwn', text }] });\nconst header = (text) => ({ type: 'header', text: { type: 'plain_text', text } });\n\n// The whole hub state lives in one top-level key, replaced on every change so n8n notices and saves it.\nconst store = $getWorkflowStaticData('global');\nconst readState = () => store.hub || { signatures: {}, events: {}, deadLetters: [] };\nconst writeState = (state) => { store.hub = state; };\n\nfunction rememberSignature(state, signature, timestamp, now) {\n  const live = Object.entries(state.signatures).filter(([, expiry]) => expiry >= now);\n  return { ...state, signatures: { ...Object.fromEntries(live), [signature]: timestamp + TOLERANCE_SECONDS } };\n}\n\nfunction recordEvent(state, key, record, now) {\n  const live = Object.entries(state.events).filter(([k, v]) => k !== key && now - v.at <= EVENT_RETENTION_SECONDS);\n  const kept = Object.fromEntries(live.slice(-(MAX_EVENTS - 1)));\n  return { ...state, events: { ...kept, [key]: { ...record, at: Math.floor(now) } } };\n}\n\nfunction addDeadLetter(state, reason, key, detail, now) {\n  const entry = { reason, key, detail, at: Math.floor(now) };\n  return { ...state, deadLetters: [...state.deadLetters, entry].slice(-MAX_DEAD_LETTERS) };\n}\n\nconst answer = (status, outcome, extra = {}) => [{ json: { status, reply: { outcome }, deliver: false, ...extra } }];\n\nfunction verify(scheme, secret, headers, body, now) {\n  if ((secret || '').length < MIN_SECRET_LENGTH) return 'not_configured';\n  const timestamp = headers[scheme.ts] || '';\n  const signature = headers[scheme.sig] || '';\n  if (!timestamp || !signature) return 'missing_headers';\n  if (!/^[0-9]{1,12}$/.test(timestamp)) return 'bad_timestamp';\n  if (Math.abs(now - Number(timestamp)) > TOLERANCE_SECONDS) return 'stale_timestamp';\n  const base = Buffer.concat([Buffer.from(`${scheme.version}:${timestamp}:`), body]);\n  const expected = Buffer.from(`${scheme.version}=${crypto.createHmac('sha256', secret).update(base).digest('hex')}`);\n  const given = Buffer.from(signature);\n  return expected.length === given.length && crypto.timingSafeEqual(expected, given) ? 'ok' : 'bad_signature';\n}\n\n// Authentication first. A rejected request writes nothing, so strangers cannot fill the state.\nasync function gate(scheme, secret, node) {\n  const item = node.getInputData()[0];\n  const hasBody = Boolean(item.binary && item.binary.data);\n  const body = hasBody ? await node.helpers.getBinaryDataBuffer(0, 'data') : Buffer.alloc(0);\n  if (body.length > MAX_BODY_BYTES) return { done: answer(413, 'too_large') };\n  const now = Date.now() / 1000;\n  const headers = item.json.headers || {};\n  const reason = verify(scheme, secret, headers, body, now);\n  if (reason !== 'ok') return { done: answer(reason === 'not_configured' ? 503 : 401, reason) };\n  const state = readState();\n  const signature = headers[scheme.sig];\n  if (has(state.signatures, signature) && state.signatures[signature] >= now) return { done: answer(409, 'replay') };\n  const next = rememberSignature(state, signature, Number(headers[scheme.ts]), now);\n  writeState(next);\n  return { body, now, state: next };\n}\n\nfunction dead(state, status, reason, key, detail, now) {\n  writeState(addDeadLetter(state, reason, key, detail, now));\n  return answer(status, reason);\n}\n\nfunction parseJsonEvent(passed, validate) {\n  const { body, state, now } = passed;\n  const digest = sha256(body);\n  let event;\n  try {\n    const text = body.toString('utf8');\n    if (!Buffer.from(text, 'utf8').equals(body)) throw new Error('not utf-8');\n    event = JSON.parse(text);\n  } catch (error) {\n    return { done: dead(state, 422, 'invalid_json', null, { sha256: digest }, now) };\n  }\n  const fields = validate(event);\n  if (fields.length) return { done: dead(state, 422, 'invalid_schema', null, { sha256: digest, fields }, now) };\n  return { event };\n}\n\nconst failing = (checks) => Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);\n\n// All tries failed. Keep the authenticated event for repair; do not mark it seen, so a re-signed retry works.\n// The HTTP error object is deliberately not copied: it can contain the Slack webhook URL.\nconst gated = $('Gate').first().json;\nreturn dead(readState(), 502, 'delivery_failed', gated.key, { event: gated.event }, Date.now() / 1000);\n"
+      }
+    },
+    {
+      "id": "a84155e3-a0bf-5562-bd7f-6ea5bc0bc74e",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.reply) }}",
+        "options": {
+          "responseCode": "={{ $json.status }}"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Signal webhook": {
+      "main": [
+        [
+          {
+            "node": "Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gate": {
+      "main": [
+        [
+          {
+            "node": "Deliver?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deliver?": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Slack": {
+      "main": [
+        [
+          {
+            "node": "Mark delivered",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dead-letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark delivered": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dead-letter": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none"
+  },
+  "pinData": {}
+}

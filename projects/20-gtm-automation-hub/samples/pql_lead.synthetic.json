@@ -1,0 +1,9 @@
+{
+  "idempotency_key": "syn-visitor-001:demo-v1",
+  "visitor_key": "syn-visitor-001",
+  "score_version": "demo-v1",
+  "tier": "A_assist",
+  "action": "high-touch: proactive chat or a human-assisted offer",
+  "score": 0.214,
+  "decided_at": "2026-01-12T09:30:00Z"
+}

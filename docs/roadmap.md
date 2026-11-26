@@ -26,24 +26,26 @@ Status below says what is built and what is only specced. The stack at the end i
 
 ---
 
-## Roadmap: Next 14 Projects
+## Projects 05 onwards
 
 | # | Project | Priority | Effort | Status | Data Sources |
 |---|---|---|---|---|---|
 | 05 | [Real-Time Intent Webhook Router](../projects/05-intent-webhook-router/) | 🔴 P1 | 2 days | 📋 | Clearbit Reveal / Unify API, Slack Webhooks |
 | 06 | [AI SDR Research Agent](../projects/06-ai-sdr-research-agent/) | 🔴 P1 | 3 days | 📋 | GitHub API, Prospeo, Clay, Claude Haiku |
-| 07 | [PQL Scorer](../projects/07-pql-scorer/) | 🟡 P2 | 2 days | 📋 | Product event webhooks, Mixpanel/Amplitude export |
+| 07 | [PQL Scorer](../projects/07-pql-scorer/) | 🟡 P2 | 2 days | ✅ | Real web-shop events |
 | 08 | [Usage-Based Pricing Meter](../projects/08-usage-pricing-meter/) | 🟡 P2 | 2 days | 📋 | Stripe Metered Billing API, internal event log |
-| 09 | [Multi-Touch Attribution Engine](../projects/09-attribution-engine/) | 🟡 P2 | 3 days | 📋 | UTM params, HubSpot Activities API, ad platform webhooks |
+| 09 | [Multi-Touch Attribution Engine](../projects/09-attribution-engine/) | 🟡 P2 | 3 days | ✅ | Synthetic world with known effects |
 | 10 | [AI Call Coaching & Battlecard Generator](../projects/10-call-coaching-battlecard/) | 🟡 P2 | 3 days | 📋 | Gong API / Fireflies.ai transcripts, Claude Sonnet |
-| 11 | [Predictive Churn & NRR Alert System](../projects/11-churn-alert-system/) | 🔴 P1 | 2 days | 📋 | Product usage DB, Stripe MRR feed, HubSpot |
+| 11 | [Predictive Churn & NRR Alert System](../projects/11-churn-alert-system/) | 🔴 P1 | 2 days | ✅ | Real retail transactions |
 | 12 | [Automated QBR Generator](../projects/12-qbr-generator/) | 🟢 P3 | 2 days | 📋 | HubSpot, Stripe, usage metrics DB, Google Slides API |
 | 13 | [Dark Social Attribution Bot](../projects/13-dark-social-attribution/) | 🟢 P3 | 1 day | 📋 | HubSpot forms, inbound lead webhook, Claude |
 | 14 | [Competitor Battlecard Auto-Updater](../projects/14-competitor-battlecard-updater/) | 🟡 P2 | 2 days | 📋 | G2 RSS, competitor sitemap diff, Claude summariser |
 | 15 | [GTM Architecture Teardown](../projects/15-gtm-architecture-teardown/) | 🔴 P1 | 1 day | 📋 | Public pricing pages, SEC filings, Sacra research |
 | 16 | [Enrichment Waterfall Engine](../projects/16-enrichment-waterfall/) | 🔴 P1 | 3 days | ✅ | Synthetic providers and contacts |
-| 17 | [Signal and Fit Account Scoring](../projects/17-signal-fit-scoring/) | 🔴 P1 | 3 days | 📋 | Account signals, outcome labels |
+| 17 | [Signal and Fit Account Scoring](../projects/17-signal-fit-scoring/) | 🔴 P1 | 3 days | ✅ | Real bank marketing records |
 | 18 | [GTM MCP Server](../projects/18-gtm-mcp-server/) | 🟡 P2 | 2 days | 📋 | Projects 02, 16, 17 |
+| 19 | [Clay Playbook](../projects/19-clay-playbook/) | 🟡 P2 | 1 day | ✅ | Clay company data (not published) |
+| 20 | [Signal-to-Action Hub](../projects/20-gtm-automation-hub/) | 🔴 P1 | 1 day | ✅ | Synthetic payloads |
 
 ---
 
