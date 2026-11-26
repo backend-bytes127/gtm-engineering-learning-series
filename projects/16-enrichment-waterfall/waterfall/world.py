@@ -4,7 +4,21 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass
 
-from .models import CATCH_ALL, INVALID, MICROS, NOT_FOUND, PER_CALL, PER_HIT, VALID, Answer, Contact, RateLimited, ServerError, TimedOut, Terms
+from .models import (
+    CATCH_ALL,
+    INVALID,
+    MICROS,
+    NOT_FOUND,
+    PER_CALL,
+    PER_HIT,
+    VALID,
+    Answer,
+    Contact,
+    RateLimited,
+    ServerError,
+    Terms,
+    TimedOut,
+)
 
 TERMS = (
     Terms("alder", 10_000, PER_CALL),
