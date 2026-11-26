@@ -2,7 +2,6 @@ import hashlib
 import hmac
 import json
 import time
-from datetime import datetime, timezone
 
 import pytest
 
@@ -11,12 +10,10 @@ from sequencer.ai import runtime
 from sequencer.live import scheduler
 from sequencer.tests.test_ai_flow import FakeSDK, send
 from sequencer.tests.test_unipile import ACCOUNT
-from sequencer.tests.test_web_live import WEBHOOK_SECRET, call, env, launched, transport, ws  # noqa: F401  (fixtures)
+from sequencer.tests.test_web_live import MON_10, WEBHOOK_SECRET, call, env, launched, transport, ws  # noqa: F401  (fixtures)
 from sequencer.web.auth import Auth
 from sequencer.web.http import Request
 from sequencer.web.routes import dispatch
-
-MON_10 = datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc)  # Monday, inside 09-17 London
 
 
 @pytest.fixture(autouse=True)

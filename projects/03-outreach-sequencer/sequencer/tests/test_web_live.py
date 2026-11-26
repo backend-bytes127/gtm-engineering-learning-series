@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -16,6 +16,18 @@ from sequencer.web.http import Request
 from sequencer.web.routes import dispatch
 from sequencer.web.server import auth_from_env
 from sequencer.web.workspace import Workspace
+
+
+def upcoming_monday_10(today: datetime) -> datetime:
+    """10:00 UTC on the next Monday after `today`, which is inside the 09-17 London window all year.
+
+    The web routes launch against the real clock, so a fixed calendar date here stops working once it has passed.
+    """
+    days_ahead = 7 - today.weekday()
+    return (today + timedelta(days=days_ahead)).replace(hour=10, minute=0, second=0, microsecond=0)
+
+
+MON_10 = upcoming_monday_10(datetime.now(timezone.utc))
 
 ROOT = Path(__file__).resolve().parents[2]
 WEBHOOK_SECRET = "whsec_unit_test"
@@ -129,7 +141,7 @@ def test_preflight_surfaces_a_provider_failure_without_the_key(ws, env, transpor
 def test_start_then_scheduler_sends_only_to_the_chosen_contact_within_caps(ws, env, transport):
     launched(ws)
     assert call(ws, "POST", "/api/live/start", {"contacts": ["r0001"], "confirm": True})[0] == 200
-    now = datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc)  # Monday, inside the 9-17 London window
+    now = MON_10
     scheduler.step(ws, now, transport)
     posts = [r for r in transport.requests if r["method"] == "POST"]
     assert len(posts) == 1 and posts[0]["body"]["user_id"] == "prov_mira"
@@ -148,7 +160,7 @@ def test_stop_halts_the_scheduler(ws, env, transport):
     launched(ws)
     call(ws, "POST", "/api/live/start", {"contacts": ["r0001"], "confirm": True})
     assert call(ws, "POST", "/api/live/stop")[1] == {"enabled": False}
-    scheduler.step(ws, datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc), transport)
+    scheduler.step(ws, MON_10, transport)
     assert [r for r in transport.requests if r["method"] == "POST"] == []
 
 
@@ -165,7 +177,7 @@ def test_a_scheduler_error_is_recorded_not_raised(ws, env):
     def broken(*a, **k):
         raise OSError("network down")
 
-    scheduler.step(ws, datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc), broken)
+    scheduler.step(ws, MON_10, broken)
     assert "network down" in call(ws, "GET", "/api/live")[1]["status"]["error"]
 
 
@@ -178,7 +190,7 @@ def test_scheduler_does_nothing_when_unconfigured_or_not_started(ws, monkeypatch
 def test_accept_polling_runs_on_a_schedule_not_every_tick(ws, env, transport):
     launched(ws)
     call(ws, "POST", "/api/live/start", {"contacts": ["r0001"], "confirm": True})
-    t0 = datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc)
+    t0 = MON_10
     last = scheduler.step(ws, t0, transport)
     n = len([r for r in transport.requests if r["path"].endswith("/relations")])
     last = scheduler.step(ws, t0.replace(minute=5), transport, last)
@@ -208,7 +220,7 @@ def reply_body(provider_id):
 def test_webhook_rejects_missing_or_wrong_signatures_and_changes_nothing(ws, env, transport):
     launched(ws)
     call(ws, "POST", "/api/live/start", {"contacts": ["r0001"], "confirm": True})
-    scheduler.step(ws, datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc), transport)
+    scheduler.step(ws, MON_10, transport)
     body = reply_body("prov_mira")
     assert call(ws, "POST", "/api/webhooks/unipile", raw=body.encode())[0] == 401
     assert call(ws, "POST", "/api/webhooks/unipile", raw=body.encode(), headers=signed(body, "wrong"))[0] == 401
@@ -220,7 +232,7 @@ def test_webhook_rejects_missing_or_wrong_signatures_and_changes_nothing(ws, env
 def test_a_signed_reply_marks_the_contact_replied(ws, env, transport):
     launched(ws)
     call(ws, "POST", "/api/live/start", {"contacts": ["r0001"], "confirm": True})
-    scheduler.step(ws, datetime(2026, 11, 16, 10, 0, tzinfo=timezone.utc), transport)
+    scheduler.step(ws, MON_10, transport)
     body = reply_body("prov_mira")
     assert call(ws, "POST", "/api/webhooks/unipile", raw=body.encode(), headers=signed(body)) == (200, {"ok": True})
     with ws.store() as s:
