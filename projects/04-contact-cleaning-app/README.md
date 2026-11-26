@@ -12,7 +12,7 @@ Upload files ──> Clean and standardize ──> Consolidate ──> CRM updat
 | Input | The six source exports (Google Ads, event, LinkedIn form, scraped LinkedIn, Apollo, ZoomInfo) and an optional Rules template |
 | Output | Final_Contact_List.xlsx, Cleaning_Audit.xlsx (both downloadable), and a CRM update plan |
 | Result on the bundled synthetic sample | 37 rows → 5 removed → 32 kept → 12 people → 12 contacts, 5 companies, 12 links planned for the CRM |
-| Quality gates | 56 tests, 96% coverage (CI gate 90%), lint, browser run on the sample |
+| Quality gates | 61 tests, 93% coverage (CI gate 90%), lint, browser run on the sample |
 | Stack | Python 3.10+, standard library server, plain JavaScript, openpyxl. No framework, no database |
 | **CRM push is off by default** | The app shows a preview. See [CRM integration](#crm-integration) |
 
@@ -22,7 +22,7 @@ Upload files ──> Clean and standardize ──> Consolidate ──> CRM updat
 cd projects/04-contact-cleaning-app
 pip install -r requirements.txt
 python3 -m contactapp            # http://127.0.0.1:8770  (or: make contact-app)
-python3 -m pytest                # 56 tests
+python3 -m pytest                # 61 tests
 ```
 
 Click **Try the sample data** to see the whole flow with no files. The app reuses Project 02's `pipeline` package by path, so there is one copy of the cleaning rules.
@@ -56,12 +56,12 @@ The plan is built by [`crm_plan.py`](contactapp/crm_plan.py) (pure, no network) 
 
 | Decision | Why |
 |---|---|
-| Contacts match on **e-mail**, companies on **domain** (batch upsert) | Running the same file twice updates records, it never duplicates them |
+| Contacts are upserted on **e-mail**. Companies are **searched by domain**, then updated or created | E-mail is unique in HubSpot; a company domain is not, so it cannot be an upsert key. A domain that already has several companies is reported and left unchanged. Because HubSpot's search can lag behind a create, repeating a push immediately could still create a company twice |
 | **Blank fields are never sent** | A blank in our list can never erase a value that is already in the CRM |
 | Rows with **no e-mail are skipped** and listed | They cannot be matched safely; a person decides |
 | Company size bucket goes to a custom text property `gtm_company_size` | HubSpot's own field is a number; our value is a range such as `51-200` |
-| Order: company upsert → contact upsert → read back ids → associate | Ids are read back by match key instead of trusting response order |
-| Batches of 100, retry on 429 and 5xx | HubSpot's batch limit and rate limits |
+| Order: company search → update or create → contact upsert → read back ids → associate | Ids are matched by key instead of trusting response order. A partial failure (HTTP 207) counts as a failure |
+| Batches of 100; retry on 429 (honouring `Retry-After`) and on 5xx, except for creates | A create that failed with a 5xx may have happened, so it is not repeated |
 | A failed stage **stops** the push and reports what was done | A partial result is never hidden |
 
 **Safety rails for the real push** (all must hold):

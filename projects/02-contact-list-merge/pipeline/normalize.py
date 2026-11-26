@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from difflib import SequenceMatcher
 
 from . import constants as C
@@ -47,8 +48,22 @@ def slug_to_name(slug: str) -> str:
     return base.replace("-", " ").strip()
 
 
+# Latin letters that Unicode decomposition does not reduce to a plain letter.
+_LATIN_EXTRA = str.maketrans(
+    {"ß": "ss", "ø": "o", "ł": "l", "đ": "d", "ð": "d", "æ": "ae", "œ": "oe", "þ": "th", "ħ": "h", "ı": "i"}
+)
+
+
 def letters(text: str) -> str:
-    return re.sub(r"[^a-z]", "", text.lower())
+    """Lower-case letters only. Accented Latin letters lose the accent; letters of other scripts are kept as they are."""
+    out: list[str] = []
+    for ch in unicodedata.normalize("NFC", text).lower().translate(_LATIN_EXTRA):
+        parts = unicodedata.normalize("NFKD", ch)
+        if parts.isascii() or parts[0].isascii():
+            out.append("".join(c for c in parts if c.isascii() and c.isalpha()))
+        elif ch.isalpha():
+            out.append(ch)
+    return "".join(out)
 
 
 def alias_first(first: str) -> str:

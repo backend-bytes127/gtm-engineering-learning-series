@@ -8,16 +8,16 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 
 ## Projects
 
-**4 built and tested · 14 specced, not started.** [Built](#built) · [Next up](#next-up) · [Roadmap](docs/roadmap.md) · [Research behind the list](docs/research.md)
+**4 built (02-04 have automated tests) · 14 specced, not started.** [Built](#built) · [Next up](#next-up) · [Roadmap](docs/roadmap.md) · [Research behind the list](docs/research.md)
 
 ### Built
 
 | # | Project | Problem | Stack | Proof it works |
 |---|---|---|---|---|
 | 01 | [LinkedIn ICP Scraper](projects/01-linkedin-icp-scraper/) | Turn an Ideal Customer Profile into a keyword matrix and pull matching LinkedIn profiles into a sheet | n8n, Apify, Google Sheets API | 15 searches, 255 profiles, about $0.40 per full run |
-| 02 | [Contact List Merge](projects/02-contact-list-merge/) | Merge 6 messy lead exports (ads, event, LinkedIn, scraper, Apollo, ZoomInfo) into one clean, de-duplicated contact list | n8n, JavaScript, Python reference build | built and verified on a 292-row instructor dataset (90 people out; dataset not included) and a bundled synthetic sample (37 rows, 12 people); 102 tests, 98% coverage, n8n output identical to the Python reference |
-| 03 | [Outreach Sequencer](projects/03-outreach-sequencer/) | Take a clean contact list through a multi-step email and LinkedIn sequence, with validation, personalised and approved messages, send limits and stop rules, and a results report | Python, SQLite, openpyxl (sending is simulated) | 36 rows → 26 valid → 25 launched; rules proved over a 60-day simulated run; 475 tests, 98% coverage, report numbers recounted independently from SQL |
-| 04 | [Contact Cleaning App](projects/04-contact-cleaning-app/) | A web app around Project 02: upload the lead exports, clean, standardize and consolidate them, then preview and (when switched on) push the result to HubSpot | Python, standard-library server, JavaScript, openpyxl | 37 rows → 12 people → 12 contacts and 5 companies planned for the CRM; 56 tests, 96% coverage; push off by default |
+| 02 | [Contact List Merge](projects/02-contact-list-merge/) | Merge 6 messy lead exports (ads, event, LinkedIn, scraper, Apollo, ZoomInfo) into one clean, de-duplicated contact list | n8n, JavaScript, Python reference build | built and verified on a 292-row instructor dataset (90 people out; dataset not included) and a bundled synthetic sample (37 rows, 12 people); 111 tests, 97% coverage, n8n output the same as the Python reference on the tested data |
+| 03 | [Outreach Sequencer](projects/03-outreach-sequencer/) | Take a clean contact list through a multi-step email and LinkedIn sequence, with validation, personalised and approved messages, send limits and stop rules, and a results report | Python, SQLite, openpyxl (sending is simulated) | 36 rows → 26 valid → 25 launched; rules proved over a 60-day simulated run; 518 tests, 97% coverage, report numbers recounted independently from SQL |
+| 04 | [Contact Cleaning App](projects/04-contact-cleaning-app/) | A web app around Project 02: upload the lead exports, clean, standardize and consolidate them, then preview and (when switched on) push the result to HubSpot | Python, standard-library server, JavaScript, openpyxl | 37 rows → 12 people → 12 contacts and 5 companies planned for the CRM; 61 tests, 93% coverage; push off by default and not yet run against a live HubSpot account |
 
 ### Next up
 
@@ -49,7 +49,7 @@ Specs only: no code yet. Each link opens the project's spec. Listed in suggested
 Two ideas run through the whole repo:
 
 1. **Workflows are generated, not hand-edited.** Logic lives in readable, testable source files. A build script assembles the n8n Code nodes from them, so the workflow JSON is a build artifact that CI can verify is up to date.
-2. **Every claim has a test.** A Python reference implementation produces golden output; the n8n JavaScript is proven identical to it, and an end-to-end test runs the real workflow in a clean container.
+2. **Code is tested against a reference.** For project 02, a Python reference produces golden output; the n8n JavaScript gives the same output on the tested data, and an end-to-end test runs the workflow in a clean container. The golden file is the pipeline's own output, so it catches regressions; it does not measure matching accuracy. Project 01 has no tests, and live deployments are not covered by tests.
 
 ## Quick start
 

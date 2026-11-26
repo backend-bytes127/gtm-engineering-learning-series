@@ -2,7 +2,7 @@
 
 Inspired by [Aditya Kanodia's LinkedIn post on 15 GTM Engineering projects](https://www.linkedin.com/feed/update/urn:li:activity:7529476323678027776).
 
-Each project is a real, tested, reproducible system — not a demo. Stack: Python + n8n + Docker + SQLite/Postgres + Claude API.
+Status below says what is built and what is only specced. The stack at the end is the plan for unbuilt projects, not a list of what has been used.
 
 ## Status Legend
 
@@ -20,9 +20,9 @@ Each project is a real, tested, reproducible system — not a demo. Stack: Pytho
 | # | Project | Status | Key Output |
 |---|---|---|---|
 | 01 | [LinkedIn ICP Scraper](../projects/01-linkedin-icp-scraper/) | ✅ | ICP → keyword matrix → LinkedIn profiles → spreadsheet |
-| 02 | [Contact List Merge](../projects/02-contact-list-merge/) | ✅ | 6 lead exports → clean deduped list (102 tests, 98% coverage) |
-| 03 | [Outreach Sequencer](../projects/03-outreach-sequencer/) | ✅ | Clean list → multi-step email/LinkedIn sequence (475 tests) |
-| 04 | [Contact Cleaning App](../projects/04-contact-cleaning-app/) | ✅ | Web app over #02, Railway deployed, HubSpot push |
+| 02 | [Contact List Merge](../projects/02-contact-list-merge/) | ✅ | 6 lead exports → clean deduped list (111 tests, 97% coverage) |
+| 03 | [Outreach Sequencer](../projects/03-outreach-sequencer/) | ✅ | Clean list → multi-step email/LinkedIn sequence (518 tests) |
+| 04 | [Contact Cleaning App](../projects/04-contact-cleaning-app/) | ✅ | Web app over #02, deployed on Railway; HubSpot push written but not run against a live account |
 
 ---
 

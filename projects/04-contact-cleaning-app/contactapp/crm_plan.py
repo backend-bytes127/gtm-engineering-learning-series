@@ -1,7 +1,7 @@
 """Turn the consolidated list into a CRM update plan. Pure: no network, so it is safe to show before anything is sent.
 
 Rules that protect existing CRM data:
-- a contact is matched on e-mail and a company on its domain, so re-running never creates duplicates;
+- a contact is matched on e-mail and a company on its domain, so a later re-run updates records (see hubspot.py for the limits);
 - blank fields are left out of the payload, so a blank in our list can never erase a value already in the CRM;
 - a row with no e-mail cannot be matched safely, so it is listed as skipped for a person to handle.
 """

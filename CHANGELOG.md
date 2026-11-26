@@ -1,5 +1,12 @@
 # Changelog
 
+## Corrections after an independent review
+
+- 03: the stop-request check missed common wording ("please stop", curly apostrophes) and most non-English requests. Added Dutch, German, French and Spanish basics, and routed data-erasure requests to suppression plus a person.
+- 04: companies are no longer upserted on `domain` (not a unique HubSpot property); they are searched, then updated or created. Partial failures (HTTP 207) are no longer reported as success. `Retry-After` is honoured and creates are not repeated after a 5xx.
+- 02: non-Latin surnames were stripped to nothing and could merge different people; accents are now folded and other scripts kept. A missing surname never matches.
+- Coverage figures now exclude test files. The project 15 draft was removed (wrong and unsourced claims).
+
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions are per repository.
 
 ## [Unreleased]

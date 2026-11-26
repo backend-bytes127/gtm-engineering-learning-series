@@ -1,6 +1,7 @@
 """What happens when someone writes back. The first checks are plain code and run before any AI is involved:
 
-1. Asking us to stop (or "not interested") ends all automation for that person immediately.
+1. Asking us to stop (or "not interested") ends all automation for that person immediately. A request to erase
+   their data does the same and is also handed to a person.
 2. Money, legal, complaints, or very long messages go to a human.
 3. After `max_auto_replies` automatic answers in a row, a human takes over.
 Only then is Claude asked to draft a reply, and what it writes still has to pass the output checks.
@@ -16,7 +17,7 @@ from ..models import Sender
 from ..store import Store
 from .client import AIClient
 from .drafting import draft_reply
-from .guard import DM_MAX, is_opt_out, needs_human
+from .guard import DM_MAX, is_data_request, is_opt_out, needs_human
 from .runtime import get_ai_mode
 from .steps import calls_left, disclosure_line, thread_history
 
@@ -41,6 +42,11 @@ def handle_inbound(
     tracked = store.contact(contact_key)
     if tracked is None:
         return "ignored"
+    if is_data_request(text):
+        _supersede(store, contact_key, now)
+        record_event(store, contact_key, C.UNSUBSCRIBED, now, detail="asked for their data to be erased")
+        _escalate(store, contact_key, "Data request: stop contact and handle erasure of their data by hand.", now)
+        return "opted_out"
     if is_opt_out(text):
         _supersede(store, contact_key, now)
         record_event(store, contact_key, C.UNSUBSCRIBED, now, detail="asked to stop")

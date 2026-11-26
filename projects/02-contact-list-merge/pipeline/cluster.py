@@ -103,7 +103,7 @@ def _strong_keys(p: Prepared) -> list[str]:
 def _same_name(a: Prepared, b: Prepared) -> bool:
     ka, kb = N.name_key(a.rec.first or a.rec.full.split(" ")[0], _last(a)), N.name_key(
         b.rec.first or b.rec.full.split(" ")[0], _last(b))
-    return ka == kb
+    return ka == kb and not ka.endswith("|")  # no surname, no match
 
 
 def _last(p: Prepared) -> str:

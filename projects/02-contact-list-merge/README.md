@@ -8,7 +8,7 @@ Six messy lead exports in, one clean, de-duplicated contact list out. Implemente
 | Output | 11 columns, one row per real person (`Final Output` sheet), plus an audit trail |
 | Result on the bundled synthetic sample | 37 rows read → 5 invalid removed → 32 kept → **12 people** |
 | Built and verified on | an instructor dataset of 292 rows → 9 removed → 283 kept → **90 people** (193 duplicates merged). **That dataset is not included.** |
-| Quality gates | 102 tests, 98% coverage, n8n output **identical** to the reference (0 differing rows), end-to-end test in a clean container |
+| Quality gates | 111 tests, 97% coverage, n8n output **identical** to the reference (0 differing rows), end-to-end test in a clean container |
 | Stack | n8n 2.32.6 (Extract From File, Code, IF, Merge, Convert To File), JavaScript, Python 3 + openpyxl |
 
 ![The merge flow after a successful run, with item counts on every connection (run on the instructor dataset)](docs/guide/assets/04-flow2-zoom-item-counts.png)
@@ -75,7 +75,7 @@ These are judgment calls, listed deliberately rather than hidden. (The specific 
 cd projects/02-contact-list-merge
 pip install -r requirements.txt
 python3 -m pipeline.run          # writes output/Final_Contact_List.xlsx and output/Cleaning_Audit.xlsx
-python3 -m pytest                # 102 tests
+python3 -m pytest                # 111 tests
 GTM_DATA_DIR=/path/to/your/exports python3 -m pipeline.run   # your own files, same names and layout
 ```
 
@@ -97,7 +97,7 @@ make up                          # from the repo root; n8n on http://localhost:5
 ### C. Verify everything
 
 ```bash
-make check       # lint + 102 tests + rebuild workflow + JS/Python parity + secret scan
+make check       # lint + 111 tests + rebuild workflow + JS/Python parity + secret scan
 make e2e         # real n8n container: import, submit the form, compare with the golden file
 ```
 

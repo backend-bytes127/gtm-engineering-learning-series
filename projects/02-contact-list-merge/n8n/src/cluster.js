@@ -45,7 +45,7 @@ function lastOf(p) {
   return idx >= 0 ? p.full.slice(idx + 1) : '';
 }
 const keyOf = (p) => nameKey(p.first || p.full.split(' ')[0], lastOf(p));
-const sameName = (a, b) => keyOf(a) === keyOf(b);
+const sameName = (a, b) => keyOf(a) === keyOf(b) && !keyOf(a).endsWith('|'); // no surname, no match
 
 function buildClusters(preps) {
   const groups = new Groups(preps);

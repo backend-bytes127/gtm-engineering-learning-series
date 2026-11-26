@@ -17,7 +17,15 @@ function cleanName(raw) {
   while (tokens.length > 1 && SALUTATIONS.has(trimDots(tokens[0].toLowerCase()))) tokens = tokens.slice(1);
   return tokens.map(capToken).join(' ');
 }
-const letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');
+// Latin letters that Unicode decomposition does not reduce to a plain letter.
+const LATIN_EXTRA = { ß: 'ss', ø: 'o', ł: 'l', đ: 'd', ð: 'd', æ: 'ae', œ: 'oe', þ: 'th', ħ: 'h', ı: 'i' };
+// Lower-case letters only. Accented Latin letters lose the accent; letters of other scripts are kept as they are.
+const letters = (t) => Array.from(t.normalize('NFC').toLowerCase()).map((ch) => {
+  const c = LATIN_EXTRA[ch] || ch;
+  const parts = c.normalize('NFKD');
+  if (parts.charCodeAt(0) < 128) return parts.replace(/[^a-z]/g, '');
+  return /\p{L}/u.test(c) ? c : '';
+}).join('');
 const aliasFirst = (first) => FIRST_NAME_ALIASES[first.toLowerCase()] || first.toLowerCase();
 const nameKey = (first, last) => `${first ? aliasFirst(first.split(/\s+/)[0]) : ''}|${letters(last)}`;
 function slugToName(slug) {

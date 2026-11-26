@@ -20,3 +20,6 @@ select = ["E", "F", "I", "B", "UP"]
 "pipeline/run.py" = ["E501"]  # COLUMN_MAP is a wide documentation table
 "scripts/make_sample_data.py" = ["E501"]  # rows of sample data are intentionally one line each
 "notebooks/*.ipynb" = ["E402"]  # sys.path is set up before the project imports on purpose
+
+[tool.coverage.run]
+omit = ["*/tests/*"]

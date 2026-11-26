@@ -20,3 +20,6 @@ select = ["E", "F", "I", "B", "UP"]
 "scripts/make_sample_data.py" = ["E501"]
 "sequencer/tests/*.py" = ["F811"]  # pytest fixtures are imported and then used as parameters
 "sequencer/ai/drafting.py" = ["E501"]  # the system prompt is prose, wrapped by meaning not by column
+
+[tool.coverage.run]
+omit = ["*/tests/*"]

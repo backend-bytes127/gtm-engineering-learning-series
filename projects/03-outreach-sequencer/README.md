@@ -7,9 +7,9 @@ A small Email and LinkedIn sequencing tool. It takes a clean contact list, runs 
 | Input | A clean contact list (CSV or XLSX). [Project 02's](../02-contact-list-merge/README.md) `Final_Contact_List.xlsx` imports as-is |
 | Output | A tracker (status and touch log for every contact), `Sequence_Report.xlsx`, `Summary.md` |
 | Result on the bundled synthetic sample | 36 rows read → 10 removed → 26 kept → 25 launched (1 held back for an unpersonalisable draft) → 86 messages over 3 weeks of simulated time |
-| Quality gates | 475 tests, 98% coverage, golden-file regression, an independent SQL recount of every report number, lint |
+| Quality gates | 518 tests, 97% coverage, golden-file regression, an independent SQL recount of every report number, lint |
 | Stack | Python 3.10+, SQLite, openpyxl. No services, no API keys |
-| **Sending is simulated** | Nothing is sent. See [what is and is not real](#what-is-and-is-not-real) |
+| **Sending is simulated by default** | Nothing is sent unless live LinkedIn sending is deliberately switched on. See [what is and is not real](#what-is-and-is-not-real) |
 
 ## Try it
 
@@ -17,7 +17,7 @@ A small Email and LinkedIn sequencing tool. It takes a clean contact list, runs 
 cd projects/03-outreach-sequencer
 pip install -r requirements.txt
 python3 -m sequencer demo        # import, validate, approve, launch, simulate 60 days, report -> output/
-python3 -m pytest                # 475 tests
+python3 -m pytest                # 518 tests
 python3 -m sequencer serve       # the web app
 ```
 
@@ -140,16 +140,18 @@ The config folder holds four small JSON files: [`sequences.json`](config/sequenc
 
 **Real and tested:** import and column mapping, validation and de-duplication, template rendering and checks, the launch gate, scheduling, daily limits, sending windows, stop rules, status tracking, the touch log, suppression, reporting.
 
+**Stop requests:** plain code, not the AI, checks every inbound message for common stop and data-erasure wording in English, Dutch, German, French and Spanish ([tests](sequencer/tests/test_opt_out.py)). It will miss other phrasings and languages, so a person still has to watch the inbox. This is not a GDPR compliance claim.
+
 **Simulated:**
 
 - **Sending.** By default `SimulatedProvider` sends nothing. Live LinkedIn sending exists (see above) but has only been tested against a faked Unipile, not yet against a real account.
-- **Simulated provider.** `SimulatedProvider` sends nothing. Replies, bounces, opens, accepts and meetings come from a seeded random model with invented rates ([ADR-0009](../../docs/adr/0009-provider-interface-and-simulated-sending.md)). The report says so on its first line. To go live you implement one method, `Provider.send`, for a mailbox and a LinkedIn service, and call `engine.record_event` from their webhooks.
+- **Outcomes.** In simulation, replies, bounces, opens, accepts and meetings come from a seeded random model with invented rates ([ADR-0009](../../docs/adr/0009-provider-interface-and-simulated-sending.md)). The report says so on its first line. To go live you implement one method, `Provider.send`, for a mailbox and a LinkedIn service, and call `engine.record_event` from their webhooks.
 - **E-mail verification.** Checks are offline: syntax, disposable and typo domains, role accounts. They show an address is plausible, **not that the mailbox exists**. Confirming that needs an SMTP-level verification service; `validate.EmailVerifier` is the plug-in point.
 
 **Known limits:**
 
 - The web app's request handling is tested without a browser (every endpoint, plus the security cases), and the front end has guard tests for broken imports and unsafe HTML. Its look and feel was checked by hand in a browser, there are no automated browser tests, and `web/server.py` (the thin socket wrapper) has no automated test.
-- The web app is single-user and local: no login, one project at a time. It is not meant to be put on a server.
+- The web app is single-user, one project at a time. Run locally it has no login; hosted, it requires one shared password. It is not built for several users.
 
 - Sequences are linear, with no branching. A DM step waits for the invite to be accepted, so a contact who never accepts holds at that step for up to 14 days before the sequence moves on.
 - One sender and one timezone; the contact's own timezone is not used.

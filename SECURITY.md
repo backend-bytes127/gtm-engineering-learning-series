@@ -15,7 +15,7 @@ This repository teaches GTM automation, which routinely touches API tokens, OAut
 
 ## Enforced automatically
 
-`scripts/check_no_secrets.py` scans the working tree for token patterns, Google OAuth client ids and secrets, spreadsheet ids, private keys, home-directory paths, e-mail addresses and forbidden file names. It runs:
+`scripts/check_no_secrets.py` scans the working tree for token patterns, Google OAuth client ids and secrets, spreadsheet ids, private keys, home-directory paths, the local committer's identity (where configured; not in CI) and forbidden file names. It does **not** detect e-mail addresses in general. It runs:
 
 - locally on every commit, once you enable the hook: `make hooks`
 - on demand: `make secrets`
