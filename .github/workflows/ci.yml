@@ -62,6 +62,21 @@ jobs:
         working-directory: projects/04-contact-cleaning-app
         run: python -m pytest --cov=contactapp --cov-report=term-missing --cov-fail-under=90
 
+  waterfall:
+    name: Enrichment Waterfall tests (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install pytest pytest-cov
+      - name: Unit tests (coverage gate 90%)
+        working-directory: projects/16-enrichment-waterfall
+        run: python -m pytest --cov=waterfall --cov-report=term-missing --cov-fail-under=90
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

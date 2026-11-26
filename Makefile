@@ -1,8 +1,9 @@
 # GTM Engineering Learning Series: common tasks. `make help` lists them.
 P2 := projects/02-contact-list-merge
 P1 := projects/01-linkedin-icp-scraper
-P3 := projects/03-outreach-sequencer projects/04-contact-cleaning-app
+P3 := projects/03-outreach-sequencer
 P4 := projects/04-contact-cleaning-app
+P16 := projects/16-enrichment-waterfall
 PY ?= python3
 
 .DEFAULT_GOAL := help
@@ -14,13 +15,14 @@ help:  ## show this help
 install:  ## install Python test dependencies
 	$(PY) -m pip install -r $(P2)/requirements.txt ruff pytest-cov
 
-test:  ## unit + integration + golden-file tests (projects 02, 03 and 04)
+test:  ## unit + integration + golden-file tests (projects 02, 03, 04 and 16)
 	cd $(P2) && $(PY) -m pytest --cov=pipeline --cov-report=term-missing --cov-fail-under=90
 	cd $(P3) && $(PY) -m pytest --cov=sequencer --cov-report=term-missing --cov-fail-under=90
 	cd $(P4) && $(PY) -m pytest --cov=contactapp --cov-report=term-missing --cov-fail-under=90
+	cd $(P16) && $(PY) -m pytest --cov=waterfall --cov-report=term-missing --cov-fail-under=90
 
 lint:  ## ruff
-	ruff check $(P1)/scripts $(P2) $(P3) $(P4)
+	ruff check $(P1)/scripts $(P2) $(P3) $(P4) $(P16)
 
 parity:  ## n8n JavaScript nodes must reproduce the Python golden output exactly
 	cd $(P2) && $(PY) scripts/parity_check.py

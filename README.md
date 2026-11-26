@@ -8,7 +8,7 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 
 ## Projects
 
-**4 built (02-04 have automated tests) · 14 specced, not started.** [Built](#built) · [Next up](#next-up) · [Roadmap](docs/roadmap.md) · [Research behind the list](docs/research.md)
+**5 built (02-04 and 16 have automated tests) · 13 specced, not started.** [Built](#built) · [Next up](#next-up) · [Roadmap](docs/roadmap.md) · [Research behind the list](docs/research.md)
 
 ### Built
 
@@ -18,6 +18,7 @@ Hands-on go-to-market engineering projects, built as real, tested, reproducible 
 | 02 | [Contact List Merge](projects/02-contact-list-merge/) | Merge 6 messy lead exports (ads, event, LinkedIn, scraper, Apollo, ZoomInfo) into one clean, de-duplicated contact list | n8n, JavaScript, Python reference build | built and verified on a 292-row instructor dataset (90 people out; dataset not included) and a bundled synthetic sample (37 rows, 12 people); 111 tests, 97% coverage, n8n output the same as the Python reference on the tested data |
 | 03 | [Outreach Sequencer](projects/03-outreach-sequencer/) | Take a clean contact list through a multi-step email and LinkedIn sequence, with validation, personalised and approved messages, send limits and stop rules, and a results report | Python, SQLite, openpyxl (sending is simulated) | 36 rows → 26 valid → 25 launched; rules proved over a 60-day simulated run; 518 tests, 97% coverage, report numbers recounted independently from SQL |
 | 04 | [Contact Cleaning App](projects/04-contact-cleaning-app/) | A web app around Project 02: upload the lead exports, clean, standardize and consolidate them, then preview and (when switched on) push the result to HubSpot | Python, standard-library server, JavaScript, openpyxl | 37 rows → 12 people → 12 contacts and 5 companies planned for the CRM; 61 tests, 93% coverage; push off by default and not yet run against a live HubSpot account |
+| 16 | [Enrichment Waterfall Engine](projects/16-enrichment-waterfall/) | Ask data providers one at a time without paying twice or breaking a budget | Python, SQLite (providers and data are synthetic) | 42 tests, 99% coverage; calls and spend match a separate oracle for all 24 provider orders |
 
 ### Next up
 
@@ -25,7 +26,6 @@ Specs only: no code yet. Each link opens the project's spec. Listed in suggested
 
 | # | Project | What it will do | Priority |
 |---|---|---|---|
-| 16 | [Enrichment Waterfall Engine](projects/16-enrichment-waterfall/) | Try providers in cost order, stop at the first verified result, report coverage and cost per contact | P1 |
 | 05 | [Real-Time Intent Webhook Router](projects/05-intent-webhook-router/) | Turn buying signals into routed alerts | P1 |
 | 06 | [AI SDR Research Agent](projects/06-ai-sdr-research-agent/) | Research a prospect and return a structured, outreach-ready record | P1 |
 | 17 | [Signal and Fit Account Scoring](projects/17-signal-fit-scoring/) | Score fit x time-decayed intent and backtest the weights | P1 |

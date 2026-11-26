@@ -41,7 +41,7 @@ Status below says what is built and what is only specced. The stack at the end i
 | 13 | [Dark Social Attribution Bot](../projects/13-dark-social-attribution/) | 🟢 P3 | 1 day | 📋 | HubSpot forms, inbound lead webhook, Claude |
 | 14 | [Competitor Battlecard Auto-Updater](../projects/14-competitor-battlecard-updater/) | 🟡 P2 | 2 days | 📋 | G2 RSS, competitor sitemap diff, Claude summariser |
 | 15 | [GTM Architecture Teardown](../projects/15-gtm-architecture-teardown/) | 🔴 P1 | 1 day | 📋 | Public pricing pages, SEC filings, Sacra research |
-| 16 | [Enrichment Waterfall Engine](../projects/16-enrichment-waterfall/) | 🔴 P1 | 3 days | 📋 | Enrichment provider APIs (fake provider for tests) |
+| 16 | [Enrichment Waterfall Engine](../projects/16-enrichment-waterfall/) | 🔴 P1 | 3 days | ✅ | Synthetic providers and contacts |
 | 17 | [Signal and Fit Account Scoring](../projects/17-signal-fit-scoring/) | 🔴 P1 | 3 days | 📋 | Account signals, outcome labels |
 | 18 | [GTM MCP Server](../projects/18-gtm-mcp-server/) | 🟡 P2 | 2 days | 📋 | Projects 02, 16, 17 |
 
